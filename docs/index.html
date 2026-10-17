@@ -11,12 +11,14 @@
   --bg: #f5f6f8; --card: #ffffff; --text: #16181d; --muted: #6b7280; --line: #e5e7eb;
   --good: #0a8f5a; --good-bg: #e3f6ed; --warn: #b26a00; --warn-bg: #fff3dc;
   --bad: #c62828; --bad-bg: #fde8e8; --info: #2457c5; --info-bg: #e6eeff; --bar: #d9dde3;
+  --ma20: #d68a00; --ma50: #2f6fe0; --ma200: #8b4fd6; --trend: #3a3f4a; --grid: #eef0f3;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0f1115; --card: #181b21; --text: #eceef2; --muted: #9aa1ad; --line: #2a2f38;
     --good: #3ccf8e; --good-bg: #133326; --warn: #f0b04a; --warn-bg: #3a2c12;
     --bad: #ff6b6b; --bad-bg: #3d1a1a; --info: #7aa2ff; --info-bg: #1a2644; --bar: #2a2f38;
+    --ma20: #f0b04a; --ma50: #6f9dff; --ma200: #b48cff; --trend: #d5d9e0; --grid: #20242b;
   }
 }
 * { box-sizing: border-box; }
@@ -30,6 +32,12 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .badge { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
 .b-close { color: var(--good); background: var(--good-bg); }
 .b-intraday { color: var(--warn); background: var(--warn-bg); }
+.markets { display: flex; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 3px; margin-bottom: 10px; }
+.mkt { flex: 1; border: 0; background: transparent; color: var(--muted); border-radius: 9px; padding: 8px 0;
+  font: inherit; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.mkt[aria-selected="true"] { background: var(--text); color: var(--bg); }
+.mkt .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); display: none; }
+.mkt.live .dot { display: inline-block; }
 .meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
 .banner { border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
 .banner.bad { color: var(--bad); background: var(--bad-bg); }
@@ -49,12 +57,14 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
   padding: 4px 11px; font: inherit; font-size: 13px; cursor: pointer; }
 .chip[aria-pressed="true"] { color: var(--info); background: var(--info-bg); border-color: transparent; font-weight: 600; }
 .row { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; }
-.row > button { all: unset; display: grid; grid-template-columns: 1fr auto 52px; align-items: center; gap: 10px;
+.row > button { all: unset; display: grid; grid-template-columns: minmax(0, 1fr) auto 44px; align-items: center; gap: 10px;
   width: 100%; padding: 11px 12px; cursor: pointer; box-sizing: border-box; }
-.tkr { font-weight: 700; font-size: 16px; }
+.tkr { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tkr .nm { font-weight: 600; font-size: 14px; margin-left: 4px; }
+.px { font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 600; }
+.px span { margin-left: 6px; }
 .sub { font-size: 12px; color: var(--muted); }
 .score { text-align: right; font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
-.score small { display: block; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .up { color: var(--bad); } .down { color: var(--good); } /* 台股習慣：紅漲綠跌 */
 .pill { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
 .p-good { color: var(--good); background: var(--good-bg); }
@@ -71,10 +81,36 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .comp b { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
 .tag { font-size: 12px; padding: 2px 7px; border-radius: 6px; background: var(--bg); color: var(--muted); }
+.tag.alert { color: var(--info); background: var(--info-bg); font-weight: 600; }
+.tag.lim { color: var(--bad); background: var(--bad-bg); font-weight: 700; }
 .empty { color: var(--muted); font-size: 14px; padding: 6px 0; }
 details { margin-top: 16px; color: var(--muted); font-size: 13px; }
 details summary { cursor: pointer; font-weight: 600; }
 details p { margin: 6px 0; }
+
+/* 走勢圖 */
+.chartbox { margin: 2px 0 12px; }
+.seg { display: flex; gap: 4px; margin-bottom: 6px; }
+.seg button { flex: 1; border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 8px;
+  padding: 5px 0; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.seg button[aria-pressed="true"] { color: var(--text); border-color: var(--text); }
+.cwrap { position: relative; }
+.cmain { height: 260px; }
+.csub { height: 92px; margin-top: 4px; }
+.cscore { height: 100px; }
+.legend { position: absolute; left: 4px; top: 2px; z-index: 3; font-size: 11px; line-height: 1.35; pointer-events: none;
+  font-variant-numeric: tabular-nums; color: var(--text); background: color-mix(in srgb, var(--card) 80%, transparent);
+  padding: 1px 4px; border-radius: 4px; }
+.legend i { font-style: normal; color: var(--muted); }
+.sublabel { position: absolute; left: 4px; top: 1px; z-index: 3; font-size: 11px; color: var(--muted); pointer-events: none;
+  background: color-mix(in srgb, var(--card) 80%, transparent); padding: 0 4px; border-radius: 4px; }
+.indchips { display: flex; gap: 5px; flex-wrap: wrap; margin: 8px 0 2px; }
+.indchips .chip { padding: 3px 9px; font-size: 12px; }
+.alerts { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+.note { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.ctitle { font-size: 12px; color: var(--muted); font-weight: 600; margin: 10px 0 2px; }
+.keys { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--muted); margin-top: 4px; }
+.keys b { display: inline-block; width: 12px; height: 2px; vertical-align: middle; margin-right: 3px; }
 </style>
 </head>
 <body>
@@ -83,6 +119,7 @@ details p { margin: 6px 0; }
     <h1>股票翻倍計畫</h1>
     <span id="mode" class="badge"></span>
   </header>
+  <div class="markets" role="tablist" id="markets"></div>
   <div id="meta" class="meta">載入中…</div>
   <div id="banners"></div>
 
@@ -100,29 +137,89 @@ details p { margin: 6px 0; }
 
   <details>
     <summary>分數怎麼算</summary>
-    <p>總分 0–100：相對強弱 30、資金流 25、趨勢 20、反彈 15，風險最多扣 10 分。</p>
-    <p>持股：強勢續抱 ≥75、續抱、轉弱留意 &lt;50、出場訊號 &lt;40 且跌破 50 日線。候選：可進場 ≥70 且趨勢夠強、觀察 ≥60。</p>
+    <p>總分 0–100：相對強弱 30、資金流 25、趨勢 20、反彈 15，風險最多扣 10 分。美股和台股各自排名，不互相比較。</p>
+    <p>持股：強勢續抱 ≥75、續抱、轉弱留意 &lt;50、出場訊號 &lt;40 且跌破 50 日線。候選：可進場 ≥70 且趨勢夠強、觀察 ≥60。台股漲停鎖住的股票先列觀察，因為實際上買不到。</p>
     <p>換股：候選股比最弱持股高 15 分以上，連續 3 個收盤日才成立。盤中顯示的是暫定結果，收盤後才確認。標「自動」的持股由程式挑選，換股時會自動汰換；你自己指定的只提醒不換。</p>
+    <p>走勢圖使用 <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a> 的 Lightweight Charts（Apache 2.0）。</p>
+    <p>股價每 15 分鐘跟著掃描更新，不是即時報價；台股另有約 20 分鐘延遲。走勢圖上的趨勢線、支撐壓力和藍色提示是程式自動算的，只供參考，不影響分數。</p>
   </details>
 </main>
+<script src="vendor/lightweight-charts-4.2.0.js"></script>
 <script>
 const SIG_CLASS = { strong: "p-good", hold: "p-mute", reduce: "p-warn", exit: "p-bad", swap_out: "p-bad",
   buy: "p-good", watch: "p-info", none: "p-mute", swap_in: "p-info" };
 const COMP = [["rs", "相對強弱"], ["mf", "資金流"], ["trend", "趨勢"], ["rebound", "反彈"], ["risk", "風險"]];
-let data = null, tab = "h", theme = "全部";
+const DEFAULT_MARKETS = [{ key: "us", label: "美股", file: "data.json", timezone: "America/New_York", open: "09:30", close: "16:00" }];
+let markets = [], market = null, data = null, tab = "h", theme = "全部", userPicked = false;
+let openTicker = null, chartView = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+};
+
+async function getJson(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+// 依市場當地時間判斷是否正在交易（給切換按鈕上的小圓點和預設市場用）
+function isLive(m) {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: m.timezone, weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+      .formatToParts(new Date()).reduce((o, p) => (o[p.type] = p.value, o), {});
+    if (["Sat", "Sun"].includes(parts.weekday)) return false;
+    const now = `${parts.hour}:${parts.minute}`;
+    return now >= m.open && now < m.close;
+  } catch { return false; }
+}
+
+async function loadMarkets() {
+  try { markets = (await getJson("data/markets.json?t=" + Date.now())).markets; }
+  catch { markets = DEFAULT_MARKETS; }
+  if (!markets.length) markets = DEFAULT_MARKETS;
+  const fromHash = location.hash.slice(1);
+  const saved = store.get("market");
+  const keys = markets.map(m => m.key);
+  if (!market) {
+    if (keys.includes(fromHash)) { market = fromHash; userPicked = true; }
+    else if (keys.includes(saved)) { market = saved; userPicked = true; }
+    else market = (markets.find(isLive) || markets[0]).key;
+  }
+  if (!keys.includes(market)) market = keys[0];
+  renderMarkets();
+}
+
+function renderMarkets() {
+  $("markets").innerHTML = markets.length < 2 ? "" : markets.map(m =>
+    `<button class="mkt${isLive(m) ? " live" : ""}" role="tab" aria-selected="${m.key === market}" data-m="${esc(m.key)}">
+      <span class="dot"></span>${esc(m.label)}</button>`).join("");
+  $("markets").style.display = markets.length < 2 ? "none" : "";
+}
 
 async function load() {
   try {
-    const r = await fetch("data.json?t=" + Date.now(), { cache: "no-store" });
-    if (!r.ok) throw new Error(r.status);
-    data = await r.json();
+    await loadMarkets();
+    const m = markets.find(x => x.key === market);
+    const fresh = await getJson(m.file + "?t=" + Date.now());
+    fresh.market = fresh.market || m.key;
+    // 自動重新整理時資料沒變，就不重畫（避免打開的走勢圖被重設）
+    if (data && data.market === fresh.market && data.generated_at === fresh.generated_at) return;
+    data = fresh;
     render();
   } catch (e) {
     $("meta").textContent = "讀不到資料，稍後會自動重試。";
   }
 }
+
+function fmtPx(v) {
+  if (v == null) return "–";
+  return v.toLocaleString("en-US", { minimumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2, maximumFractionDigits: 2 });
+}
+const fmtPct = v => v == null ? "" : (v > 0 ? "+" : "") + v.toFixed(2) + "%";
+const clsOf = v => v > 0 ? "up" : v < 0 ? "down" : "";
 
 function render() {
   const m = $("mode");
@@ -131,12 +228,17 @@ function render() {
 
   const gen = new Date(data.generated_at);
   const local = gen.toLocaleString("zh-TW", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
-  $("meta").textContent = `更新於 ${local}（美東 ${data.generated_at_et.slice(5, 16)}）・資料日 ${data.data_date}`;
+  const mkt = data.generated_at_local ? data.generated_at_local.slice(5, 16) : data.generated_at_et.slice(5, 16);
+  const tz = data.tz_label || "美東";
+  let priceNote = "";
+  if (data.price_time) priceNote = data.price_time === "收盤" ? "・股價為收盤價" : `・股價截至 ${tz} ${data.price_time}`;
+  if (data.mode === "intraday" && data.quote_delay_minutes) priceNote += `（延遲約 ${data.quote_delay_minutes} 分鐘）`;
+  $("meta").textContent = `更新於 ${local}（${tz} ${mkt}）・資料日 ${data.data_date}${priceNote}`;
 
   const b = [];
   const ageMin = (Date.now() - gen.getTime()) / 60000;
   if (ageMin > data.stale_after_minutes)
-    b.push(`<div class="banner bad">資料已 ${fmtAge(ageMin)} 沒更新，電腦或排程可能停了。</div>`);
+    b.push(`<div class="banner bad">${esc(data.market_label || "")}資料已 ${fmtAge(ageMin)} 沒更新，電腦或排程可能停了。</div>`);
   if (data.demo) b.push(`<div class="banner warn">目前顯示的是模擬資料，不是真實行情。</div>`);
   if (data.errors?.length) b.push(`<div class="banner warn">${data.errors.length} 檔抓不到資料：${data.errors.map(e => esc(e.ticker)).join("、")}</div>`);
   $("banners").innerHTML = b.join("");
@@ -151,22 +253,27 @@ function fmtAge(min) {
   return Math.round(min / 1440) + " 天";
 }
 
+function label(t) {
+  const it = [...(data.holdings || []), ...(data.candidates || [])].find(x => x.ticker === t);
+  return esc(t) + (it?.name ? ` <span class="small">${esc(it.name)}</span>` : "");
+}
+
 function renderSwaps() {
   const rows = [];
   for (const s of data.swaps || []) {
     const pill = s.status === "confirmed" ? `<span class="pill p-good">已確認</span>` : `<span class="pill p-warn">暫定</span>`;
-    rows.push(`<div class="swap">${pill}<span class="tk">${esc(s.out)}</span><span class="arrow">→</span>
-      <span class="tk">${esc(s.in)}</span><span class="small">高 ${s.gap} 分・連續 ${s.streak} 天</span></div>`);
+    rows.push(`<div class="swap">${pill}<span class="tk">${label(s.out)}</span><span class="arrow">→</span>
+      <span class="tk">${label(s.in)}</span><span class="small">高 ${s.gap} 分・連續 ${s.streak} 天</span></div>`);
   }
   const building = (data.candidates || []).filter(c => c.swap?.status === "building")
     .sort((a, b) => b.swap.streak - a.swap.streak).slice(0, 3);
   for (const c of building)
     rows.push(`<div class="swap"><span class="pill p-mute">累積中 ${c.swap.streak}/${c.swap.need}</span>
-      <span class="tk">${esc(c.ticker)}</span><span class="small">比 ${esc(c.swap.out)} 高 ${c.swap.gap} 分</span></div>`);
+      <span class="tk">${label(c.ticker)}</span><span class="small">比 ${esc(c.swap.out)} 高 ${c.swap.gap} 分</span></div>`);
   const changes = (data.portfolio_changes || []).filter(c => c.action === "swap").slice(0, 3);
   for (const c of changes)
-    rows.push(`<div class="swap"><span class="pill p-info">已換股</span><span class="tk">${esc(c.out)}</span>
-      <span class="arrow">→</span><span class="tk">${esc(c.in)}</span><span class="small">${esc(c.date)}</span></div>`);
+    rows.push(`<div class="swap"><span class="pill p-info">已換股</span><span class="tk">${label(c.out)}</span>
+      <span class="arrow">→</span><span class="tk">${label(c.in)}</span><span class="small">${esc(c.date)}</span></div>`);
   $("swaps").innerHTML = rows.join("") || `<div class="empty">目前沒有換股訊號。</div>`;
 }
 
@@ -177,45 +284,325 @@ function renderList() {
   $("chips").innerHTML = themes.map(t =>
     `<button class="chip" aria-pressed="${t === theme}" data-theme="${esc(t)}">${esc(t)}</button>`).join("");
   const shown = items.filter(i => theme === "全部" || i.theme === theme);
+  destroyChart();
   $("list").innerHTML = shown.map(rowHtml).join("") || `<div class="empty">沒有資料。</div>`;
+  if (openTicker) {
+    const row = [...$("list").querySelectorAll(".row")].find(r => r.dataset.t === openTicker);
+    if (row) openRow(row); else openTicker = null;
+  }
 }
 
 function rowHtml(i) {
   const chg = i.chg_1d_pct;
-  const chgCls = chg > 0 ? "up" : chg < 0 ? "down" : "";
   const sub = [i.theme, i.source === "auto" ? "自動" : i.source === "manual" ? "自選" : "", i.weakest ? "最弱" : ""]
     .filter(Boolean).join("・");
-  const comps = COMP.map(([k, label]) => {
+  const comps = COMP.map(([k, lbl]) => {
     const v = i.components[k];
-    return `<div class="comp"><span>${label}</span><div class="track"><div class="fill${k === "risk" ? " risk" : ""}"
+    return `<div class="comp"><span>${lbl}</span><div class="track"><div class="fill${k === "risk" ? " risk" : ""}"
       style="width:${Math.max(0, Math.min(100, v))}%"></div></div><b>${Math.round(v)}</b></div>`;
   }).join("");
-  const tags = (i.reasons || []).map(r => `<span class="tag">${esc(r)}</span>`).join("");
-  return `<div class="row"><button aria-expanded="false">
-      <div><div class="tkr">${esc(i.ticker)}</div><div class="sub">${esc(sub)}</div></div>
+  const tags = (i.reasons || []).map(r => `<span class="tag${r === "漲停" || r === "跌停" ? " lim" : ""}">${esc(r)}</span>`).join("");
+  const lim = i.limit === "up" ? ` <span class="tag lim">漲停</span>` : i.limit === "down" ? ` <span class="tag lim">跌停</span>` : "";
+  const px = i.price != null
+    ? `<div class="px">${fmtPx(i.price)}<span class="${clsOf(chg)}">${fmtPct(chg)}</span>${lim}</div>`
+    : `<div class="px ${clsOf(chg)}">${fmtPct(chg)}</div>`;
+  return `<div class="row" data-t="${esc(i.ticker)}"><button aria-expanded="false">
+      <div><div class="tkr">${esc(i.ticker)}${i.name ? `<span class="nm">${esc(i.name)}</span>` : ""}</div>
+        ${px}<div class="sub">${esc(sub)}</div></div>
       <span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span>
-      <div class="score">${Math.round(i.score)}<small class="${chgCls}">${chg > 0 ? "+" : ""}${chg.toFixed(1)}%</small></div>
-    </button><div class="detail">${comps}${tags ? `<div class="tags">${tags}</div>` : ""}</div></div>`;
+      <div class="score">${Math.round(i.score)}</div>
+    </button><div class="detail"><div class="chartbox"></div>${comps}${tags ? `<div class="tags">${tags}</div>` : ""}</div></div>`;
 }
 
+function openRow(row) {
+  for (const r of $("list").querySelectorAll(".row.open")) if (r !== row) closeRow(r);
+  row.classList.add("open");
+  row.firstElementChild.setAttribute("aria-expanded", "true");
+  openTicker = row.dataset.t;
+  const item = [...data.holdings, ...data.candidates].find(x => x.ticker === openTicker);
+  if (item && window.LightweightCharts) showChart(row.querySelector(".chartbox"), item);
+}
+function closeRow(row) {
+  row.classList.remove("open");
+  row.firstElementChild.setAttribute("aria-expanded", "false");
+  if (row.dataset.t === openTicker) { destroyChart(); openTicker = null; }
+}
+
+// ───────── 走勢圖 ─────────
+const IND = {
+  mfi: "MFI 資金流量", macd: "MACD", rsi: "RSI", obv: "OBV 能量潮", cmf: "CMF 資金流",
+};
+let range = store.get("range") || "6m";
+let subs = (store.get("subs") || "mfi,macd").split(",").filter(k => IND[k]).slice(0, 2);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function destroyChart() {
+  if (!chartView) return;
+  for (const c of chartView.charts) { try { c.remove(); } catch {} }
+  chartView = null;
+}
+
+function baseOpts(extra = {}) {
+  return {
+    autoSize: true,
+    layout: { background: { type: "solid", color: css("--card") }, textColor: css("--muted"), fontSize: 10, attributionLogo: false,
+      fontFamily: getComputedStyle(document.body).fontFamily },
+    grid: { vertLines: { color: css("--grid") }, horzLines: { color: css("--grid") } },
+    rightPriceScale: { borderColor: css("--line") },
+    timeScale: { borderColor: css("--line"), rightOffset: 2 },
+    crosshair: { mode: 0 },
+    handleScroll: { vertTouchDrag: false },
+    localization: { locale: "zh-TW" },
+    ...extra,
+  };
+}
+const line = (chart, color, extra = {}) => chart.addLineSeries({ color, lineWidth: 1, priceLineVisible: false,
+  lastValueVisible: false, crosshairMarkerVisible: false, ...extra });
+
+async function showChart(box, item) {
+  destroyChart();
+  box.innerHTML = `<div class="seg" role="group">${[["1d", "今日"], ["1m", "1 個月"], ["6m", "6 個月"], ["1y", "1 年"]]
+    .map(([k, l]) => `<button data-r="${k}" aria-pressed="${k === range}">${l}</button>`).join("")}</div>
+    <div class="alerts">${(item.alerts || []).map(a => `<span class="tag alert">${esc(a)}</span>`).join("")}</div>
+    <div class="cwrap"><div class="legend"></div><div class="cmain"></div></div>
+    <div class="keys"></div><div class="subs"></div><div class="extra"></div>`;
+  box.querySelector(".seg").addEventListener("click", e => {
+    const b = e.target.closest("button[data-r]");
+    if (!b) return;
+    range = b.dataset.r; store.set("range", range);
+    showChart(box, item);
+  });
+  const view = { charts: [], ticker: item.ticker };
+  chartView = view;
+  try {
+    if (range === "1d") await drawIntraday(box, item, view);
+    else await drawDaily(box, item, view);
+  } catch (e) {
+    if (chartView === view) box.querySelector(".cmain").innerHTML =
+      `<div class="empty">${range === "1d" ? "今天還沒有盤中走勢資料。" : "走勢圖資料還沒產生，下一次收盤確認後就會有。"}</div>`;
+  }
+}
+
+async function drawDaily(box, item, view) {
+  const d = await getJson(`data/charts/${data.market}/${encodeURIComponent(item.ticker)}.json?v=${data.data_date}`);
+  if (chartView !== view) return;
+  // 盤中把今天這根 K 補上（圖檔只在收盤後更新）
+  const bars = d.t.map((t, i) => ({ time: t, open: d.o[i], high: d.h[i], low: d.l[i], close: d.c[i], v: d.v[i] }));
+  const b = item.bar;
+  if (b && b.t > d.t[d.t.length - 1]) bars.push({ time: b.t, open: b.o, high: b.h, low: b.l, close: b.c, v: b.v });
+  else if (b && b.t === d.t[d.t.length - 1]) Object.assign(bars[bars.length - 1], { open: b.o, high: b.h, low: b.l, close: b.c, v: b.v });
+  const UP = css("--bad"), DOWN = css("--good");
+
+  const el = box.querySelector(".cmain");
+  const chart = LightweightCharts.createChart(el, baseOpts());
+  view.charts.push(chart);
+  const candles = chart.addCandlestickSeries({ upColor: UP, downColor: DOWN, borderUpColor: UP, borderDownColor: DOWN,
+    wickUpColor: UP, wickDownColor: DOWN, priceLineVisible: false });
+  candles.setData(bars.map(({ v, ...x }) => x));
+  candles.priceScale().applyOptions({ scaleMargins: { top: 0.16, bottom: 0.24 } });
+
+  // 成交量：紅漲綠跌，爆量（> 2 倍 20 日均量）不透明，其他半透明
+  const vol = chart.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" }, lastValueVisible: false, priceLineVisible: false });
+  chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+  vol.setData(bars.map((x, i) => {
+    const avg = d.vma20[Math.min(i, d.vma20.length - 1)];
+    const spike = avg && x.v > 2 * avg;
+    const c = x.close >= x.open ? UP : DOWN;
+    return { time: x.time, value: x.v, color: spike ? c : c + "66" };
+  }));
+  const vma = line(chart, css("--muted"), { priceScaleId: "vol", lineWidth: 1 });
+  vma.setData(d.t.map((t, i) => d.vma20[i] == null ? { time: t } : { time: t, value: d.vma20[i] }));
+
+  const mas = [["sma20", "--ma20", "MA20"], ["sma50", "--ma50", "MA50"], ["sma200", "--ma200", "MA200"]];
+  for (const [k, c] of mas)
+    line(chart, css(c), { lineWidth: k === "sma200" ? 2 : 1 }).setData(d.t.map((t, i) => d[k][i] == null ? { time: t } : { time: t, value: d[k][i] }));
+
+  // 自動趨勢線
+  for (const tl of d.trendlines || []) {
+    line(chart, css("--trend"), { lineWidth: 2, lineStyle: tl.broken ? 2 : 0 })
+      .setData([{ time: tl.from.t, value: tl.from.v }, { time: tl.to.t, value: tl.to.v }]);
+  }
+  // 支撐壓力、52 週高低
+  for (const lv of d.levels || [])
+    candles.createPriceLine({ price: lv.price, color: css(lv.kind === "support" ? "--info" : "--warn"), lineWidth: 1, lineStyle: 2,
+      axisLabelVisible: true, title: (lv.kind === "support" ? "支撐" : "壓力") + (lv.touches > 1 ? `×${lv.touches}` : "") });
+  if (d.hi52) candles.createPriceLine({ price: d.hi52, color: css("--muted"), lineWidth: 1, lineStyle: 1, axisLabelVisible: false, title: "52週高" });
+  if (d.lo52) candles.createPriceLine({ price: d.lo52, color: css("--muted"), lineWidth: 1, lineStyle: 1, axisLabelVisible: false, title: "52週低" });
+
+  // 標記：選入、換股、進出場訊號、除息
+  const have = new Set(bars.map(x => x.time));
+  const MK = {
+    add: ["belowBar", "--info", "arrowUp"], in: ["belowBar", "--info", "arrowUp"], out: ["aboveBar", "--warn", "arrowDown"],
+    buy: ["belowBar", "--bad", "arrowUp"], exit: ["aboveBar", "--good", "arrowDown"],
+  };
+  const markers = (d.markers || []).filter(m => have.has(m.t)).map(m => {
+    const [position, c, shape] = MK[m.kind] || MK.add;
+    return { time: m.t, position, color: css(c), shape, text: m.text };
+  });
+  for (const t of d.dividends || []) if (have.has(t)) markers.push({ time: t, position: "aboveBar", color: css("--muted"), shape: "circle", text: "除息" });
+  markers.sort((a, b) => a.time < b.time ? -1 : a.time > b.time ? 1 : 0);
+  candles.setMarkers(markers);
+
+  box.querySelector(".keys").innerHTML =
+    mas.map(([, c, l]) => `<span><b style="background:${css(c)}"></b>${l}</span>`).join("") +
+    `<span><b style="background:${css("--trend")}"></b>趨勢線（虛線＝已跌破/突破）</span>` +
+    `<span><b style="background:${css("--info")}"></b>支撐</span><span><b style="background:${css("--warn")}"></b>壓力</span>`;
+
+  // 圖例：十字線移到哪天就顯示那天的價格和均線
+  const legend = box.querySelector(".legend");
+  const idx = new Map(bars.map((x, i) => [x.time, i]));
+  const showLegend = t => {
+    const i = idx.get(t) ?? bars.length - 1;
+    const x = bars[i], p = bars[i - 1];
+    const chg = p ? (x.close / p.close - 1) * 100 : null;
+    const di = Math.min(i, d.t.length - 1);
+    const ma = mas.map(([k, c, l]) => d[k][di] != null ? `<span style="color:${css(c)}">${l} ${fmtPx(d[k][di])}</span>` : "").join(" ");
+    legend.innerHTML = `${x.time.slice(5)} <i>開</i>${fmtPx(x.open)} <i>高</i>${fmtPx(x.high)} <i>低</i>${fmtPx(x.low)} <i>收</i>${fmtPx(x.close)}
+      <span class="${clsOf(chg)}">${fmtPct(chg)}</span><br>${ma}`;
+  };
+  showLegend(null);
+  chart.subscribeCrosshairMove(p => showLegend(p.time));
+
+  // 副圖
+  const subBox = box.querySelector(".subs");
+  subBox.innerHTML = `<div class="indchips">${Object.entries(IND).map(([k, l]) =>
+    `<button class="chip" data-k="${k}" aria-pressed="${subs.includes(k)}">${l}</button>`).join("")}</div>`;
+  subBox.querySelector(".indchips").addEventListener("click", e => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    const k = c.dataset.k;
+    subs = subs.includes(k) ? subs.filter(x => x !== k) : [...subs, k].slice(-2);
+    store.set("subs", subs.join(","));
+    showChart(box, item);
+  });
+  const subCharts = [];
+  for (const k of subs) {
+    const wrap = document.createElement("div");
+    wrap.className = "cwrap";
+    wrap.innerHTML = `<div class="sublabel">${IND[k]}</div><div class="csub"></div>`;
+    subBox.appendChild(wrap);
+    const sc = LightweightCharts.createChart(wrap.querySelector(".csub"), baseOpts({ timeScale: { visible: false, rightOffset: 2 } }));
+    view.charts.push(sc);
+    subCharts.push(sc);
+    drawIndicator(sc, k, d);
+  }
+
+  // 範圍：1 個月 / 6 個月 / 1 年
+  const n = bars.length;
+  const span = { "1m": 22, "6m": 126, "1y": 260 }[range] || 126;
+  const lr = { from: Math.max(0, n - span), to: n + 1 };
+  const all = [chart, ...subCharts];
+  for (const c of all) c.timeScale().setVisibleLogicalRange(lr);
+  let syncing = false;
+  for (const src of all)
+    src.timeScale().subscribeVisibleLogicalRangeChange(r => {
+      if (syncing || !r) return;
+      syncing = true;
+      for (const dst of all) if (dst !== src) dst.timeScale().setVisibleLogicalRange(r);
+      syncing = false;
+    });
+
+  drawScores(box.querySelector(".extra"), d, view);
+}
+
+function drawIndicator(sc, k, d) {
+  const ser = (arr) => d.t.map((t, i) => arr[i] == null ? { time: t } : { time: t, value: arr[i] });
+  const ref = (s, v) => s.createPriceLine({ price: v, color: css("--muted"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false });
+  if (k === "macd") {
+    const h = sc.addHistogramSeries({ priceLineVisible: false, lastValueVisible: false });
+    h.setData(d.t.map((t, i) => d.macd_hist[i] == null ? { time: t } :
+      { time: t, value: d.macd_hist[i], color: (d.macd_hist[i] >= 0 ? css("--bad") : css("--good")) + "99" }));
+    line(sc, css("--ma50")).setData(ser(d.macd));
+    line(sc, css("--ma20")).setData(ser(d.macd_signal));
+  } else if (k === "obv") {
+    line(sc, css("--info"), { priceFormat: { type: "volume" } }).setData(ser(d.obv));
+  } else {
+    const s = line(sc, css("--info"), { lastValueVisible: true });
+    s.setData(ser(d[k]));
+    if (k === "mfi") { ref(s, 80); ref(s, 20); }
+    if (k === "rsi") { ref(s, 70); ref(s, 30); }
+    if (k === "cmf") ref(s, 0);
+  }
+}
+
+function drawScores(box, d, view) {
+  if (!d.scores || d.scores.length < 2) return;
+  box.innerHTML = `<div class="ctitle">分數走勢（收盤確認）</div><div class="cscore"></div>`;
+  const sc = LightweightCharts.createChart(box.querySelector(".cscore"), baseOpts({ handleScroll: false, handleScale: false }));
+  view.charts.push(sc);
+  const s = line(sc, css("--text"), { lineWidth: 2, lastValueVisible: true, crosshairMarkerVisible: true });
+  s.setData(d.scores.map(x => ({ time: x.t, value: x.v })));
+  s.createPriceLine({ price: 70, color: css("--bad"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false, title: "可進場 70" });
+  s.createPriceLine({ price: 50, color: css("--warn"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false, title: "轉弱 50" });
+  sc.timeScale().fitContent();
+}
+
+async function drawIntraday(box, item, view) {
+  const d = await getJson(`data/intraday/${data.market}.json?t=${encodeURIComponent(data.generated_at)}`);
+  if (chartView !== view) return;
+  const s = d.series[item.ticker];
+  if (!s || !s.c.some(v => v != null)) throw new Error("no data");
+  const el = box.querySelector(".cmain");
+  const chart = LightweightCharts.createChart(el, baseOpts({
+    timeScale: { borderColor: css("--line"), timeVisible: true, secondsVisible: false, rightOffset: 2 },
+    localization: { locale: "zh-TW", timeFormatter: t => new Date(t * 1000).toISOString().slice(11, 16) },
+  }));
+  view.charts.push(chart);
+  const last = [...s.c].reverse().find(v => v != null);
+  const color = item.prev_close != null && last < item.prev_close ? css("--good") : css("--bad");
+  const px = chart.addAreaSeries({ lineColor: color, topColor: color + "40", bottomColor: color + "05", lineWidth: 2, priceLineVisible: false });
+  px.setData(d.t.map((t, i) => s.c[i] == null ? { time: t } : { time: t, value: s.c[i] }));
+  line(chart, css("--ma50"), { lineWidth: 1 }).setData(d.t.map((t, i) => s.vwap[i] == null ? { time: t } : { time: t, value: s.vwap[i] }));
+  if (item.prev_close != null)
+    px.createPriceLine({ price: item.prev_close, color: css("--muted"), lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "昨收" });
+  chart.timeScale().fitContent();
+  const legend = box.querySelector(".legend");
+  const show = t => {
+    let i = t == null ? s.c.length - 1 : d.t.indexOf(t);
+    while (i > 0 && s.c[i] == null) i--;
+    const v = s.c[i], chg = item.prev_close ? (v / item.prev_close - 1) * 100 : null;
+    legend.innerHTML = `${new Date(d.t[i] * 1000).toISOString().slice(11, 16)} <i>價</i>${fmtPx(v)} <span class="${clsOf(chg)}">${fmtPct(chg)}</span>
+      <span style="color:${css("--ma50")}">VWAP ${fmtPx(s.vwap[i])}</span>`;
+  };
+  show(null);
+  chart.subscribeCrosshairMove(p => show(p.time));
+  box.querySelector(".keys").innerHTML = `<span><b style="background:${color}"></b>5 分鐘價格</span>` +
+    `<span><b style="background:${css("--ma50")}"></b>VWAP 當日成交均價</span><span>日期 ${esc(d.date)}</span>` +
+    (data.quote_delay_minutes ? `<span>延遲約 ${data.quote_delay_minutes} 分鐘</span>` : "");
+}
+
+// ───────── 事件 ─────────
 $("list").addEventListener("click", e => {
   const btn = e.target.closest(".row > button");
   if (!btn) return;
   const row = btn.parentElement;
-  row.classList.toggle("open");
-  btn.setAttribute("aria-expanded", row.classList.contains("open"));
+  row.classList.contains("open") ? closeRow(row) : openRow(row);
 });
 $("chips").addEventListener("click", e => {
   const c = e.target.closest(".chip");
   if (c) { theme = c.dataset.theme; renderList(); }
 });
+$("markets").addEventListener("click", e => {
+  const b = e.target.closest(".mkt");
+  if (!b || b.dataset.m === market) return;
+  market = b.dataset.m; userPicked = true;
+  store.set("market", market);
+  history.replaceState(null, "", "#" + market);
+  openTicker = null; theme = "全部";
+  $("meta").textContent = "載入中…";
+  load();
+});
 for (const [id, t] of [["tabH", "h"], ["tabC", "c"]])
   $(id).addEventListener("click", () => {
-    tab = t; theme = "全部";
+    tab = t; theme = "全部"; openTicker = null;
     $("tabH").setAttribute("aria-selected", t === "h");
     $("tabC").setAttribute("aria-selected", t === "c");
     if (data) renderList();
   });
+window.addEventListener("hashchange", () => {
+  const h = location.hash.slice(1);
+  if (h && h !== market && markets.some(m => m.key === h)) { market = h; openTicker = null; load(); }
+});
 
 load();
 setInterval(load, 5 * 60 * 1000);
