@@ -118,13 +118,23 @@ DASH = [
     ("TWD=X", "美元兌台幣", "fx"),
     ("^TWII", "台股加權", "idx"),
     ("^GSPC", "S&P 500", "idx"),
+    ("BZ=F", "布蘭特原油", "oil"),
+    ("CL=F", "WTI 原油", "oil"),
 ]
 
 
 def dashboard(yf_download, now_utc):
     syms = [s for s, _, _ in DASH] + ["TSM", "2330.TW"]
-    data = yf_download(syms, period="1y", interval="1d")
+    data = yf_download(syms, period="5y", interval="1d")
     items = []
+
+    def hist(c):
+        """點進去看的走勢圖：近一年日線、近五年週線。"""
+        d = c.iloc[-252:]
+        w = c.resample("W-FRI").last().dropna().iloc[-262:]
+        return {"d": {"t": [x.date().isoformat() for x in d.index], "v": [_r(float(x), 3) for x in d]},
+                "w": {"t": [x.date().isoformat() for x in w.index], "v": [_r(float(x), 3) for x in w]}}
+
     for s, label, kind in DASH:
         df = data.get(s)
         if df is None or df.empty:
@@ -141,7 +151,7 @@ def dashboard(yf_download, now_utc):
                       "chg": _r(last - prev, 3) if kind in ("yield", "fx") else None,
                       "chg_pct": _r((last / prev - 1) * 100),
                       "vs_sma200_pct": _r((last / sma200 - 1) * 100, 1) if sma200 else None,
-                      "spark": [_r(float(x), 3) for x in c.iloc[-60:]]})
+                      "spark": [_r(float(x), 3) for x in c.iloc[-60:]], "hist": hist(c)})
     # 台積電 ADR 溢價：1 股 ADR = 5 股台股
     try:
         adr, tw, fx = data.get("TSM"), data.get("2330.TW"), data.get("TWD=X")
@@ -156,7 +166,8 @@ def dashboard(yf_download, now_utc):
             items.append({"sym": "TSM_PREM", "label": "台積電 ADR 溢價", "kind": "prem",
                           "value": _r(float(prem.iloc[-1])), "chg": _r(float(prem.iloc[-1] - prem.iloc[-2]))
                           if len(prem) > 1 else None,
-                          "avg_1y": _r(float(prem.mean())), "spark": [_r(float(x)) for x in prem.iloc[-60:]],
+                          "avg_1y": _r(float(prem.iloc[-252:].mean())), "spark": [_r(float(x)) for x in prem.iloc[-60:]],
+                          "hist": hist(prem),
                           "note": "TSM ÷（2330 × 5 ÷ 美元台幣）− 1；日期以兩邊都有收盤的那天對齊"})
     except Exception:
         _probe["tsm_premium"] = {"ok": False, "error": traceback.format_exc()[-300:]}

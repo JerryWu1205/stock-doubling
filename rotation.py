@@ -386,6 +386,46 @@ def rotation_backtest(close, dv, bench, members, key, k_groups=3, k_each=3, step
             "rule": f"每 {step} 個交易日換一次：最強 {k_groups} 個族群、每族群最強 {k_each} 檔，等權重；含交易成本"}
 
 
+def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70):
+    """全市場（不是手挑的股票池）測持股檔數：每 step 天選相對強度＋資金流最高的前 N 檔（要站上 50 日線），等權重、含成本。
+    另外把期間切成前後兩半，看結論是不是兩段都成立。"""
+    rets = close.pct_change(fill_method=None).fillna(0).clip(-0.5, 1.0)
+    flow = _flow(close, dv)
+    idx = close.index
+    eq = {n: [1.0] for n in ns}
+    prev = {n: set() for n in ns}
+    dates = [idx[start]]
+    cost = COST[key]
+    for t in range(start, len(idx) - 1, step):
+        sub = close.iloc[: t + 1]
+        last = sub.iloc[-1]
+        ok = last > sub.iloc[-50:].mean()
+        r63 = (last / sub.iloc[-64] - 1)[ok].dropna()
+        r21 = (last / sub.iloc[-22] - 1).reindex(r63.index)
+        fl = flow.iloc[t].reindex(r63.index)
+        sc = (r63.rank(pct=True) * 0.45 + r21.rank(pct=True) * 0.30 + fl.rank(pct=True) * 0.25).dropna()
+        order = list(sc.sort_values(ascending=False).index)
+        end = min(t + step, len(idx) - 1)
+        for n in ns:
+            pk = order[:n]
+            seg = (1 + rets.iloc[t + 1: end + 1][pk].mean(axis=1)).prod() if pk else 1.0
+            turn = len(set(pk) ^ prev[n]) / max(len(pk), 1)
+            eq[n].append(eq[n][-1] * seg * (1 - cost * turn))
+            prev[n] = set(pk)
+        dates.append(idx[end])
+    out = {}
+    for n in ns:
+        s = pd.Series(eq[n], dates).reindex(idx).ffill().loc[dates[0]:]
+        h = len(s) // 2
+        out[str(n)] = {**_stats(s), "h1": _stats(s.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(s.iloc[h:]).get("cagr_pct")}
+    bs = bench.reindex(idx).ffill().loc[dates[0]:]
+    h = len(bs) // 2
+    out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct")}
+    out["rule"] = (f"全市場每 {step} 個交易日換一次：站上 50 日線的股票裡，近 3 月漲幅 45%＋近 1 月 30%＋資金流 25% 排名最高的前 N 檔，"
+                   "等權重、含交易成本；h1／h2 是前半段／後半段的年化")
+    return out
+
+
 def lev_backtest(key, yf_download):
     """原型、2 倍、3 倍：買進持有 vs 趨勢規則（收盤在 50 日線上且 50 日線在 200 日線上才持有，隔天進出）。"""
     pairs = LEV.get(key, [])
@@ -455,7 +495,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     close, dv, changed, pending = update_prices(key, syms, yf_download, now_utc)
     _probe[f"{key}_prices"] = {"have": int(close.shape[1]), "pending": pending, "rows": int(close.shape[0])}
     old = fu._load(out_path, {})
-    if not changed and old.get("generated_at") and old.get("pending") == pending:
+    if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old:
         return
     if bench_sym not in close.columns or close.shape[0] < 80:
         return
@@ -473,6 +513,17 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         members["ind"].setdefault(uni[t]["ind"], []).append(t)
     themes = US_THEMES if key == "us" else TW_THEMES  # 設定檔的主題和這裡重疊，不另外合併，避免同一個題材出現兩次
     members["theme"] = {g: [t for t in v if t in close.columns] for g, v in themes.items()}
+    # 族群走勢：成員每天漲跌幅的平均（等權重），近一年從 100 起算
+    rets = close.pct_change(fill_method=None).iloc[-251:]
+    days = [d.date().isoformat() for d in close.index[-252:]]
+
+    def gidx(tks):
+        r = rets[tks].clip(-0.5, 1.0).mean(axis=1).fillna(0)
+        v = 100 * np.concatenate([[1.0], (1 + r).cumprod().to_numpy()])
+        return [round(float(x), 2) for x in v[-len(days):]]
+
+    b = bench.reindex(close.index).ffill().iloc[-252:]
+    bench_idx = [round(float(x / b.iloc[0] * 100), 2) for x in b]
     res = {}
     for kind, mem in members.items():
         now_t = group_table(close, dv, bench, mem)
@@ -486,11 +537,12 @@ def _run(key, cfg, yf_download, now_utc, in_session):
                          "r5": round(r["r5"] * 100, 1), "r21": round(r["r21"] * 100, 1), "r63": round(r["r63"] * 100, 1),
                          "breadth": round(r["breadth"] * 100), "flow": round(r["flow"] * 100), "heat": round(r["heat"], 2),
                          "leaders": [{"t": t, "name": names.get(t, ""),
-                                      "r21": round(float(close[t].iloc[-1] / close[t].iloc[-22] - 1) * 100, 1)} for t in ld]})
+                                      "r21": round(float(close[t].iloc[-1] / close[t].iloc[-22] - 1) * 100, 1)} for t in ld],
+                         "idx": gidx(r["tks"])})
         res[kind] = rows
     out = {"market": key, "generated_at": _now_iso(now_utc), "data_date": str(close.index[-1].date()),
            "n_stocks": len(tks), "pending": pending, "groups": res["ind"], "themes": res["theme"],
-           "bench": cfg["benchmark"],
+           "bench": cfg["benchmark"], "dates": days, "bench_idx": bench_idx,
            "notes": {"score": "族群分數 0～100：近 1 月超額報酬 35%、近 3 月 30%、近 1 週 10%、資金淨流入 15%、站上 50 日線比例 10%（都是和其他族群比的排名）",
                      "flow": "資金淨流入：近 20 天上漲日成交金額減下跌日，占總成交金額的百分比",
                      "heat": "成交熱度：近 20 天成交金額 ÷ 近 60 天平均，再和全市場比；大於 1 代表資金在加碼這個族群",
@@ -504,6 +556,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     elif not pending:
         try:
             out["bt"] = {k: rotation_backtest(close, dv, bench, m, key) for k, m in members.items()}
+            out["bt"]["counts"] = count_backtest(close, dv, bench, key)
             out["bt_date"] = out["data_date"]
             out["bt_note"] = "名單是現在的股票，沒有包含過去下市或掉出門檻的股票（倖存者偏差），實際會比回測差一些。"
         except Exception:

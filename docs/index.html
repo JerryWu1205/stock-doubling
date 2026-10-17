@@ -173,6 +173,10 @@ button.stat { font: inherit; color: inherit; text-align: left; cursor: pointer; 
 .ev:first-child, .nw:first-child { border-top: 0; }
 .ev .when { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1.3; }
 .ev .when b { display: block; color: var(--text); font-size: 14px; }
+.tipbox { position: fixed; z-index: 50; max-width: min(320px, calc(100vw - 32px)); padding: 8px 10px; border-radius: 8px;
+  background: var(--text); color: var(--card); font-size: 12.5px; line-height: 1.5; box-shadow: 0 4px 16px rgba(0,0,0,.25); pointer-events: none; }
+[data-tip]:not(button):not(.stat):not(.tag) { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; }
+.evres { font-size: 13px; margin: 2px 0; }
 .ev .why, .nw .why { font-size: 12px; color: var(--muted); }
 .nw { padding: 7px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .nw a { color: var(--info); font-size: 12px; text-decoration: none; }
@@ -204,6 +208,13 @@ details p { margin: 6px 0; }
 .seg button[aria-pressed="true"] { color: var(--text); border-color: var(--text); }
 .cwrap { position: relative; }
 .cmain { height: 300px; }
+.cline { height: 220px; margin-top: 6px; }
+.dash .stat { cursor: pointer; }
+.dash .stat[aria-pressed="true"] { border-color: var(--info); background: var(--info-bg); }
+.dashchart { margin-top: 10px; }
+.dashchart .hd2 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.rg .hd { cursor: pointer; }
+.rgchart { margin: 6px 0 2px 32px; }
 .csub { height: 92px; margin-top: 4px; }
 .cscore { height: 100px; }
 .legend { position: absolute; left: 4px; top: 2px; z-index: 3; font-size: 11px; line-height: 1.35; pointer-events: none;
@@ -239,6 +250,8 @@ details p { margin: 6px 0; }
   <section class="card" id="dashCard" hidden>
     <h2>大盤儀表板</h2>
     <div class="dash" id="dash"></div>
+    <div class="dashchart" id="dashChart" hidden></div>
+    <div class="note">點任何一格看走勢圖。</div>
   </section>
 
   <section class="card" id="todo">
@@ -571,17 +584,54 @@ function upcoming() {
   if (opt?.settle && data) for (const d of opt.settle.slice(0, 2))
     if (!ev.some(e => e.date === d && /結算/.test(e.title)))
       ev.push({ date: d, time: "", title: data.market === "tw" ? "台指期、台指選擇權月結算" : "美股月選擇權結算", why: "結算前後造市商調整避險部位，波動常變大", tickers: [] });
-  return ev.filter(e => e.date >= t).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  // 已公布結果的大事多留 2 天，讓人看得到實際數字
+  const t2 = new Date(Date.parse(t) - 2 * 86400e3).toISOString().slice(0, 10);
+  return ev.filter(e => e.date >= t || (e.result && e.date >= t2)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
 }
 // 個股接下來 14 天內的財報
 function earningsOf(tk) {
   const lim = new Date(Date.now() + 22 * 86400e3).toISOString().slice(0, 10);
   return upcoming().find(e => e.date <= lim && (e.tickers || []).includes(tk));
 }
+let dashOpen = null, dashRange = "1y", dashItems = [], dashView = null;
+function renderDashChart() {
+  const box = $("dashChart");
+  if (dashView) { for (const c of dashView.charts) try { c.remove(); } catch {} dashView = null; }
+  const d = dashItems.find(x => x.sym === dashOpen);
+  if (!d) { box.hidden = true; box.innerHTML = ""; return; }
+  box.hidden = false;
+  const h = d.hist;
+  box.innerHTML = `<div class="hd2"><b>${esc(d.label)}</b>${h ? `<div class="seg" style="margin:0;flex:none;width:150px">${[["1y", "1 年"], ["5y", "5 年"]].map(([k, l]) =>
+    `<button data-dr="${k}" aria-pressed="${k === dashRange}">${l}</button>`).join("")}</div>` : ""}</div><div class="cline"></div>
+    <div class="note">${d.note ? esc(d.note) + "。" : ""}${h ? (dashRange === "5y" ? "5 年用週線。" : "近一年日線。") : "這項從開始記錄那天起累積，資料還不多。"}</div>`;
+  dashView = { charts: [] };
+  const s = h ? (dashRange === "5y" ? h.w : h.d) : { t: [], v: d.spark || [] };
+  if (!h) {  // 沒有日期的（期交所資料）：用最近幾天
+    const n = s.v.length, today = new Date();
+    s.t = s.v.map((_, i) => new Date(today - (n - 1 - i) * 86400e3).toISOString().slice(0, 10));
+  }
+  lineChart(box.querySelector(".cline"), [{ t: s.t, v: s.v, color: css("--info"), ref: d.kind === "prem" ? d.avg_1y : null }], dashView);
+}
+$("dash").addEventListener("click", e => {
+  const st = e.target.closest(".stat");
+  if (!st) return;
+  dashOpen = dashOpen === st.dataset.sym ? null : st.dataset.sym;
+  for (const x of $("dash").querySelectorAll(".stat")) x.setAttribute("aria-pressed", x.dataset.sym === dashOpen);
+  renderDashChart();
+});
+$("dash").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.closest(".stat")) e.target.click(); });
+$("dashChart").addEventListener("click", e => {
+  const b = e.target.closest("button[data-dr]");
+  if (!b) return;
+  dashRange = b.dataset.dr;
+  renderDashChart();
+});
+
 function renderDash() {
   const items = [...(dash?.items || []), ...Object.entries(optTW?.items || {}).map(([k, v]) => ({ ...v, sym: k, kind: k }))];
   $("dashCard").hidden = !items.length;
   if (!items.length) return;
+  dashItems = items;
   $("dash").innerHTML = items.map(d => {
     let v, sub;
     if (d.kind === "pcr") {
@@ -590,6 +640,9 @@ function renderDash() {
     } else if (d.kind === "fi_net") {
       v = Math.round(d.value).toLocaleString("en-US");
       sub = `<span class="${clsOf(d.chg)}">${d.chg == null ? "" : fmtInt(d.chg)}</span>・${d.value >= 0 ? "淨多" : "淨空"}`;
+    } else if (d.kind === "oil") {
+      v = "$" + d.value.toFixed(2);
+      sub = `<span class="${clsOf(d.chg_pct)}">${fmtPct(d.chg_pct)}</span>・每桶`;
     } else if (d.kind === "prem") {
       v = fmtP1(d.value);
       sub = `一年平均 ${fmtP1(d.avg_1y)}${d.value > d.avg_1y + 5 ? "・偏熱" : d.value < d.avg_1y - 5 ? "・偏冷" : ""}`;
@@ -603,9 +656,10 @@ function renderDash() {
       else if (d.vs_sma200_pct != null && d.kind === "idx") sub += d.vs_sma200_pct >= 0 ? "・年線上" : "・年線下";
       if (d.kind === "fx") sub += d.chg_pct > 0 ? "・台幣貶" : d.chg_pct < 0 ? "・台幣升" : "";
     }
-    return `<div class="stat" title="${esc(d.note || "")}"><div class="k">${esc(d.label)}</div><div class="v">${v}</div>
+    return `<div class="stat" role="button" tabindex="0" data-sym="${esc(d.sym)}" aria-pressed="${dashOpen === d.sym}" title="${esc(d.note || "點一下看走勢圖")}"><div class="k">${esc(d.label)}</div><div class="v">${v}</div>
       <div class="s">${sub}</div>${sparkSvg(d.spark)}</div>`;
   }).join("");
+  renderDashChart();
 }
 
 const fmtBig = v => v == null ? "–" : v >= 1e12 ? (v / 1e12).toFixed(2) + " 兆" : v >= 1e8 ? (v / 1e8).toFixed(1) + " 億" : v >= 1e4 ? (v / 1e4).toFixed(0) + " 萬" : String(Math.round(v));
@@ -677,6 +731,7 @@ function fundHtml(tk) {
   return out.length ? `<div class="fund">${out.join("")}<div class="note">基本面只供參考，不算進分數。</div></div>` : "";
 }
 
+function srcName(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return "來源"; } }
 function renderNews() {
   const items = news?.news || [];
   $("newsCard").hidden = !items.length;
@@ -685,7 +740,7 @@ function renderNews() {
     const t = new Date(n.time);
     const when = isNaN(t) ? "" : t.toLocaleString("zh-TW", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Taipei" });
     return `<div class="nw"><span class="pill ${n.level === "高" ? "p-bad" : "p-warn"}">${esc(n.level || "中")}</span> <b>${esc(n.title)}</b>
-      <div class="why">${esc(n.impact || "")}</div><div class="why">${esc(when)}${n.url ? ` ・ <a href="${esc(n.url)}" target="_blank" rel="noopener">來源</a>` : ""}</div></div>`;
+      <div class="why">${esc(n.impact || "")}</div><div class="why">${esc(when)}${n.url ? ` ・ <a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.source || srcName(n.url))}</a>` : ""}</div></div>`;
   });
   $("newsList").innerHTML = (newsOpen ? rows : rows.slice(0, 3)).join("")
     + (rows.length > 3 ? `<button class="more" data-more="news">${newsOpen ? "收起" : `顯示全部（${rows.length} 則）`}</button>` : "");
@@ -697,9 +752,11 @@ function renderEvents() {
   const t0 = new Date(todayTW());
   const rows = ev.map(e => {
     const d = Math.round((new Date(e.date) - t0) / 86400e3);
-    const rel = d === 0 ? "今天" : d === 1 ? "明天" : `${d} 天後`;
-    return `<div class="ev"><div class="when"><b>${e.date.slice(5).replace("-", "/")}</b>${esc(e.time || "")}<br>${rel}</div>
-      <div><b>${esc(e.title)}</b><div class="why">${esc(e.why || "")}</div></div></div>`;
+    const rel = d < 0 ? `${-d} 天前` : d === 0 ? "今天" : d === 1 ? "明天" : `${d} 天後`;
+    const res = e.result ? `<div class="evres"><span class="pill p-good">結果</span> ${esc(e.result)}${e.result_url ? ` <a href="${esc(e.result_url)}" target="_blank" rel="noopener">來源</a>` : ""}</div>` : "";
+    const tm = e.time_tbd ? `${esc(e.time || "")}?` : esc(e.time || "");
+    return `<div class="ev"><div class="when"><b>${e.date.slice(5).replace("-", "/")}</b>${tm}<br>${rel}</div>
+      <div><b>${esc(e.title)}</b>${res}<div class="why">${esc(e.why || "")}${e.src ? ` ・ <a href="${esc(e.src)}" target="_blank" rel="noopener">時間來源</a>` : ""}</div></div></div>`;
   });
   $("eventsList").innerHTML = (eventsOpen ? rows : rows.slice(0, 4)).join("")
     + (rows.length > 4 ? `<button class="more" data-more="events">${eventsOpen ? "收起" : `顯示全部（${rows.length} 項）`}</button>` : "")
@@ -929,7 +986,7 @@ const line = (chart, color, extra = {}) => chart.addLineSeries({ color, lineWidt
 
 async function showChart(box, item) {
   destroyChart();
-  box.innerHTML = `<div class="seg" role="group">${[["1d", "今日"], ["1m", "1 個月"], ["6m", "6 個月"], ["1y", "1 年"]]
+  box.innerHTML = `<div class="seg" role="group">${[["1d", "今日"], ["1m", "1 月"], ["6m", "6 月"], ["1y", "1 年"], ["3y", "3 年"], ["5y", "5 年"]]
     .map(([k, l]) => `<button data-r="${k}" aria-pressed="${k === range}">${l}</button>`).join("")}</div>
     <div class="alerts">${(item.alerts || []).map(a => `<button class="tag alert" aria-pressed="false" data-a="${esc(a)}">${esc(a)} ⓘ</button>`).join("")}</div>
     <div class="explain" hidden></div>
@@ -954,6 +1011,7 @@ async function showChart(box, item) {
   chartView = view;
   try {
     if (range === "1d") await drawIntraday(box, item, view);
+    else if (range === "3y" || range === "5y") await drawWeekly(box, item, view);
     else await drawDaily(box, item, view);
   } catch (e) {
     if (chartView === view) box.querySelector(".cmain").innerHTML =
@@ -1083,6 +1141,50 @@ async function drawDaily(box, item, view) {
     });
 
   drawScores(box.querySelector(".extra"), d, view);
+}
+
+// 長線圖：週 K（3 年、5 年），10 週線≈50 日線、40 週線≈200 日線
+async function drawWeekly(box, item, view) {
+  const d = await getJson(`data/charts/${data.market}/${encodeURIComponent(item.ticker)}.json?v=${data.data_date}`);
+  if (chartView !== view) return;
+  if (!d.wk) throw new Error("no weekly");
+  const w = d.wk, UP = css("--bad"), DOWN = css("--good");
+  const bars = w.t.map((t, i) => ({ time: t, open: w.o[i], high: w.h[i], low: w.l[i], close: w.c[i] })).filter(x => x.close != null);
+  const chart = LightweightCharts.createChart(box.querySelector(".cmain"), baseOpts());
+  view.charts.push(chart);
+  const candles = chart.addCandlestickSeries({ upColor: UP, downColor: DOWN, borderUpColor: UP, borderDownColor: DOWN,
+    wickUpColor: UP, wickDownColor: DOWN, priceLineVisible: false });
+  candles.setData(bars);
+  candles.priceScale().applyOptions({ scaleMargins: { top: 0.12, bottom: 0.2 } });
+  const vol = chart.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" }, lastValueVisible: false, priceLineVisible: false });
+  chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.84, bottom: 0 } });
+  vol.setData(w.t.map((t, i) => ({ time: t, value: w.v[i], color: (w.c[i] >= w.o[i] ? UP : DOWN) + "66" })));
+  line(chart, css("--ma50"), { lineWidth: 1 }).setData(w.t.map((t, i) => w.ma10[i] == null ? { time: t } : { time: t, value: w.ma10[i] }));
+  line(chart, css("--ma200"), { lineWidth: 2 }).setData(w.t.map((t, i) => w.ma40[i] == null ? { time: t } : { time: t, value: w.ma40[i] }));
+  const n = bars.length, span = range === "3y" ? 157 : 262;
+  chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, n - span), to: n + 1 });
+  const first = bars[Math.max(0, n - span)], last = bars[n - 1];
+  const legend = box.querySelector(".legend");
+  const show = t => {
+    const x = bars.find(b => b.time === t) || last;
+    legend.innerHTML = `週 ${x.time} <i>收</i>${fmtPx(x.close)}<br><i>${range === "3y" ? "3" : "5"} 年漲跌</i> <span class="${clsOf(last.close - first.close)}">${fmtP1((last.close / first.close - 1) * 100)}</span>`;
+  };
+  show(null);
+  chart.subscribeCrosshairMove(p => show(p.time));
+  box.querySelector(".keys").innerHTML = `<span><b style="background:${css("--ma50")}"></b>10 週線（約 50 日線）</span><span><b style="background:${css("--ma200")}"></b>40 週線（約 200 日線）</span><span>一根 K 棒＝一週</span>`;
+}
+
+// 簡單折線圖（大盤儀表板、類股走勢共用）：series = [{t:[], v:[], color, width}]
+function lineChart(el, series, view) {
+  const chart = LightweightCharts.createChart(el, baseOpts());
+  view.charts.push(chart);
+  series.forEach((s, k) => {
+    const ln = line(chart, s.color, { lineWidth: s.width || 2, lastValueVisible: k === 0, crosshairMarkerVisible: true });
+    ln.setData(s.t.map((t, i) => s.v[i] == null ? { time: t } : { time: t, value: s.v[i] }));
+    if (s.ref != null) ln.createPriceLine({ price: s.ref, color: css("--muted"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false });
+  });
+  chart.timeScale().fitContent();
+  return chart;
 }
 
 function drawIndicator(sc, k, d) {
@@ -1245,7 +1347,7 @@ async function renderPerf() {
   chart.timeScale().fitContent();
 }
 // ───────── 類股輪動 ─────────
-let rotData = null, rotKind = "themes", rotOpen = false;
+let rotData = null, rotKind = "themes", rotOpen = false, rotGroup = null, rotView = null;
 async function renderRot() {
   const box = $("rot");
   try {
@@ -1265,11 +1367,12 @@ async function renderRot() {
     const mv = g.rank_prev == null ? `<span class="mv">新</span>` : g.rank_prev === g.rank ? `<span class="mv">–</span>`
       : `<span class="mv ${g.rank_prev > g.rank ? "up" : "down"}">${g.rank_prev > g.rank ? "▲" : "▼"}${Math.abs(g.rank_prev - g.rank)}</span>`;
     const ld = (g.leaders || []).map(l => `${esc(l.t)}${l.name && l.name !== l.t ? " " + esc(l.name) : ""}`).join("、");
-    return `<div class="rg"><div class="hd"><span class="rk">${g.rank}</span>${mv}<span class="nm2">${esc(g.name)} <span class="small">${g.n} 檔</span></span><span class="sc">${g.score}</span></div>
+    return `<div class="rg" data-g="${esc(g.name)}"><div class="hd"><span class="rk">${g.rank}</span>${mv}<span class="nm2">${esc(g.name)} <span class="small">${g.n} 檔</span></span><span class="sc">${g.score}</span></div>
       <div class="bar"><i style="width:${g.score}%"></i></div>
       <div class="ln">比大盤：1週 <b class="${clsOf(g.r5)}">${fmtP1(g.r5)}</b>・1月 <b class="${clsOf(g.r21)}">${fmtP1(g.r21)}</b>・3月 <b class="${clsOf(g.r63)}">${fmtP1(g.r63)}</b></div>
       <div class="ln">資金淨流入 <b class="${clsOf(g.flow)}">${g.flow > 0 ? "+" : ""}${g.flow}%</b>・熱度 <b>${g.heat.toFixed(2)}</b>・站上 50 日線 <b>${g.breadth}%</b></div>
-      ${ld ? `<div class="ln">領頭：${ld}</div>` : ""}</div>`;
+      ${ld ? `<div class="ln">領頭：${ld}</div>` : ""}
+      ${rotGroup === g.name ? `<div class="rgchart"><div class="cline"></div><div class="note">藍線＝族群（成員等權重）、灰線＝大盤 ${esc(R.bench)}，一年前都從 100 起算。${g.idx ? "" : "（下一次更新才會有走勢資料）"}</div></div>` : ""}</div>`;
   };
   const shown = rotOpen ? list : list.slice(0, 12);
   const hot = list.filter(g => g.rank <= 3).map(g => g.name).join("、");
@@ -1296,14 +1399,23 @@ async function renderRot() {
       <div class="seg" id="rotSeg"><button data-k="themes" aria-pressed="${rotKind === "themes"}">題材（${(R.themes || []).length}）</button><button data-k="groups" aria-pressed="${rotKind === "groups"}">產業（${(R.groups || []).length}）</button></div>
       <div class="note" style="margin-bottom:6px">${hot ? `最強：<b>${esc(hot)}</b>。` : ""}${up ? `這週排名大幅往上：<b>${esc(up)}</b>。` : ""}資料日 ${esc(R.data_date || "")}，${R.n_stocks} 檔。</div>
       ${shown.map(row).join("") || `<div class="empty">還沒有資料</div>`}
+      <div class="note">點族群名稱看走勢圖。</div>
       ${n > 12 ? `<button class="more" id="rotMore">${rotOpen ? "收起" : `顯示全部（${n} 個）`}</button>` : ""}
       <div class="note">${esc(R.notes?.score || "")}。${esc(R.notes?.excess || "")}。${esc(R.notes?.flow || "")}。${esc(R.notes?.universe || "")}。${R.notes?.pending ? esc(R.notes.pending) + "。" : ""}</div></section>
     ${bt}${levCard}`;
+  if (rotView) { for (const c of rotView.charts) try { c.remove(); } catch {} rotView = null; }
+  const g = list.find(x => x.name === rotGroup), el = box.querySelector(".rgchart .cline");
+  if (g?.idx && el && R.dates) {
+    rotView = { charts: [] };
+    lineChart(el, [{ t: R.dates, v: g.idx, color: css("--info") }, { t: R.dates, v: R.bench_idx, color: css("--muted"), width: 1 }], rotView);
+  }
 }
 $("rot").addEventListener("click", e => {
   const b = e.target.closest("#rotSeg button");
   if (b) { rotKind = b.dataset.k; rotOpen = false; renderRot(); return; }
-  if (e.target.id === "rotMore") { rotOpen = !rotOpen; renderRot(); }
+  if (e.target.id === "rotMore") { rotOpen = !rotOpen; renderRot(); return; }
+  const hd = e.target.closest(".rg .hd");
+  if (hd) { const g = hd.parentElement.dataset.g; rotGroup = rotGroup === g ? null : g; renderRot(); }
 });
 
 function destroyPerf() {
@@ -1402,6 +1514,175 @@ window.addEventListener("hashchange", () => {
 load().then(loadExtras);
 setInterval(() => { load(); loadExtras(); }, 5 * 60 * 1000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+
+// ───────── 專業術語說明：滑鼠移過去（手機點一下）就跳出小視窗 ─────────
+// 整段文字剛好等於這些詞才標（避免「趨勢」之類的短詞亂標）
+const GLOSS_EXACT = {
+  "相對強弱": "跟大盤比最近 1～6 個月漲得多還是少。分數越高＝越比大盤強，資金在追它。佔總分 30%。",
+  "資金流": "看成交量配合價格：上漲時量大、下跌時量小＝資金流入。用 MFI、OBV、CMF 綜合算。佔總分 25%。",
+  "趨勢": "股價和 20／50／200 日均線的排列：股價在均線上、短均線在長均線上＝趨勢向上。佔總分 20%。",
+  "反彈": "最近有沒有從回檔中重新轉強。佔總分 15%。",
+  "風險": "波動太大、離均線太遠（漲太急）會扣分，最多扣 10 分。這條越長越危險。",
+  "超賣": "跌深策略用：RSI 低於 40 的程度，越低代表賣過頭。",
+  "止跌": "跌深策略用：從 5 日低點反彈 3%、RSI 翻揚、站上 5 日線，代表開始止跌。",
+  "程式選股": "程式依分數自動挑的模擬組合，換股規則固定，用來追蹤這套方法的成績。",
+  "候選": "還沒進組合但分數在追蹤中的股票，夠強就會換進來。",
+  "我的 ★": "你自己的真實持股，股數和均價只存在你這台裝置的瀏覽器裡，不會上傳。",
+  "類股": "看資金流向哪些產業、題材：哪一群最強、最近排名往上或往下。",
+  "績效": "回測：照這套規則過去一年的報酬、最大回檔，和大盤比。",
+  "有動作": "只顯示今天要處理的（出場、換股、可進場）。",
+  "有提示": "只顯示圖上有技術提示（突破、跌破、爆量等）的。",
+  "可進場": "分數夠高、趨勢夠強，符合買進條件。",
+  "觀察": "分數不錯但還差一點，先放觀察名單。",
+  "續抱": "分數正常，繼續持有。",
+  "換入": "這檔分數比組合最弱的高 15 分以上連續 3 天，建議換進來。",
+  "換出": "組合裡最弱、被更強的候選取代。",
+  "換股": "候選比組合最弱的那檔高 15 分以上、連續 3 天，就換股。",
+  "已確認": "已經連續 3 天符合換股條件。",
+  "領頭": "這一群裡最強的幾檔。",
+  "熱度": "這群最近的成交金額 ÷ 平常的成交金額。大於 1＝比平常熱。",
+  "年化": "把報酬換算成一年的速度。目標是年化 +100%（一年翻倍）。",
+  "最大回檔": "期間內從最高點跌下來最多跌了幾 %，代表最痛的時候賠多少。",
+  "勝率": "賺錢的交易佔全部交易的比例。",
+  "同期大盤": "同一段時間直接買大盤 ETF（美股 SPY、台股 0050）的報酬，用來比較。",
+};
+// 文字裡有出現就標（長詞優先）
+const GLOSS = {
+  ...ALERT_HELP,
+  "相對大盤強勢": "最近漲得比大盤多，資金在追。",
+  "相對大盤弱勢": "最近漲得比大盤少（或跌得多），資金在流出。",
+  "相對大盤": "副圖：這檔股價 ÷ 大盤。線往上＝比大盤強，往下＝比大盤弱。看資金是不是在輪動進來。",
+  "MFI 資金流量": "MFI（資金流量指標）：把成交量算進去的 RSI，0～100。80 以上過熱、20 以下資金撤得太兇。",
+  "MACD": "MACD：快慢兩條均線的差距。柱子由負轉正＝漲的動能變強；由正轉負＝動能轉弱。適合看趨勢轉折，反應比較慢。",
+  "RSI": "RSI（相對強弱指標）：最近漲的力道 ÷ 漲跌總力道，0～100。70 以上偏熱、30 以下超賣。",
+  "OBV 能量潮": "OBV（能量潮）：上漲日加成交量、下跌日減成交量累積起來。價格創高但 OBV 沒創高＝量能不足。",
+  "CMF 資金流": "CMF（蔡金資金流）：收盤靠近當天高點且量大＝買盤強。大於 0 資金流入，小於 0 流出。",
+  "多頭排列": "股價 > 20 日線 > 50 日線 > 200 日線，標準的上升趨勢。",
+  "空頭排列": "股價 < 20 日線 < 50 日線 < 200 日線，標準的下降趨勢。",
+  "漲多等回檔": "股價離 20 日線太遠（漲太急），追高容易被洗，等拉回再買比較好。",
+  "回檔到均線": "強勢股拉回到均線附近，常是比較好的買點。",
+  "拉回止跌": "回檔後出現止跌跡象。",
+  "止跌訊號": "跌深後開始止跌：反彈、RSI 翻揚、站上短均線。",
+  "波動大": "每天平均波動比一般股票大，部位要小一點。",
+  "創 20 日新低": "收盤是近 20 個交易日最低，還在跌。",
+  "跌破 50 日線": "收盤在 50 日均線下面，中期趨勢轉弱。",
+  "距半年高點": "從近半年最高點跌了多少。",
+  "資金回流": "跌深後成交量配合上漲，資金開始回來。",
+  "資金流入": "上漲量大、下跌量小，資金在買。",
+  "資金流出": "下跌量大、上漲量小，資金在賣。",
+  "強勢續抱": "分數 75 以上，趨勢很強，繼續抱。",
+  "轉弱留意": "分數掉到 50 以下，開始轉弱，留意是否要出場。",
+  "出場訊號": "分數低於 40 而且跌破 50 日線，建議出場。",
+  "反彈達標": "跌深策略：已經彈回半年高點 5% 以內，可以獲利了結。",
+  "跌破退場線": "收盤跌破建議的停損價，照紀律應該出場。",
+  "吊燈停損": "近 22 天最高收盤 − 3 倍 ATR。股價創高它就跟著往上移，跌破就出場，讓獲利奔跑又能守住。",
+  "50 日線": "近 50 個交易日的平均收盤價，中期趨勢的分界。",
+  "成本 −8%": "從你的買進均價跌 8% 就停損的固定停損法。",
+  "每天正常波動": "ATR：近 14 天平均每天的高低波動幅度。停損設得比這個還近，很容易被正常震盪洗掉。",
+  "ATR": "ATR（平均真實波幅）：近 14 天平均每天的波動幅度，用來設停損距離。",
+  "10 週線": "近 10 週平均收盤，約等於 50 日線。",
+  "40 週線": "近 40 週平均收盤，約等於 200 日線，長期多空分界。",
+  "本益比": "股價 ÷ 每股盈餘（EPS），等於幾年賺回股價。越高代表市場給的期待越高；條狀圖是它在自己歷史裡的位置。",
+  "淨值比": "股價 ÷ 每股淨值。小於 1 代表股價低於公司帳面價值。",
+  "殖利率": "一年配的現金股利 ÷ 股價。",
+  "年增 YoY": "YoY：和去年同期比的成長率。",
+  "月增 MoM": "MoM：和上個月比的成長率（台股每月 10 日前公布營收）。",
+  "季增 QoQ": "QoQ：和上一季比的成長率。",
+  "今年累計年增": "今年 1 月到最新月份的營收合計，和去年同期比。",
+  "融資餘額": "散戶借錢買股票的張數。融資大增但股價不漲＝籌碼不乾淨，容易被斷頭賣壓砸。",
+  "融券餘額": "借股票來放空的張數。很高時若股價上漲，空方回補會推升股價（軋空）。",
+  "借券賣出": "法人借股票來賣（放空或避險）的張數，增加通常偏空。",
+  "券資比": "融券 ÷ 融資。偏高代表很多人看空，也可能出現軋空。",
+  "目標價": "分析師給的 12 個月目標價平均，只是參考，常常追著股價調。",
+  "EPS": "EPS（每股盈餘）：公司賺的錢 ÷ 股數。",
+  "賣權/買權未平倉": "Put/Call 比：買賣權留倉量的比例。很高＝大家在買保險避險（常在低點）；很低＝大家太樂觀（小心過熱）。",
+  "P/C": "Put/Call 比：賣權 ÷ 買權。高＝避險多、偏悲觀；低＝偏樂觀。極端值常是反向訊號。",
+  "預期漲跌幅": "從選擇權價格反推，市場預期到期前大概會漲跌多少 %（約 68% 機率落在這範圍）。",
+  "隱含波動": "IV：選擇權價格隱含的未來波動率。越高＝市場越緊張；位置＝在過去一年裡的高低（0～100）。",
+  "最大痛點": "Max Pain：到期時讓買選擇權的人賠最多的價格。結算前股價有時會被吸過去。",
+  "上方壓力": "買權未平倉最多的履約價，造市商避險常讓這裡變成壓力。",
+  "下方支撐": "賣權未平倉最多的履約價，常變成支撐。",
+  "異常大量": "今天成交量遠大於未平倉量的選擇權，可能有大戶押方向。",
+  "費城半導體": "SOX 費城半導體指數：美國主要半導體股，台股電子股的領先指標。",
+  "VIX 恐慌指數": "VIX：S&P 500 選擇權的隱含波動。20 以下平靜、30 以上恐慌，極高時常是相對低點。",
+  "美 10 年債殖利率": "美國 10 年公債利率。上升會壓低科技股、成長股的估值。",
+  "美元兌台幣": "數字變大＝台幣貶值，外資通常在匯出（賣台股）；變小＝台幣升值、熱錢流入。",
+  "台股加權": "台灣加權股價指數（TAIEX）。",
+  "S&P 500": "美國 500 大企業指數，美股大盤。",
+  "布蘭特原油": "國際油價基準（歐洲北海）。油價大漲推升通膨、利率預期，對科技股不利、對石油股有利。",
+  "WTI 原油": "美國西德州原油價格，美國油價基準。",
+  "台積電 ADR 溢價": "台積電在美國的 ADR 換算成台幣後，比台股股價貴多少。溢價擴大常代表外資看好、隔天台股偏強。",
+  "台指 P/C 比": "台指選擇權賣權 ÷ 買權未平倉。高＝避險多；低＝偏樂觀。",
+  "外資台指期淨單": "外資在台指期的多單減空單口數。正＝偏多、負＝偏空（避險），常領先現貨方向。",
+  "站上 50 日線": "這一群裡有幾 % 的股票在 50 日均線上面，越高代表這群普遍強（廣度）。",
+  "資金淨流入": "這一群上漲日成交金額減下跌日成交金額，正＝資金流入。",
+  "槓桿 ETF": "每天追蹤指數 2 倍或 3 倍漲跌的 ETF。盤整時會耗損，只適合趨勢明確時短中期持有。",
+  "滑價": "實際成交價比想要的價格差，大單或冷門股特別明顯。",
+  "手續費": "券商收的交易費用；台股另有賣出證交稅 0.3%（ETF 0.1%）。",
+  "結算": "期貨、選擇權到期結算日，前後造市商調整避險，波動常變大。",
+  "除權息": "配發股利或股票的基準日，當天股價會扣掉配發的金額。",
+  "強勢": "強勢策略：買相對強、資金流入、趨勢向上的股票，跟著趨勢走。",
+  "跌深": "跌深策略：買離半年高點跌 10～35%、開始止跌的股票，賭反彈。",
+};
+const GLOSS_KEYS = Object.keys(GLOSS).sort((a, b) => b.length - a.length);
+function tipFor(text) {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (!t || t.length > 90) return "";
+  if (GLOSS_EXACT[t]) return GLOSS_EXACT[t];
+  const hit = [];
+  for (const k of GLOSS_KEYS) {
+    if (hit.length >= 3) break;
+    if (t.includes(k) && !hit.some(h => h.includes(k))) hit.push(k);
+  }
+  return hit.map(k => hit.length > 1 ? `${k}：${GLOSS[k]}` : GLOSS[k]).join("\n");
+}
+const TIP_SEL = "button, .tag, .pill, .k, .kv span, .comp > span, .sublabel, .ln, .bk b, th, h3, .ex span, .stat";
+function annotate(root) {
+  if (!(root instanceof Element)) return;
+  const els = [...(root.matches(TIP_SEL) ? [root] : []), ...root.querySelectorAll(TIP_SEL)];
+  for (const el of els) {
+    if (el.dataset.tip || el.classList.contains("rb") || el.closest(".tipbox")) continue;
+    if (el.parentElement?.closest("[data-tip]")) continue;
+    // 有子元素的只看自己的文字（例如儀表板格子只看標題）
+    const txt = el.classList.contains("stat") ? (el.querySelector(".k")?.textContent || "") : el.textContent;
+    const tip = tipFor(txt);
+    if (!tip) continue;
+    const note = el.title && !/^點一下/.test(el.title) ? "\n" + el.title : "";
+    el.dataset.tip = tip + note;
+    if (el.title) el.removeAttribute("title");
+  }
+}
+const tipBox = document.createElement("div");
+tipBox.className = "tipbox"; tipBox.hidden = true; tipBox.setAttribute("role", "tooltip");
+document.body.append(tipBox);
+let tipTimer = null;
+function showTip(el) {
+  tipBox.textContent = el.dataset.tip;
+  tipBox.style.whiteSpace = "pre-line";
+  tipBox.hidden = false;
+  const r = el.getBoundingClientRect(), w = tipBox.offsetWidth, h = tipBox.offsetHeight;
+  const left = Math.max(16, Math.min(innerWidth - w - 16, r.left + r.width / 2 - w / 2));
+  const top = r.bottom + 6 + h > innerHeight ? r.top - h - 6 : r.bottom + 6;
+  tipBox.style.left = left + "px"; tipBox.style.top = Math.max(8, top) + "px";
+}
+function hideTip() { tipBox.hidden = true; clearTimeout(tipTimer); }
+document.addEventListener("mouseover", e => {
+  const el = e.target.closest?.("[data-tip]");
+  if (el) showTip(el); else if (!e.target.closest?.(".tipbox")) hideTip();
+});
+document.addEventListener("focusin", e => { const el = e.target.closest?.("[data-tip]"); if (el) showTip(el); });
+document.addEventListener("focusout", hideTip);
+// 手機：點一下顯示 4 秒（按鈕原本的功能照常）
+document.addEventListener("pointerup", e => {
+  if (e.pointerType !== "touch") return;
+  const el = e.target.closest?.("[data-tip]");
+  if (!el) return hideTip();
+  showTip(el); clearTimeout(tipTimer); tipTimer = setTimeout(hideTip, 4000);
+});
+addEventListener("scroll", () => { if (!tipTimer) hideTip(); }, { passive: true });
+new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) annotate(n); })
+  .observe(document.body, { childList: true, subtree: true });
+annotate(document.body);
 </script>
 </body>
 </html>

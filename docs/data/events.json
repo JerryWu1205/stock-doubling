@@ -1,6 +1,6 @@
 {
  "updated": "2026-10-17",
- "note": "時間為台北時間；財報日期以公司公告為準。",
+ "note": "時間為台北時間；財報日期以公司公告為準。verified=已對照官方公告；time_tbd=尚未公告、為預估。",
  "events": [
   {
    "date": "2026-10-21",
@@ -9,19 +9,40 @@
    "why": "串流與廣告指標，影響軟體/網路股情緒",
    "tickers": [
     "NFLX"
-   ]
+   ],
+   "src": "https://s22.q4cdn.com/959853165/files/doc_news/Netflix-to-Announce-Third-Quarter-2026-Financial-Results-2026.pdf",
+   "verified": true
   },
   {
    "date": "2026-10-22",
    "time": "04:00",
    "title": "Tesla、Lam Research、德州儀器、IBM、SAP 財報（美東 10/21 盤後）",
-   "why": "LRCX 看半導體設備需求，TXN 看類比晶片景氣；部分來源寫 Meta 也在這天，以公司公告為準",
+   "why": "LRCX 看半導體設備需求，TXN 看類比晶片景氣",
    "tickers": [
     "TSLA",
     "LRCX",
     "TXN",
     "IBM"
-   ]
+   ],
+   "src": [
+    "https://www.teslaoracle.com/?p=66789",
+    "https://finviz.com/news/397284/lam-research-corporation-announces-september-quarter-financial-conference-call",
+    "https://investingnews.com/texas-instruments-to-webcast-q3-2026-earnings-conference-call/",
+    "https://investingnews.com/ibm-to-announce-third-quarter-2026-financial-results/",
+    "https://www.sap.com/investors/en/financial-documents-and-events/events.html"
+   ],
+   "verified": true
+  },
+  {
+   "date": "2026-10-22",
+   "time": "04:00",
+   "title": "Meta 財報（美東 10/21 盤後，公司已公告）",
+   "why": "AI 資本支出指引，影響半導體、光通訊、電力族群",
+   "tickers": [
+    "META"
+   ],
+   "src": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-to-Announce-Third-Quarter-2026-Results/default.aspx",
+   "verified": true
   },
   {
    "date": "2026-10-23",
@@ -31,142 +52,209 @@
    "tickers": [
     "WDC",
     "BE"
-   ]
+   ],
+   "src": [
+    "https://www.westerndigital.com/de-de/company/newsroom/press-releases/2026/2026-10-08-wd-to-announce-first-quarter-fiscal-year-2027-financial-results",
+    "https://www.bloomenergy.com/news/bloom-energy-to-announce-third-quarter-2026-financial-results-on-october-22-2026/"
+   ],
+   "verified": true
   },
   {
    "date": "2026-10-28",
    "time": "19:30",
-   "title": "GE Vernova 財報（美東盤前）",
+   "title": "GE Vernova 財報電話會議（美東 10/28 盤前發布）",
    "why": "電力設備、AI 資料中心用電需求",
    "tickers": [
     "GEV"
-   ]
+   ],
+   "src": "https://www.gevernova.com/news/press-releases/ge-vernova-announce-third-quarter-2026-financial-results-october-28",
+   "verified": true
   },
   {
    "date": "2026-10-29",
    "time": "02:00",
-   "title": "Fed 利率決議（10/27–28 會議）",
+   "title": "Fed 利率決議（10/27–28 會議，02:30 記者會）",
    "why": "CPI 偏熱後市場擔心再升息；殖利率直接影響科技股估值",
-   "tickers": []
+   "tickers": [],
+   "src": "https://www.federalreserve.gov/newsevents/2026-october.htm",
+   "verified": true
   },
   {
    "date": "2026-10-29",
    "time": "04:00",
-   "title": "Microsoft、Alphabet 財報（美東 10/28 盤後，Meta 預估同天）",
+   "title": "Microsoft 財報（美東 10/28 盤後）",
    "why": "重點是 AI 資本支出指引，決定半導體、光通訊、電力族群的需求預期",
    "tickers": [
-    "MSFT",
-    "GOOGL",
-    "META"
-   ]
+    "MSFT"
+   ],
+   "src": "https://finviz.com/news/400058/microsoft-announces-quarterly-earnings-release-date",
+   "verified": true
+  },
+  {
+   "date": "2026-10-29",
+   "time": "04:00",
+   "title": "Alphabet 財報（預估美東 10/28 盤後，公司尚未公告）",
+   "why": "AI 資本支出與雲端成長",
+   "tickers": [
+    "GOOGL"
+   ],
+   "time_tbd": true
   },
   {
    "date": "2026-10-29",
    "time": "20:30",
    "title": "美國第三季 GDP 初值、9 月 PCE 物價",
    "why": "PCE 是 Fed 最看的通膨指標",
-   "tickers": []
+   "tickers": [],
+   "src": "https://www.bea.gov/index.php/news/schedule/full",
+   "verified": true
   },
   {
    "date": "2026-10-30",
    "time": "04:00",
-   "title": "Amazon（預估）、Intel 財報（美東 10/29 盤後）",
+   "title": "Amazon、Intel 財報（美東 10/29 盤後）",
    "why": "AWS 資本支出、Intel 代工進度",
    "tickers": [
     "AMZN",
     "INTC"
-   ]
+   ],
+   "src": [
+    "https://finviz.com/news/403264/amazoncom-to-webcast-third-quarter-2026-financial-results-conference-call",
+    "https://www.intc.com/news-events/press-releases/detail/1782/intel-to-report-third-quarter-2026-financial-results"
+   ],
+   "verified": true
   },
   {
    "date": "2026-10-30",
    "time": "23:00",
-   "title": "Chevron 財報（美東 10/30 上午）",
+   "title": "Chevron 財報電話會議（美東 10/30 11:00）",
    "why": "油價高檔下的獲利與資本支出",
    "tickers": [
     "CVX"
-   ]
+   ],
+   "src": "https://investingnews.com/advisory-chevron-corporation-s-3q-2026-earnings-conference-call-and-webcast/",
+   "verified": true
+  },
+  {
+   "date": "2026-11-03",
+   "time": "05:30",
+   "title": "Apple 財報（美東 11/2 盤後，06:00 電話會議）",
+   "why": "消費電子需求",
+   "tickers": [
+    "AAPL"
+   ],
+   "src": "https://macrumors.com/2026/10/06/apple-q4-2026-earnings-nov-2",
+   "verified": true
   },
   {
    "date": "2026-11-03",
    "time": "05:00",
-   "title": "Apple、Palantir（預估）財報（美東 11/2 盤後）",
-   "why": "消費電子需求與 AI 軟體估值",
+   "title": "Palantir 財報（預估美東 11/2 盤後，公司尚未公告）",
+   "why": "AI 軟體估值",
    "tickers": [
-    "AAPL",
     "PLTR"
-   ]
+   ],
+   "time_tbd": true
   },
   {
    "date": "2026-11-03",
    "time": "全天",
-   "title": "美國期中選舉",
+   "title": "美國期中選舉（美東 11/3 投票，台北 11/4 白天陸續開票）",
    "why": "影響財政、關稅與能源政策預期",
-   "tickers": []
+   "tickers": [],
+   "src": "https://wjla.com/news/nation-world/fact-check-team-435-house-seats-and-35-senate-races-hit-the-ballot-in-november-election-day-congress-candidates-voters",
+   "verified": true
   },
   {
    "date": "2026-11-04",
-   "time": "06:00",
-   "title": "AMD 財報（美東 11/3 盤後）",
+   "time": "05:00",
+   "title": "AMD 財報（美東 11/3 盤後，06:00 電話會議）",
    "why": "AI GPU 與伺服器 CPU 需求",
    "tickers": [
     "AMD"
-   ]
+   ],
+   "src": "https://ir.amd.com/news-events/press-releases/detail/1300/amd-to-report-fiscal-third-quarter-2026-financial-results",
+   "verified": true
   },
   {
    "date": "2026-11-05",
    "time": "05:00",
-   "title": "Qualcomm 財報（美東 11/4 盤後）",
+   "title": "Qualcomm 財報（美東 11/4 盤後，05:45 電話會議）",
    "why": "手機與 AI PC 晶片",
    "tickers": [
     "QCOM"
-   ]
+   ],
+   "src": "https://investor.qualcomm.com/news-events/investor-events/events/event-details/2026/Q4-FY26-Earnings-Conference-Call-2026-zipgVlNz63/default.aspx",
+   "verified": true
+  },
+  {
+   "date": "2026-11-05",
+   "time": "05:00",
+   "title": "Arm 財報（美東 11/4 盤後，06:00 電話會議）",
+   "why": "手機、資料中心 CPU 授權與權利金，AI 晶片架構指標",
+   "tickers": [
+    "ARM"
+   ],
+   "src": "https://newsroom.arm.com/?p=22756",
+   "verified": true
   },
   {
    "date": "2026-11-06",
    "time": "21:30",
    "title": "美國 10 月非農就業",
    "why": "就業過熱會推升升息預期",
-   "tickers": []
+   "tickers": [],
+   "src": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+   "verified": true
   },
   {
    "date": "2026-11-10",
    "time": "21:30",
    "title": "美國 10 月 CPI",
    "why": "上次 CPI 偏熱是這波科技股下跌的導火線，決定 12 月是否升息",
-   "tickers": []
+   "tickers": [],
+   "src": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+   "verified": true
   },
   {
    "date": "2026-11-13",
    "time": "21:30",
    "title": "美國 10 月 PPI",
    "why": "生產端通膨",
-   "tickers": []
+   "tickers": [],
+   "src": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+   "verified": true
   },
   {
    "date": "2026-11-17",
    "time": "21:30",
    "title": "美國 10 月零售銷售",
    "why": "消費強弱",
-   "tickers": []
+   "tickers": [],
+   "src": "https://www.census.gov/retail/release_schedule.html",
+   "verified": true
   },
   {
    "date": "2026-11-18",
    "time": "03:00",
    "title": "Fed 會議紀錄（10 月會議）",
    "why": "看官員對再升息的態度",
-   "tickers": []
+   "tickers": [],
+   "src": "https://www.federalreserve.gov/newsevents/2026-november.htm",
+   "verified": true
   },
   {
    "date": "2026-11-18",
    "time": "05:00",
-   "title": "NVIDIA 財報（預估美東 11/17 盤後，以官方公告為準）",
+   "title": "NVIDIA 財報（預估美東 11/17 盤後，公司尚未公告日期）",
    "why": "對半導體族群影響最大的單一事件",
    "tickers": [
     "NVDA",
     "SOXL",
     "AVGO",
     "TSM"
-   ]
+   ],
+   "time_tbd": true
   }
  ]
 }

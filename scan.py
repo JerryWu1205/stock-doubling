@@ -1006,9 +1006,39 @@ def score_line(hist, t):
     return [{"t": d, "v": v["scores"][t]} for d, v in sorted(hist["confirmed"].items()) if t in v["scores"]]
 
 
+def weekly_bars(df):
+    """週 K（給 3 年、5 年的長線圖），附 10 週線（約 50 日）、40 週線（約 200 日）。"""
+    w = df.resample("W-FRI").agg({"Open": "first", "High": "max", "Low": "min", "Close": "last", "Volume": "sum"}).dropna(subset=["Close"])
+    w = w.iloc[-262:]
+    c = w["Close"]
+    return {"t": [d.date().isoformat() for d in w.index], "o": charts._arr(w["Open"]), "h": charts._arr(w["High"]),
+            "l": charts._arr(w["Low"]), "c": charts._arr(c), "v": [int(x) for x in w["Volume"].fillna(0)],
+            "ma10": charts._arr(c.rolling(10).mean()), "ma40": charts._arr(c.rolling(40).mean())}
+
+
+def fetch_weekly(cfg, tickers, demo, raw_data):
+    """5 年日線（只給長線圖用，評分不用）；失敗就用手上的 2 年資料。"""
+    if demo:
+        return {t: raw_data[t] for t in tickers if t in raw_data}
+    try:
+        symmap = symbol_map(cfg, tickers, demo)
+        got = yf_download(list(symmap.values()), period="5y", interval="1d")
+        back = {v: k for k, v in symmap.items()}
+        return {back.get(s, s): df for s, df in got.items()}
+    except Exception:
+        traceback.print_exc()
+        return {}
+
+
+def charts_have_weekly(key):
+    f = next(iter(sorted((DATA_DIR / "charts" / key).glob("*.json"))), None)
+    return f is None or "wk" in read_json(f, {})
+
+
 def write_charts(cfg, raw_data, results, hist, port, demo, dhist=None, dport=None):
     folder = DATA_DIR / "charts" / cfg["key"]
     bench = raw_data[cfg["benchmark"]]["Close"]
+    long_data = fetch_weekly(cfg, list(results), demo, raw_data)
     keep = set()
     for t in results:
         raw = raw_data.get(t)
@@ -1027,6 +1057,9 @@ def write_charts(cfg, raw_data, results, hist, port, demo, dhist=None, dport=Non
         ratio = raw["Close"].reindex(idx) / bench.reindex(idx).ffill()
         ratio = ratio / ratio.dropna().iloc[0] * 100 if ratio.notna().any() else ratio
         chart["rs"] = [charts._r(float(x), 2) for x in ratio.to_numpy(float)]
+        lraw = long_data.get(t)
+        lraw = lraw if lraw is not None and len(lraw) > len(raw) else raw
+        chart["wk"] = weekly_bars(lraw)
         chart["demo"] = demo
         name = f"{t}.json"
         keep.add(name)
@@ -1119,7 +1152,8 @@ def run_market(cfg, args, now_utc):
             traceback.print_exc()
     # 剛升級到兩套名單時，跌深紀錄或績效檔還不存在，就算休市也先跑一次收盤確認把它們產生出來
     upgraded = (cfg["history_path"].with_name(cfg["history_path"].stem + "_dip.json").exists()
-                and "exits" in read_json(DATA_DIR / "perf" / f"{key}.json", {}))
+                and "exits" in read_json(DATA_DIR / "perf" / f"{key}.json", {})
+                and charts_have_weekly(key))
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
             and upgraded and nothing_to_do(cfg, now, hist):
         print(f"{tag} 休市中，最近一次收盤已確認，這次不更新。")
