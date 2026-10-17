@@ -8,6 +8,13 @@
 swap_gap = 15
 swap_days = 3
 
+# Telegram 通知：透過 AI情報官 的 Bot 發送（Token 直接讀 AI情報官 的 .env）。
+# 不想收通知就把 enabled 改成 false。
+[notify]
+enabled = true
+env_file = "../ai-intel-officer/.env"
+page_url = "https://jerrywu1205.github.io/stock-doubling/"
+
 # 評分權重（百分比）。risk 是扣分項：風險越高扣越多，最多扣 risk 分。
 [weights]
 relative_strength = 30
