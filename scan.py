@@ -128,7 +128,7 @@ def market_config(key, cfg):
         "holdings": list(holdings),
         "candidates": list(pool),
         "themes": themes,
-        "names": {norm(k): v for k, v in cfg.get("names", {}).items()},
+        "names": {**(US_NAMES if key == "us" else {}), **{norm(k): v for k, v in cfg.get("names", {}).items()}},
         "history_path": state / "history.json",
         "portfolio_path": state / "portfolio.json",
         "suffix_path": state / "suffix.json",
@@ -349,11 +349,11 @@ def symbol_map(cfg, tickers, demo):
     return resolve_tw(tickers, cfg)
 
 
-def _intraday_raw(symmap, cfg):
+def _intraday_raw(symmap, cfg, period="1d", prepost=False):
     """yf_download 會把時間 normalize 掉，盤中要保留時間，所以這裡另外處理。"""
     import yfinance as yf
     syms = list(symmap.values())
-    raw = yf.download(syms, period="1d", interval="5m", prepost=False, group_by="ticker",
+    raw = yf.download(syms, period=period, interval="5m", prepost=prepost, group_by="ticker",
                       progress=False, threads=True, auto_adjust=False)
     out = {}
     if raw is None or raw.empty:
@@ -374,6 +374,149 @@ def _intraday_raw(symmap, cfg):
             df = df.copy()
             df.index = idx.tz_convert(cfg["zone"])
             out[t] = df
+    return out
+
+
+# 美股中文名（config 的 [us.names] 可以覆蓋）
+US_NAMES = {
+    "SPY": "S&P 500 ETF",
+    "NVDA": "輝達",
+    "AMD": "超微",
+    "AVGO": "博通",
+    "TSM": "台積電ADR",
+    "MU": "美光",
+    "ASML": "艾司摩爾",
+    "AMAT": "應用材料",
+    "LRCX": "科林研發",
+    "KLAC": "科磊",
+    "MRVL": "邁威爾",
+    "ARM": "安謀",
+    "QCOM": "高通",
+    "INTC": "英特爾",
+    "TXN": "德州儀器",
+    "ADI": "亞德諾",
+    "NXPI": "恩智浦",
+    "ON": "安森美",
+    "MPWR": "芯源系統",
+    "TER": "泰瑞達",
+    "ALAB": "Astera Labs",
+    "SMCI": "美超微",
+    "SOXL": "三倍做多半導體ETF",
+    "COHR": "Coherent",
+    "LITE": "Lumentum",
+    "CIEN": "Ciena",
+    "AAOI": "應用光電",
+    "FN": "Fabrinet",
+    "CRDO": "Credo",
+    "ANET": "Arista",
+    "GLW": "康寧",
+    "CLS": "Celestica",
+    "MTSI": "MACOM",
+    "VST": "Vistra",
+    "CEG": "Constellation能源",
+    "GEV": "GE Vernova",
+    "OKLO": "Oklo",
+    "SMR": "NuScale",
+    "CCJ": "Cameco",
+    "NRG": "NRG能源",
+    "TLN": "Talen能源",
+    "BWXT": "BWX科技",
+    "LEU": "Centrus能源",
+    "NNE": "Nano Nuclear",
+    "ETN": "伊頓",
+    "VRT": "維諦",
+    "PWR": "Quanta Services",
+    "CRWV": "CoreWeave",
+    "NBIS": "Nebius",
+    "IREN": "IREN",
+    "CIFR": "Cipher Mining",
+    "APLD": "Applied Digital",
+    "WULF": "TeraWulf",
+    "CORZ": "Core Scientific",
+    "ORCL": "甲骨文",
+    "PLTR": "Palantir",
+    "MSFT": "微軟",
+    "CRM": "Salesforce",
+    "NOW": "ServiceNow",
+    "SNOW": "Snowflake",
+    "DDOG": "Datadog",
+    "CRWD": "CrowdStrike",
+    "NET": "Cloudflare",
+    "PANW": "Palo Alto",
+    "ZS": "Zscaler",
+    "MDB": "MongoDB",
+    "APP": "AppLovin",
+    "SHOP": "Shopify",
+    "ADBE": "Adobe",
+    "XOM": "埃克森美孚",
+    "CVX": "雪佛龍",
+    "OXY": "西方石油",
+    "COP": "康菲石油",
+    "SLB": "斯倫貝謝",
+    "EOG": "EOG資源",
+    "DVN": "Devon能源",
+    "HAL": "哈里伯頓",
+}
+
+
+# 美股盤前（美東 4:00–9:30）、盤後（16:00–20:00）：只顯示價格當參考，不進評分
+EXT_HOURS = {"pre": ("04:00", "09:30"), "post": ("16:00", "20:00")}
+
+
+def ext_session(cfg, now):
+    if cfg["key"] != "us" or now.weekday() >= 5:
+        return None
+    for k, (a, b) in EXT_HOURS.items():
+        if hm(a) <= now.time() < hm(b):
+            return k
+    return None
+
+
+def write_ext(cfg, tickers, now, now_utc, demo=False):
+    """抓含盤前盤後的 5 分鐘線，算出每檔最新的盤前/盤後價，和最近一次正常盤收盤比。"""
+    sess = ext_session(cfg, now)
+    if sess is None:
+        return None
+    symmap = {t: t for t in tickers}
+    frames = demo_ext(tickers, cfg, now, sess) if demo else _intraday_raw(symmap, cfg, period="5d", prepost=True)
+    items = {}
+    for t, df in frames.items():
+        tod = df.index.time
+        reg = df[(tod >= hm(cfg["open"])) & (tod < hm(cfg["close"]))]
+        if reg.empty:
+            continue
+        ext = df[df.index > reg.index[-1]]
+        ext = ext[ext.index.date == now.date()]
+        if ext.empty:
+            continue
+        base = float(reg["Close"].iloc[-1])
+        px = float(ext["Close"].iloc[-1])
+        items[t] = {"p": charts._r(px), "chg": round((px / base - 1) * 100, 2),
+                    "t": ext.index[-1].strftime("%H:%M")}
+    out = {"market": cfg["key"], "session": sess, "label": "盤前" if sess == "pre" else "盤後",
+           "date": now.date().isoformat(),
+           "generated_at": now_utc.isoformat(timespec="seconds").replace("+00:00", "Z"),
+           "demo": demo, "items": items}
+    write_json_atomic(DATA_DIR / "ext" / f"{cfg['key']}.json", out)
+    return out
+
+
+def demo_ext(tickers, cfg, now, sess):
+    rng = np.random.default_rng(int(now.strftime("%j")))
+    out = {}
+    day = pd.Timestamp(now.date()).tz_localize(cfg["zone"])
+    for t in tickers:
+        idx = pd.date_range(day + pd.Timedelta(hours=9, minutes=30), now.replace(second=0, microsecond=0)
+                            if sess == "post" else day + pd.Timedelta(hours=16), freq="5min", inclusive="left")
+        if sess == "pre":  # 盤前：昨天的正常盤＋今天早上
+            prev = pd.date_range(day - pd.Timedelta(days=1) + pd.Timedelta(hours=9, minutes=30),
+                                 day - pd.Timedelta(days=1) + pd.Timedelta(hours=16), freq="5min", inclusive="left")
+            idx = prev.append(pd.date_range(day + pd.Timedelta(hours=4), now.replace(second=0, microsecond=0),
+                                            freq="5min", inclusive="left"))
+        if len(idx) == 0:
+            continue
+        c = 100 * np.exp(np.cumsum(rng.normal(0, 0.002, len(idx))))
+        out[t] = pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": 1000}, index=idx)
     return out
 
 
@@ -943,9 +1086,39 @@ def run_market(cfg, args, now_utc):
     now = now_utc.astimezone(cfg["zone"])
     session = market_session(cfg, now)
     hist = read_json(cfg["history_path"], {"confirmed": {}})
+    tickers_all = list(dict.fromkeys(cfg["fixed"] + cfg["pool"]))
+    if ext_session(cfg, now) and (args.mode == "auto" or args.demo):
+        try:
+            ext = write_ext(cfg, tickers_all, now, now_utc, args.demo)
+            if ext:
+                print(f"{tag} {ext['label']}價格 {len(ext['items'])} 檔")
+        except Exception:
+            print(f"{tag} 盤前盤後價格抓取失敗（不影響評分）", file=sys.stderr)
+            traceback.print_exc()
+    if not args.demo:  # 基本面與大盤儀表板（只顯示，不進評分）
+        try:
+            import fundamentals
+            fundamentals.run(key, tickers_all, yf_download, now_utc, dash=True)
+        except Exception:
+            print(f"{tag} 基本面資料更新失敗（不影響評分）", file=sys.stderr)
+            traceback.print_exc()
+    if not args.demo:  # 全市場類股輪動（休市時才更新，只顯示，不進評分）
+        try:
+            import rotation
+            rotation.run(key, cfg, yf_download, now_utc, in_session=(session == "open"))
+        except Exception:
+            print(f"{tag} 類股輪動更新失敗（不影響評分）", file=sys.stderr)
+            traceback.print_exc()
+    if not args.demo:  # 期權資料（只顯示，不進評分）
+        try:
+            import options
+            options.run(key, tickers_all, now_utc, in_session=(session == "open"))
+        except Exception:
+            print(f"{tag} 期權資料更新失敗（不影響評分）", file=sys.stderr)
+            traceback.print_exc()
     # 剛升級到兩套名單時，跌深紀錄或績效檔還不存在，就算休市也先跑一次收盤確認把它們產生出來
     upgraded = (cfg["history_path"].with_name(cfg["history_path"].stem + "_dip.json").exists()
-                and (DATA_DIR / "perf" / f"{key}.json").exists())
+                and "scorecard" in read_json(DATA_DIR / "perf" / f"{key}.json", {}))
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
             and upgraded and nothing_to_do(cfg, now, hist):
         print(f"{tag} 休市中，最近一次收盤已確認，這次不更新。")
@@ -1065,6 +1238,12 @@ def run_market(cfg, args, now_utc):
     braw = raw_data[cfg["benchmark"]]["Close"]
     bench_quote = {"price": charts._r(float(braw.iloc[-1])),
                    "chg_1d_pct": round(float(braw.iloc[-1] / braw.iloc[-2] - 1) * 100, 2)}
+    # 大盤多空：收盤在 200 日線上＝多頭；50 日線用來看短線轉弱
+    for n in (50, 200):
+        if len(braw) >= n:
+            ma = float(braw.iloc[-n:].mean())
+            bench_quote[f"sma{n}"] = charts._r(ma)
+            bench_quote[f"vs_sma{n}_pct"] = round((float(braw.iloc[-1]) / ma - 1) * 100, 1)
     built = {kind: build_book(kind, b, res, swaps, weakest, pt, alerts, symmap, h, date)
              for kind, (b, h, pt, res, swaps, weakest) in books.items()}
     out = build_output(cfg, built, results, errors, mode, session, now_utc, args.demo,
@@ -1087,14 +1266,15 @@ def run_market(cfg, args, now_utc):
         write_charts(cfg, raw_data, results, hist, port, args.demo, dhist, dport)
     perf_path = DATA_DIR / "perf" / f"{key}.json"
     if mode == "close" or not perf_path.exists():
-        if read_json(perf_path, {}).get("data_date") != date or args.demo:
+        old = read_json(perf_path, {})
+        if old.get("data_date") != date or "scorecard" not in old or args.demo:
             try:
                 write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, args.demo)
             except Exception:
                 print(f"{tag} 回測失敗（不影響評分）：", file=sys.stderr)
                 traceback.print_exc()
                 # 留一個空的績效檔，免得休市時每 15 分鐘重跑
-                write_json_atomic(perf_path, {"market": key, "data_date": date, "backtest": {}, "live": {},
+                write_json_atomic(perf_path, {"market": key, "data_date": date, "backtest": {}, "variants": [], "scorecard": [], "live": {},
                                               "note": "這次回測失敗，下一個收盤日會重算。"})
     update_markets_index(cfg, out)
     print(f"{tag} {out['mode_label']}｜資料日期 {date}｜強勢持股 {len(out['holdings'])} 檔、"
@@ -1109,13 +1289,34 @@ def write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, demo):
     frames = {t: adjusted(raw_data[t]) for t in universe}
     bench = adjusted(raw_data[cfg["benchmark"]])["Close"]
     rules = sys.modules[__name__]
-    tests = {}
-    for strat, b in (("momentum", cfg), ("pullback", cfg), ("dip", dcfg)):
+    costs = bt.COSTS.get(cfg["key"], bt.COSTS["us"])
+    p = bt.panel(frames, bench)
+    books = {"momentum": cfg, "pullback": cfg, "dip": dcfg}
+    tests, variants, best, preps = {}, [], None, {}
+    for strat, b in books.items():
         bb = dict(b, holdings=list(b["fixed"]), candidates=list(b["pool"]))
-        res = bt.run_backtest(frames, bench, bb, strat, rules=rules)
-        if res:
-            tests[strat] = res
+        prep = bt.prepare(frames, bench, bb, strat, p=p)
+        preps[strat] = prep
+        # 主曲線：設定檔的檔數、含交易成本、不加大盤濾網
+        res = bt.simulate(prep, bb, rules, costs=costs)
+        if not res:
+            continue
+        tests[strat] = res
+        # 其他組合：集中持股、大盤濾網
+        for n in sorted({5, 8, b["target_count"]}):
+            for regime in (False, True):
+                r = res if (n == b["target_count"] and not regime) else bt.simulate(
+                    prep, bb, rules, top_n=n, regime=regime, costs=costs)
+                if not r:
+                    continue
+                row = {k: v for k, v in r.items() if k not in ("curve", "final_holdings")}
+                row["strategy"] = strat
+                variants.append(row)
+                if best is None or (r["cagr_pct"] or -999) > (best["cagr_pct"] or -999):
+                    best = dict(r, strategy=strat)
+    variants.sort(key=lambda r: -(r["cagr_pct"] if r["cagr_pct"] is not None else -999))
     first = next(iter(tests.values()), None)
+    dates = [d for d, _ in first["curve"]] if first else []
     out = {
         "market": cfg["key"],
         "data_date": date,
@@ -1123,11 +1324,17 @@ def write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, demo):
         "demo": demo,
         "benchmark": cfg["benchmark"],
         "benchmark_name": cfg["names"].get(cfg["benchmark"], cfg["benchmark"]),
+        "costs": costs,
         "backtest": tests,
-        "backtest_benchmark": bt.bench_curve(bench, [d for d, _ in first["curve"]]) if first else None,
-        "live": {"strong": bt.live_curve(hist, frames, bench), "dip": bt.live_curve(dhist, frames, bench)},
-        "note": "回測假設每個收盤確認日依規則換股、持股等權重、空位放現金，不含手續費、稅和滑價。"
-                "過去績效不代表未來。",
+        "backtest_benchmark": bt.bench_curve(bench, dates) if first else None,
+        "variants": variants,
+        "best": best,
+        "goal": bt.goal_curve(dates),
+        "scorecard": bt.scorecard(preps),
+        "live": {"strong": bt.live_curve(hist, frames, bench, cfg["target_count"]),
+                 "dip": bt.live_curve(dhist, frames, bench, dcfg["target_count"])},
+        "note": f"回測假設每個收盤確認日依規則換股、持股等權重、空位放現金；每次買賣扣 {costs['buy'] * 100:.2f}%"
+                f"（賣出 {costs['sell'] * 100:.2f}%）的手續費、稅和滑價。過去績效不代表未來，只供研究參考。",
     }
     write_json_atomic(DATA_DIR / "perf" / f"{cfg['key']}.json", out, compact=True)
 

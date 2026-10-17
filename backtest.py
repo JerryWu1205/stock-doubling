@@ -6,7 +6,7 @@
   dip       跌深反彈：買過去半年跌深、超賣、開始止跌的股票
 
 這裡把每個分項算成「整段時間序列」，一次就能算出過去一年每天的分數，拿來回測。
-回測假設：每個收盤確認日依規則換股，持股等權重，空位放現金；不含手續費、稅和滑價。
+回測假設：每個收盤確認日依規則換股，持股等權重，空位放現金；買賣依 COSTS 扣手續費、稅和滑價。
 """
 
 import numpy as np
@@ -132,33 +132,52 @@ def panel(frames, bench_close):
     return out
 
 
-def run_backtest(frames, bench_close, cfg, strategy, rules, days=250):
-    """依換股規則逐日模擬（rules = scan 模組，用同一套選股和換股函式）。回傳 {curve: [[日期, 淨值]], ...}。"""
-    fill_portfolio, execute_swap = rules.fill_portfolio, rules.execute_swap
-    swap_analysis, apply_portfolio = rules.swap_analysis, rules.apply_portfolio
+# 交易成本（單邊，比例）。台股：手續費 0.1425%（不算折扣）＋賣出證交稅 0.3%；美股：免手續費，算 0.05% 滑價
+COSTS = {"us": {"buy": 0.0005, "sell": 0.0005}, "tw": {"buy": 0.001425, "sell": 0.004425}}
 
-    p = panel(frames, bench_close)
-    w = cfg["weights"]
-    score = strategy_score(p, strategy, w)
+
+def prepare(frames, bench_close, cfg, strategy, p=None):
+    """算好每天的分數、可進場、收盤價，給 simulate 重複使用。p 是 panel()，可以共用。"""
+    p = p if p is not None else panel(frames, bench_close)
+    score = strategy_score(p, strategy, cfg["weights"])
     ok = entry_ok(p, strategy, score)
     closes = pd.DataFrame({t: df["Close"] for t, df in frames.items()})
-    rets = closes.pct_change()
-    dates = [d for d in bench_close.index if d in score.index][-(days + 1):]
+    sma200 = bench_close.rolling(200, min_periods=150).mean()
+    return {"strategy": strategy, "score": score, "ok": ok, "closes": closes, "rets": closes.pct_change(),
+            "bench": bench_close, "risk_on": (bench_close >= sma200) | sma200.isna()}
+
+
+def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250):
+    """依換股規則逐日模擬（rules = scan 模組，用同一套選股和換股函式）。
+
+    top_n：持股檔數（預設用設定檔的 target_count）
+    regime：大盤收盤在 200 日線下就全部換成現金，站回再買回
+    costs：{"buy": 比例, "sell": 比例}，每次買賣都扣
+    """
+    fill_portfolio, execute_swap = rules.fill_portfolio, rules.execute_swap
+    swap_analysis, apply_portfolio = rules.swap_analysis, rules.apply_portfolio
+    strategy, score, ok = prep["strategy"], prep["score"], prep["ok"]
+    closes, rets, risk_on = prep["closes"], prep["rets"], prep["risk_on"]
+    dates = [d for d in prep["bench"].index if d in score.index][-(days + 1):]
     if len(dates) < 30:
         return None
 
     c = dict(cfg)
     c["holdings"], c["candidates"] = list(cfg["fixed"]), list(cfg["pool"])
+    if top_n:
+        c["target_count"] = top_n
     port = {"auto": [], "changes": []}
     apply_portfolio(c, port)
     hist = {"confirmed": {}}
     gate = strategy != "momentum"
-    value, curve, swaps_n = 1.0, [], 0
+    buy = (costs or {}).get("buy", 0.0)
+    sell = (costs or {}).get("sell", 0.0)
+    value, curve, swaps_n, cost_total = 1.0, [], 0, 0.0
     held_prev = []
     for d in dates:
+        slots = max(c["target_count"], len(held_prev), 1)
         if held_prev:  # 前一天收盤的持股，吃到今天的報酬
             r = rets.loc[d, held_prev].fillna(0.0)
-            slots = max(c["target_count"], len(held_prev))
             value *= 1 + float(r.sum()) / slots
         curve.append([d.date().isoformat(), round(value, 4)])
 
@@ -179,15 +198,64 @@ def run_backtest(frames, bench_close, cfg, strategy, rules, days=250):
             swaps_n += 1
             hist["confirmed"][day]["holdings"] = [t for t in c["holdings"] if t in results]
             fill_portfolio(c, port, results, day, gate=gate)
-        held_prev = [t for t in c["holdings"] if t in closes.columns]
+        held = [t for t in c["holdings"] if t in closes.columns]
+        if regime and not bool(risk_on.loc[d]):
+            held = []  # 大盤轉空：選股照常更新，但資金放現金
+        sold, bought = set(held_prev) - set(held), set(held) - set(held_prev)
+        if sold or bought:
+            fee = (len(sold) * sell + len(bought) * buy) / max(c["target_count"], len(held), len(held_prev), 1)
+            value *= 1 - fee
+            cost_total += fee
+        held_prev = held
 
     vals = np.array([v for _, v in curve])
     peak = np.maximum.accumulate(vals)
+    n = len(vals) - 1
     return {"label": STRATEGIES[strategy], "curve": curve,
             "total_return_pct": round((vals[-1] - 1) * 100, 1),
+            "cagr_pct": round((vals[-1] ** (252 / n) - 1) * 100, 1) if n > 0 and vals[-1] > 0 else None,
             "max_drawdown_pct": round(float((1 - vals / peak).max()) * 100, 1),
             "swaps": swaps_n,
+            "cost_pct": round(cost_total * 100, 1),
+            "top_n": c["target_count"], "regime": regime,
             "final_holdings": list(c["holdings"])}
+
+
+def run_backtest(frames, bench_close, cfg, strategy, rules, days=250, **kw):
+    return simulate(prepare(frames, bench_close, cfg, strategy), cfg, rules, days=days, **kw)
+
+
+def scorecard(preps, horizons=(5, 20, 60), days=250):
+    """訊號成績單：過去一年每次「剛變成可進場」之後 N 個交易日的表現（和大盤比）。
+
+    回傳 [{strategy, label, n, h: {5: {avg, excess, win}, ...}}]：
+      avg＝平均報酬％、excess＝平均贏大盤幾個百分點、win＝贏大盤的比例％
+    """
+    out = []
+    for strat, prep in preps.items():
+        ok = prep["ok"].astype(bool)
+        closes, bench = prep["closes"], prep["bench"].reindex(prep["closes"].index).ffill()
+        start = ok.index[-(days + 1)] if len(ok.index) > days else ok.index[0]
+        fresh = ok & ~ok.shift(1, fill_value=False)  # 剛轉成可進場的那一天
+        fresh = fresh[fresh.index >= start]
+        row = {"strategy": strat, "label": STRATEGIES[strat], "n": int(fresh.to_numpy().sum()), "h": {}}
+        for h in horizons:
+            fwd = closes.shift(-h) / closes - 1
+            bfwd = bench.shift(-h) / bench - 1
+            r = fwd.where(fresh).stack().dropna()
+            if r.empty:
+                continue
+            ex = r - bfwd.reindex(r.index.get_level_values(0)).to_numpy()
+            row["h"][str(h)] = {"n": int(len(r)), "avg": round(float(r.mean()) * 100, 2),
+                                "excess": round(float(ex.mean()) * 100, 2),
+                                "win": round(float((ex > 0).mean()) * 100, 1)}
+        out.append(row)
+    return out
+
+
+def goal_curve(dates, target=2.0):
+    """年化翻倍的進度線：一年 252 個交易日漲到 target 倍。"""
+    return [[d, round(target ** (i / 252), 4)] for i, d in enumerate(dates)]
 
 
 def bench_curve(bench_close, dates):
@@ -195,13 +263,15 @@ def bench_curve(bench_close, dates):
     b = b / b.iloc[0]
     vals = b.to_numpy(float)
     peak = np.maximum.accumulate(vals)
+    n = len(vals) - 1
     return {"curve": [[d, round(float(v), 4)] for d, v in zip(dates, vals)],
             "total_return_pct": round((vals[-1] - 1) * 100, 1),
+            "cagr_pct": round((vals[-1] ** (252 / n) - 1) * 100, 1) if n > 0 and vals[-1] > 0 else None,
             "max_drawdown_pct": round(float((1 - vals / peak).max()) * 100, 1)}
 
 
-def live_curve(hist, frames, bench_close):
-    """實際紀錄：每個收盤確認日的持股（等權重），吃到下一個確認日的報酬。"""
+def live_curve(hist, frames, bench_close, slots=16):
+    """實際紀錄：每個收盤確認日的持股（等權重，空位當現金），吃到下一個確認日的報酬。"""
     days = sorted(hist["confirmed"])
     if len(days) < 2:
         return None
@@ -212,7 +282,10 @@ def live_curve(hist, frames, bench_close):
         ta, tb = pd.Timestamp(a), pd.Timestamp(b)
         if held and ta in closes.index and tb in closes.index:
             r = closes.loc[tb, held] / closes.loc[ta, held] - 1
-            value *= 1 + float(r.fillna(0).mean())
+            value *= 1 + float(r.fillna(0).sum()) / max(slots, len(held))
         curve.append([b, round(value, 4)])
     bench = bench_curve(bench_close, [d for d, _ in curve])
-    return {"curve": curve, "total_return_pct": round((value - 1) * 100, 1), "benchmark": bench}
+    idx = bench_close.index
+    n = int(((idx > pd.Timestamp(days[0])) & (idx <= pd.Timestamp(days[-1]))).sum())  # 經過幾個交易日
+    return {"curve": curve, "total_return_pct": round((value - 1) * 100, 1), "benchmark": bench,
+            "trading_days": n, "goal_pct": round((2 ** (n / 252) - 1) * 100, 1)}
