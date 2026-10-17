@@ -29,6 +29,7 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 
+import backtest as bt
 import charts
 import indicators as ind
 
@@ -58,6 +59,16 @@ SIGNAL_LABELS = {
     "watch": "觀察",
     "none": "未達標",
     "swap_in": "換股候選",
+    "rebound": "反彈中",
+    "take": "反彈達標",
+}
+
+# 兩套名單：強勢（原本的評分）和跌深（買超跌、開始止跌的股票）
+BOOKS = {
+    "strong": {"label": "強勢", "components": [["rs", "相對強弱"], ["mf", "資金流"], ["trend", "趨勢"],
+                                                ["rebound", "反彈"], ["risk", "風險"]]},
+    "dip": {"label": "跌深", "components": [["depth", "跌深"], ["oversold", "超賣"], ["reversal", "止跌"],
+                                             ["mfturn", "資金回流"], ["risk", "風險"]]},
 }
 
 
@@ -161,9 +172,11 @@ def theme_counts(cfg):
     return counts
 
 
-def fill_portfolio(cfg, port, results, date):
+def fill_portfolio(cfg, port, results, date, gate=False):
+    """gate=True：只挑「可進場」的股票，沒有符合的就先空著（等回檔、等止跌），不硬補。"""
     counts = theme_counts(cfg)
-    ranked = sorted((t for t in cfg["candidates"] if t in results),
+    ranked = sorted((t for t in cfg["candidates"] if t in results
+                     and (not gate or results[t].get("entry_ok"))),
                     key=lambda t: -results[t]["score"])
     added = []
     for t in ranked:
@@ -181,12 +194,13 @@ def fill_portfolio(cfg, port, results, date):
     return added
 
 
-def execute_swap(cfg, port, swaps, results, date):
+def execute_swap(cfg, port, swaps, results, date, gate=False):
     """收盤確認的換股：只換自動挑的持股，一天最多換一檔。"""
     if any(c.get("action") == "swap" and c.get("date") == date for c in port["changes"]):
         return None  # 收盤後會重跑幾次，同一天已經換過就不再換
     ready = sorted((s for s in swaps.items()
-                    if s[1]["confirmed_streak"] >= cfg["swap_days"]),
+                    if s[1]["confirmed_streak"] >= cfg["swap_days"]
+                    and (not gate or results.get(s[0], {}).get("entry_ok"))),
                    key=lambda s: -(s[1]["gap"] or 0))
     if not ready:
         return None
@@ -508,6 +522,7 @@ def score_universe(raw_data, cfg, asof=None):
             "above_sma50": bool(c.iloc[-1] > ind.sma(c, 50).iloc[-1]),
             "limit": limit,
             "data_date": raw.index[-1].date().isoformat(),
+            "spark": [charts._r(float(x)) for x in rc.iloc[-30:]],
             "bar": {"t": raw.index[-1].date().isoformat(), "o": charts._r(float(bar["Open"])),
                     "h": charts._r(float(bar["High"])), "l": charts._r(float(bar["Low"])),
                     "c": charts._r(float(bar["Close"])), "v": int(bar["Volume"])},
@@ -560,6 +575,72 @@ def candidate_signal(r):
     if r["score"] >= 60:
         return "watch"
     return "none"
+
+
+def reasons_dip(r):
+    c = r["components"]
+    out = []
+    if r.get("limit") == "up":
+        out.append("漲停")
+    elif r.get("limit") == "down":
+        out.append("跌停")
+    if r.get("dd126") is not None:
+        out.append(f"距半年高點 −{r['dd126'] * 100:.0f}%")
+    if c["oversold"] >= 60:
+        out.append("超賣")
+    if c["reversal"] >= 70:
+        out.append("止跌訊號")
+    if c["mfturn"] >= 50:
+        out.append("資金回流")
+    if r.get("new_low"):
+        out.append("創 20 日新低")
+    if c["risk"] >= 70:
+        out.append("波動大")
+    return out
+
+
+def holding_signal_dip(r):
+    if r.get("new_low"):
+        return "exit"  # 跌破前 20 天低點：止跌失敗
+    if r.get("dd126") is not None and r["dd126"] < 0.05:
+        return "take"  # 已經彈回半年高點附近
+    if r["components"]["reversal"] >= 70:
+        return "rebound"
+    return "hold"
+
+
+def candidate_signal_dip(r):
+    if r.get("entry_ok"):
+        return "watch" if r.get("limit") == "up" else "buy"
+    if r["score"] >= 55:
+        return "watch"
+    return "none"
+
+
+def dip_results(results, series, weights, asof=None):
+    """用每檔的分項時間序列算跌深分數。asof=None 用最後一天。"""
+    out = {}
+    for t, r in results.items():
+        s = series.get(t)
+        if s is None or not len(s):
+            continue
+        row = s.iloc[-1] if asof is None else (s.loc[asof] if asof in s.index else None)
+        if row is None:
+            continue
+        comp = {"depth": row["dip_depth"], "oversold": row["dip_oversold"],
+                "reversal": row["dip_reversal"], "mfturn": row["dip_mfturn"], "risk": row["risk"]}
+        if not all(np.isfinite(float(v)) for v in comp.values()):
+            continue
+        score = float(bt.strategy_score(row, "dip", weights))
+        out[t] = {
+            **{k: v for k, v in r.items() if k not in ("score", "components")},
+            "score": round(score, 1),
+            "components": {k: round(float(v), 1) for k, v in comp.items()},
+            "entry_ok": bool(bt.entry_ok(row, "dip", score)),
+            "dd126": round(float(row["dd126"]), 3) if np.isfinite(row["dd126"]) else None,
+            "new_low": bool(row["new_low"]),
+        }
+    return out
 
 
 # ───────── 歷史與汰弱留強 ─────────
@@ -639,43 +720,58 @@ def write_json_atomic(path, obj, compact=False):
     os.replace(tmp, path)
 
 
-def build_output(cfg, results, errors, mode, session, now_utc, swaps, weakest, demo, port,
-                 alerts, symmap, price_time):
-    need = cfg["swap_days"]
-    zone = cfg["zone"]
+def swap_status(s, need):
+    if s["streak"] >= need:
+        return "confirmed" if s["confirmed_streak"] >= need else "provisional"
+    return "building" if s["streak"] > 0 else None
 
-    def swap_status(s):
-        if s["streak"] >= need:
-            return "confirmed" if s["confirmed_streak"] >= need else "provisional"
-        return "building" if s["streak"] > 0 else None
+
+def prev_scores(hist, date):
+    """前一個收盤確認日的分數，用來算「比昨天多幾分」。"""
+    days = [d for d in sorted(hist["confirmed"]) if d < date]
+    return hist["confirmed"][days[-1]]["scores"] if days else {}
+
+
+def build_book(kind, b, results, swaps, weakest, port, alerts, symmap, hist, date):
+    need = b["swap_days"]
+    prev = prev_scores(hist, date)
+    hsig, csig, rfn = ((holding_signal, candidate_signal, reasons_for) if kind == "strong"
+                       else (holding_signal_dip, candidate_signal_dip, reasons_dip))
 
     def base(t, r):
-        return {"ticker": t, "name": cfg["names"].get(t, ""), "yahoo": symmap.get(t, t),
-                "theme": cfg["themes"].get(t, ""), **r}
+        p = prev.get(t)
+        reasons = rfn(r)
+        if kind == "strong" and r.get("extended"):
+            reasons.append("漲多等回檔")
+        if kind == "strong" and r.get("pullback_ok"):
+            reasons.append("回檔到均線")
+        return {"ticker": t, "name": b["names"].get(t, ""), "yahoo": symmap.get(t, t),
+                "theme": b["themes"].get(t, ""), **{k: v for k, v in r.items() if k != "entry_ok"},
+                "entry_ok": bool(r.get("entry_ok")),
+                "score_prev": p, "score_chg": round(r["score"] - p, 1) if p is not None else None,
+                "reasons": reasons, "alerts": alerts.get(t, [])}
 
     holdings, candidates, swap_list = [], [], []
-    for t in cfg["holdings"]:
+    for t in b["holdings"]:
         if t not in results:
             continue
         r = results[t]
-        sig = holding_signal(r)
+        sig = hsig(r)
         holdings.append({**base(t, r), "signal": sig, "signal_label": SIGNAL_LABELS[sig],
-                         "reasons": reasons_for(r), "alerts": alerts.get(t, []),
                          "weakest": t == weakest,
-                         "source": "manual" if t in cfg["fixed"] else "auto"})
-    for t in cfg["candidates"]:
+                         "source": "manual" if t in b["fixed"] else "auto"})
+    for t in b["candidates"]:
         if t not in results:
             continue
         r = results[t]
-        sig = candidate_signal(r)
+        sig = csig(r)
         s = swaps.get(t)
-        status = swap_status(s) if s else None
-        if status in ("confirmed", "provisional"):
+        status = swap_status(s, need) if s else None
+        if status in ("confirmed", "provisional") and (kind == "strong" or r.get("entry_ok")):
             sig = "swap_in"
             swap_list.append({"in": t, "out": s["out"], "gap": s["gap"],
                               "streak": s["streak"], "need": need, "status": status})
         candidates.append({**base(t, r), "signal": sig, "signal_label": SIGNAL_LABELS[sig],
-                           "reasons": reasons_for(r), "alerts": alerts.get(t, []),
                            "swap": ({"status": status, "streak": s["streak"], "need": need,
                                      "gap": s["gap"], "out": s["out"]} if status else None)})
     holdings.sort(key=lambda x: -x["score"])
@@ -683,13 +779,30 @@ def build_output(cfg, results, errors, mode, session, now_utc, swaps, weakest, d
     swap_list.sort(key=lambda x: -(x["gap"] or 0))
     if any(s["status"] == "confirmed" for s in swap_list):
         for h in holdings:
-            if h["ticker"] == weakest:
+            if h["ticker"] == weakest and h["source"] == "auto":
                 h["signal"], h["signal_label"] = "swap_out", SIGNAL_LABELS["swap_out"]
-
-    data_date = max((r["data_date"] for r in results.values()), default=None)
-    local = now_utc.astimezone(zone)
     return {
-        "version": 2,
+        "key": kind,
+        "label": BOOKS[kind]["label"],
+        "components_meta": BOOKS[kind]["components"],
+        "target_count": b["target_count"],
+        "open_slots": max(0, b["target_count"] - len(holdings)),
+        "weakest_holding": weakest,
+        "swaps": swap_list,
+        # 自動組合的異動紀錄（新增、換股），最新的在前
+        "portfolio_changes": list(reversed(port["changes"][-30:])),
+        "holdings": holdings,
+        "candidates": candidates,
+    }
+
+
+def build_output(cfg, books, results, errors, mode, session, now_utc, demo, price_time, bench_quote):
+    need = cfg["swap_days"]
+    data_date = max((r["data_date"] for r in results.values()), default=None)
+    local = now_utc.astimezone(cfg["zone"])
+    strong = books["strong"]
+    return {
+        "version": 3,
         "market": cfg["key"],
         "market_label": cfg["label"],
         "timezone": cfg["tz"],
@@ -709,14 +822,20 @@ def build_output(cfg, results, errors, mode, session, now_utc, swaps, weakest, d
         # 網頁用：超過這個分鐘數沒更新就顯示「資料過期」
         "stale_after_minutes": 40 if mode == "intraday" else minutes_until_next_open(cfg, now_utc),
         "benchmark": cfg["benchmark"],
+        "benchmark_name": cfg["names"].get(cfg["benchmark"], cfg["benchmark"]),
+        "benchmark_quote": bench_quote,
         "weights": cfg["weights"],
         "swap_rule": {"gap": cfg["swap_gap"], "days": need},
-        "weakest_holding": weakest,
-        "swaps": swap_list,
-        # 自動組合的異動紀錄（新增、換股），最新的在前
-        "portfolio_changes": list(reversed(port["changes"][-30:])),
-        "holdings": holdings,
-        "candidates": candidates,
+        # 舊版網頁讀的欄位 = 強勢名單
+        "weakest_holding": strong["weakest_holding"],
+        "swaps": strong["swaps"],
+        "portfolio_changes": strong["portfolio_changes"],
+        "holdings": strong["holdings"],
+        "candidates": strong["candidates"],
+        # 強勢名單的內容就在上面幾個欄位，這裡只放說明；跌深名單完整放在 books.dip
+        "books": {"strong": {k: v for k, v in strong.items()
+                             if k not in ("swaps", "portfolio_changes", "holdings", "candidates")},
+                  **{k: v for k, v in books.items() if k != "strong"}},
         "errors": errors,
     }
 
@@ -739,8 +858,13 @@ def chart_markers(t, hist, port):
     return marks
 
 
-def write_charts(cfg, raw_data, results, hist, port, demo):
+def score_line(hist, t):
+    return [{"t": d, "v": v["scores"][t]} for d, v in sorted(hist["confirmed"].items()) if t in v["scores"]]
+
+
+def write_charts(cfg, raw_data, results, hist, port, demo, dhist=None, dport=None):
     folder = DATA_DIR / "charts" / cfg["key"]
+    bench = raw_data[cfg["benchmark"]]["Close"]
     keep = set()
     for t in results:
         raw = raw_data.get(t)
@@ -751,8 +875,14 @@ def write_charts(cfg, raw_data, results, hist, port, demo):
         chart["name"] = cfg["names"].get(t, "")
         chart["dividends"] = charts.dividend_dates(raw)[-8:]
         chart["markers"] = chart_markers(t, hist, port)
-        chart["scores"] = [{"t": d, "v": v["scores"][t]} for d, v in sorted(hist["confirmed"].items())
-                           if t in v["scores"]]
+        chart["scores"] = score_line(hist, t)
+        if dhist is not None:  # 跌深名單自己的分數和標記
+            chart["dip"] = {"scores": score_line(dhist, t), "markers": chart_markers(t, dhist, dport)}
+        # 相對強弱線：個股 ÷ 大盤，第一天設成 100。往上 = 比大盤強
+        idx = pd.to_datetime(chart["t"])
+        ratio = raw["Close"].reindex(idx) / bench.reindex(idx).ffill()
+        ratio = ratio / ratio.dropna().iloc[0] * 100 if ratio.notna().any() else ratio
+        chart["rs"] = [charts._r(float(x), 2) for x in ratio.to_numpy(float)]
         chart["demo"] = demo
         name = f"{t}.json"
         keep.add(name)
@@ -813,8 +943,11 @@ def run_market(cfg, args, now_utc):
     now = now_utc.astimezone(cfg["zone"])
     session = market_session(cfg, now)
     hist = read_json(cfg["history_path"], {"confirmed": {}})
+    # 剛升級到兩套名單時，跌深紀錄或績效檔還不存在，就算休市也先跑一次收盤確認把它們產生出來
+    upgraded = (cfg["history_path"].with_name(cfg["history_path"].stem + "_dip.json").exists()
+                and (DATA_DIR / "perf" / f"{key}.json").exists())
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
-            and nothing_to_do(cfg, now, hist):
+            and upgraded and nothing_to_do(cfg, now, hist):
         print(f"{tag} 休市中，最近一次收盤已確認，這次不更新。")
         return 0
 
@@ -844,32 +977,67 @@ def run_market(cfg, args, now_utc):
 
     results, errors = score_universe(raw_data, cfg)
     date = bench_last.isoformat()
-    added = fill_portfolio(cfg, port, results, date)
-    if added:
-        print(f"{tag} 自動選入 {len(added)} 檔：{', '.join(added)}")
+
+    # 每檔的分項時間序列：給跌深分數、回檔判斷和回測用
+    bench_adj = adjusted(raw_data[cfg["benchmark"]])["Close"]
+    series = {}
+    for t in results:
+        try:
+            series[t] = bt.component_series(adjusted(raw_data[t]), bench_adj)
+        except Exception:
+            pass
+    for t, r in results.items():
+        s = series.get(t)
+        if s is not None:
+            row = s.iloc[-1]
+            r["extended"] = bool(row["extended"])
+            r["pullback_ok"] = bool(bt.entry_ok(row, "pullback", r["score"]) and r["components"]["trend"] >= 60)
+    dres = dip_results(results, series, cfg["weights"])
 
     backfill = args.backfill or (0 if hist["confirmed"] else 5)  # 新市場第一次跑：自動補算 5 天
-    if backfill:
-        dates = list(raw_data[cfg["benchmark"]].index[-(backfill + 1):-1])
-        for d in dates:
-            res, _ = score_universe(raw_data, cfg, asof=d)
-            record_confirmed(hist, d.date().isoformat(), res, cfg["holdings"])
-            print(f"{tag} 補算 {d.date()}：{len(res)} 檔")
+    bf_dates = list(raw_data[cfg["benchmark"]].index[-(backfill + 1):-1]) if backfill else []
+    bf_strong = {d.date().isoformat(): score_universe(raw_data, cfg, asof=d)[0] for d in bf_dates}
 
-    if mode == "close":
-        record_confirmed(hist, date, results, cfg["holdings"])
-        swaps, weakest = swap_analysis(hist, cfg)
-        auto_swaps, _ = swap_analysis(hist, cfg, only=set(port["auto"]))
-        change = execute_swap(cfg, port, auto_swaps, results, date)
-        if change:
-            print(f"{tag} 自動換股：{change['out']} → {change['in']}（差 {change['gap']} 分）")
-            # 收盤後已換股，今天的紀錄改成新組合，訊號也重算
-            hist["confirmed"][date]["holdings"] = [t for t in cfg["holdings"] if t in results]
-            swaps, weakest = swap_analysis(hist, cfg)
-    else:
-        today = (date, {t: r["score"] for t, r in results.items()},
-                 [t for t in cfg["holdings"] if t in results])
-        swaps, weakest = swap_analysis(hist, cfg, today=today)
+    # 跌深名單有自己的持股和歷史；沒有你指定的固定持股
+    dcfg = dict(cfg, fixed=[], pool=list(dict.fromkeys(cfg["fixed"] + cfg["pool"])),
+                history_path=cfg["history_path"].with_name(cfg["history_path"].stem + "_dip.json"),
+                portfolio_path=cfg["portfolio_path"].with_name(cfg["portfolio_path"].stem + "_dip.json"))
+    dhist = read_json(dcfg["history_path"], {"confirmed": {}})
+    dport = read_json(dcfg["portfolio_path"], {"auto": [], "changes": []})
+    apply_portfolio(dcfg, dport)
+    dbackfill = args.backfill or (0 if dhist["confirmed"] else 5)
+    bf_dip = {}
+    if dbackfill:
+        for d in list(raw_data[cfg["benchmark"]].index[-(dbackfill + 1):-1]):
+            bf_dip[d.date().isoformat()] = dip_results(bf_strong.get(d.date().isoformat()) or results,
+                                                       series, cfg["weights"], asof=d)
+
+    books = {}
+    for kind, b, h, pt, res, bf, gate in (("strong", cfg, hist, port, results, bf_strong, False),
+                                          ("dip", dcfg, dhist, dport, dres, bf_dip, True)):
+        name = f"{tag}{BOOKS[kind]['label']}"
+        added = fill_portfolio(b, pt, res, date, gate=gate)
+        if added:
+            print(f"{name} 自動選入 {len(added)} 檔：{', '.join(added)}")
+        for d, r in sorted(bf.items()):
+            record_confirmed(h, d, r, b["holdings"])
+        if bf:
+            print(f"{name} 補算 {len(bf)} 天")
+        if mode == "close":
+            record_confirmed(h, date, res, b["holdings"])
+            auto_swaps, _ = swap_analysis(h, b, only=set(pt["auto"]))
+            change = execute_swap(b, pt, auto_swaps, res, date, gate=gate)
+            if change:
+                print(f"{name} 自動換股：{change['out']} → {change['in']}（差 {change['gap']} 分）")
+                # 收盤後已換股，今天的紀錄改成新組合，訊號也重算
+                fill_portfolio(b, pt, res, date, gate=gate)
+                h["confirmed"][date]["holdings"] = [t for t in b["holdings"] if t in res]
+            swaps, weakest = swap_analysis(h, b)
+        else:
+            today = (date, {t: r["score"] for t, r in res.items()},
+                     [t for t in b["holdings"] if t in res])
+            swaps, weakest = swap_analysis(h, b, today=today)
+        books[kind] = (b, h, pt, res, swaps, weakest)
 
     # 走勢圖提示（只當參考，不進評分）
     alerts = {}
@@ -894,26 +1062,74 @@ def run_market(cfg, args, now_utc):
     if price_time is None:
         price_time = "收盤" if mode == "close" else now.strftime("%H:%M")
 
-    out = build_output(cfg, results, errors, mode, session, now_utc, swaps, weakest,
-                       args.demo, port, alerts, symmap, price_time)
-    if mode == "close":
-        hist["confirmed"][date]["signals"] = {i["ticker"]: i["signal"]
-                                              for i in out["holdings"] + out["candidates"]}
-    if mode == "close" or backfill:
-        save_history(cfg, hist)
-    write_json_atomic(cfg["portfolio_path"], port)
+    braw = raw_data[cfg["benchmark"]]["Close"]
+    bench_quote = {"price": charts._r(float(braw.iloc[-1])),
+                   "chg_1d_pct": round(float(braw.iloc[-1] / braw.iloc[-2] - 1) * 100, 2)}
+    built = {kind: build_book(kind, b, res, swaps, weakest, pt, alerts, symmap, h, date)
+             for kind, (b, h, pt, res, swaps, weakest) in books.items()}
+    out = build_output(cfg, built, results, errors, mode, session, now_utc, args.demo,
+                       price_time, bench_quote)
+
+    for kind, (b, h, pt, res, _, _) in books.items():
+        if mode == "close":
+            bk = built[kind]
+            h["confirmed"][date]["signals"] = {i["ticker"]: i["signal"]
+                                               for i in bk["holdings"] + bk["candidates"]}
+        if mode == "close" or (backfill if kind == "strong" else dbackfill):
+            save_history(b, h)
+        write_json_atomic(b["portfolio_path"], pt)
 
     write_json_atomic(DATA_DIR / f"{key}.json", out)
     if key == "us":
         write_json_atomic(DOCS / "data.json", out)  # 舊網頁快取還在讀這個檔
     folder = DATA_DIR / "charts" / key
     if mode == "close" or not folder.exists() or not any(folder.glob("*.json")):
-        write_charts(cfg, raw_data, results, hist, port, args.demo)
+        write_charts(cfg, raw_data, results, hist, port, args.demo, dhist, dport)
+    perf_path = DATA_DIR / "perf" / f"{key}.json"
+    if mode == "close" or not perf_path.exists():
+        if read_json(perf_path, {}).get("data_date") != date or args.demo:
+            try:
+                write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, args.demo)
+            except Exception:
+                print(f"{tag} 回測失敗（不影響評分）：", file=sys.stderr)
+                traceback.print_exc()
+                # 留一個空的績效檔，免得休市時每 15 分鐘重跑
+                write_json_atomic(perf_path, {"market": key, "data_date": date, "backtest": {}, "live": {},
+                                              "note": "這次回測失敗，下一個收盤日會重算。"})
     update_markets_index(cfg, out)
-    print(f"{tag} {out['mode_label']}｜資料日期 {date}｜持股 {len(out['holdings'])} 檔，"
-          f"候選 {len(out['candidates'])} 檔｜換股訊號 {len(out['swaps'])} 個｜"
-          f"失敗 {len(errors)} 檔")
+    print(f"{tag} {out['mode_label']}｜資料日期 {date}｜強勢持股 {len(out['holdings'])} 檔、"
+          f"跌深持股 {len(built['dip']['holdings'])} 檔｜換股訊號 {len(out['swaps'])}"
+          f" + {len(built['dip']['swaps'])} 個｜失敗 {len(errors)} 檔")
     return 0
+
+
+def write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, demo):
+    """回測三種選股方式（過去一年），加上兩套名單的實際紀錄。"""
+    universe = [t for t in dict.fromkeys(cfg["fixed"] + cfg["pool"]) if t in results]
+    frames = {t: adjusted(raw_data[t]) for t in universe}
+    bench = adjusted(raw_data[cfg["benchmark"]])["Close"]
+    rules = sys.modules[__name__]
+    tests = {}
+    for strat, b in (("momentum", cfg), ("pullback", cfg), ("dip", dcfg)):
+        bb = dict(b, holdings=list(b["fixed"]), candidates=list(b["pool"]))
+        res = bt.run_backtest(frames, bench, bb, strat, rules=rules)
+        if res:
+            tests[strat] = res
+    first = next(iter(tests.values()), None)
+    out = {
+        "market": cfg["key"],
+        "data_date": date,
+        "generated_at": now_utc.isoformat(timespec="seconds").replace("+00:00", "Z"),
+        "demo": demo,
+        "benchmark": cfg["benchmark"],
+        "benchmark_name": cfg["names"].get(cfg["benchmark"], cfg["benchmark"]),
+        "backtest": tests,
+        "backtest_benchmark": bt.bench_curve(bench, [d for d, _ in first["curve"]]) if first else None,
+        "live": {"strong": bt.live_curve(hist, frames, bench), "dip": bt.live_curve(dhist, frames, bench)},
+        "note": "回測假設每個收盤確認日依規則換股、持股等權重、空位放現金，不含手續費、稅和滑價。"
+                "過去績效不代表未來。",
+    }
+    write_json_atomic(DATA_DIR / "perf" / f"{cfg['key']}.json", out, compact=True)
 
 
 def main():

@@ -6,6 +6,13 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0f1115">
 <title>股票翻倍計畫</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="翻倍計畫">
 <style>
 :root {
   --bg: #f5f6f8; --card: #ffffff; --text: #16181d; --muted: #6b7280; --line: #e5e7eb;
@@ -57,14 +64,14 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
   padding: 4px 11px; font: inherit; font-size: 13px; cursor: pointer; }
 .chip[aria-pressed="true"] { color: var(--info); background: var(--info-bg); border-color: transparent; font-weight: 600; }
 .row { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; }
-.row > button { all: unset; display: grid; grid-template-columns: minmax(0, 1fr) auto 44px; align-items: center; gap: 10px;
+.row > button { all: unset; display: grid; grid-template-columns: minmax(0, 1fr) 64px 50px; align-items: center; gap: 10px;
   width: 100%; padding: 11px 12px; cursor: pointer; box-sizing: border-box; }
 .tkr { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tkr .nm { font-weight: 600; font-size: 14px; margin-left: 4px; }
 .px { font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 600; }
 .px span { margin-left: 6px; }
 .sub { font-size: 12px; color: var(--muted); }
-.score { text-align: right; font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
+.score { text-align: right; font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; line-height: 1.1; }
 .up { color: var(--bad); } .down { color: var(--good); } /* 台股習慣：紅漲綠跌 */
 .pill { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
 .p-good { color: var(--good); background: var(--good-bg); }
@@ -84,6 +91,43 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .tag.alert { color: var(--info); background: var(--info-bg); font-weight: 600; }
 .tag.lim { color: var(--bad); background: var(--bad-bg); font-weight: 700; }
 .empty { color: var(--muted); font-size: 14px; padding: 6px 0; }
+.books { display: flex; gap: 6px; margin-bottom: 10px; }
+.bk { flex: 1; border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 10px; padding: 7px 4px;
+  font: inherit; cursor: pointer; text-align: center; line-height: 1.25; }
+.bk b { display: block; font-size: 15px; color: var(--text); }
+.bk span { font-size: 11px; }
+.bk[aria-selected="true"] { border-color: var(--info); background: var(--info-bg); }
+.bk[aria-selected="true"] b { color: var(--info); }
+.summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; min-width: 0; }
+.stat .k { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat .v { font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat .s { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+button.stat { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.toolbar { display: flex; gap: 6px; margin-bottom: 8px; }
+.toolbar input, .toolbar select { font: inherit; font-size: 14px; color: var(--text); background: var(--card); border: 1px solid var(--line);
+  border-radius: 10px; padding: 7px 10px; min-width: 0; }
+.toolbar input { flex: 1; }
+.toolbar select { flex: none; }
+.chip.flt[aria-pressed="true"] { color: var(--good); background: var(--good-bg); }
+.chipsep { flex: none; width: 1px; background: var(--line); margin: 3px 2px; }
+.subline .pill { margin-right: 6px; flex: none; }
+.subline { display: flex; align-items: center; margin-top: 3px; min-width: 0; }
+.subline .sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spark { width: 64px; height: 30px; display: block; }
+.scorebox { text-align: right; }
+.chg { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+.chg.up { color: var(--bad); } .chg.down { color: var(--good); }
+.tag.alert { cursor: pointer; border: 0; font: inherit; font-size: 12px; }
+.tag.alert[aria-pressed="true"] { outline: 1px solid var(--info); }
+.explain { font-size: 12px; color: var(--text); background: var(--info-bg); border-radius: 8px; padding: 7px 9px; margin: 0 0 8px; }
+.ptable { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.ptable th { font-weight: 600; color: var(--muted); text-align: right; padding: 5px 4px; font-size: 12px; }
+.ptable td { text-align: right; padding: 6px 4px; border-top: 1px solid var(--line); }
+.ptable th:first-child, .ptable td:first-child { text-align: left; }
+.ptable .sw { display: inline-block; width: 10px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+.cperf { height: 230px; }
+.verdict { font-size: 14px; margin: 4px 0 0; }
 details { margin-top: 16px; color: var(--muted); font-size: 13px; }
 details summary { cursor: pointer; font-weight: 600; }
 details p { margin: 6px 0; }
@@ -120,26 +164,46 @@ details p { margin: 6px 0; }
     <span id="mode" class="badge"></span>
   </header>
   <div class="markets" role="tablist" id="markets"></div>
+  <div class="books" role="tablist" id="books">
+    <button class="bk" role="tab" data-b="strong" aria-selected="true"><b>強勢</b><span>買最強的，跟著趨勢走</span></button>
+    <button class="bk" role="tab" data-b="dip" aria-selected="false"><b>跌深</b><span>買跌深後開始止跌的</span></button>
+  </div>
   <div id="meta" class="meta">載入中…</div>
   <div id="banners"></div>
+  <div class="summary" id="summary"></div>
 
   <section class="card" id="swapCard">
-    <h2>換股訊號</h2>
+    <h2 id="swapTitle">換股訊號</h2>
     <div id="swaps"></div>
   </section>
 
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tabH" aria-selected="true">持股</button>
     <button class="tab" role="tab" id="tabC" aria-selected="false">候選</button>
+    <button class="tab" role="tab" id="tabP" aria-selected="false">績效</button>
   </div>
-  <div class="chips" id="chips"></div>
+  <div id="listTools">
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="搜尋代號或名稱" autocomplete="off" enterkeyhint="search">
+      <select id="sort" aria-label="排序">
+        <option value="score">依分數</option>
+        <option value="chg">依分數變化</option>
+        <option value="day">依今日漲跌</option>
+        <option value="signal">依訊號</option>
+      </select>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
   <div id="list"></div>
+  <div id="perf" hidden></div>
 
   <details>
     <summary>分數怎麼算</summary>
-    <p>總分 0–100：相對強弱 30、資金流 25、趨勢 20、反彈 15，風險最多扣 10 分。美股和台股各自排名，不互相比較。</p>
-    <p>持股：強勢續抱 ≥75、續抱、轉弱留意 &lt;50、出場訊號 &lt;40 且跌破 50 日線。候選：可進場 ≥70 且趨勢夠強、觀察 ≥60。台股漲停鎖住的股票先列觀察，因為實際上買不到。</p>
-    <p>換股：候選股比最弱持股高 15 分以上，連續 3 個收盤日才成立。盤中顯示的是暫定結果，收盤後才確認。標「自動」的持股由程式挑選，換股時會自動汰換；你自己指定的只提醒不換。</p>
+    <p>兩套名單用同一批股票，各自評分、各自持股，美股和台股各自排名，不互相比較。</p>
+    <p><b>強勢</b>：總分 0–100，相對強弱 30、資金流 25、趨勢 20、反彈 15，風險最多扣 10 分。持股：強勢續抱 ≥75、續抱、轉弱留意 &lt;50、出場訊號 &lt;40 且跌破 50 日線。候選：可進場 ≥70 且趨勢夠強、觀察 ≥60；漲太多離 20 日線太遠的會標「漲多等回檔」。</p>
+    <p><b>跌深</b>：跌深 35（離半年高點跌 10–35% 最高分，跌超過 55% 歸零，避免接到一路崩的股票）、超賣 25（RSI 低於 40 的程度）、止跌 25（從 5 日低點彈 3%、RSI 翻揚、站上 5 日線）、資金回流 15，風險最多扣 10 分。可進場要 ≥60 而且止跌 ≥70，沒有合格的股票就空著，不硬湊 16 檔。持股：再破 20 日低點＝出場、回到半年高點 5% 內＝反彈達標。</p>
+    <p>換股：候選股比最弱持股高 15 分以上，連續 3 個收盤日才成立，一天最多換一檔。盤中顯示的是暫定結果，收盤後才確認。標「自動」的持股由程式挑選，換股時會自動汰換；你自己指定的只提醒不換。</p>
+    <p>績效頁的回測用過去一年的資料，每天收盤依規則換股、持股等權重、空位放現金，不含手續費、稅和滑價。過去績效不代表未來，只供研究參考，不是投資建議。</p>
     <p>走勢圖使用 <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a> 的 Lightweight Charts（Apache 2.0）。</p>
     <p>股價每 15 分鐘跟著掃描更新，不是即時報價；台股另有約 20 分鐘延遲。走勢圖上的趨勢線、支撐壓力和藍色提示是程式自動算的，只供參考，不影響分數。</p>
   </details>
@@ -147,17 +211,43 @@ details p { margin: 6px 0; }
 <script src="vendor/lightweight-charts-4.2.0.js"></script>
 <script>
 const SIG_CLASS = { strong: "p-good", hold: "p-mute", reduce: "p-warn", exit: "p-bad", swap_out: "p-bad",
-  buy: "p-good", watch: "p-info", none: "p-mute", swap_in: "p-info" };
+  buy: "p-good", watch: "p-info", none: "p-mute", swap_in: "p-info", rebound: "p-good", take: "p-warn" };
+// 依訊號排序：要動作的排前面
+const SIG_ORDER = ["exit", "swap_out", "buy", "swap_in", "take", "reduce", "watch", "rebound", "strong", "hold", "none"];
 const COMP = [["rs", "相對強弱"], ["mf", "資金流"], ["trend", "趨勢"], ["rebound", "反彈"], ["risk", "風險"]];
+const ALERT_HELP = {
+  "跌破上升趨勢線": "收盤跌到近期低點連成的上升趨勢線下方超過 1%，上漲節奏可能被打斷。",
+  "突破下降趨勢線": "收盤站上近期高點連成的下降趨勢線超過 1%，這波下跌可能告一段落。",
+  "突破壓力區": "收盤站上過去至少碰過兩次就拉回的價位，上方空間打開。",
+  "跌破支撐區": "收盤跌破過去至少兩次止跌的價位，這裡之後可能變成壓力。",
+  "創 52 週新高": "今天最高價超過過去一年的最高點，上方沒有套牢的賣壓。",
+  "爆量上漲": "成交量超過 20 日均量 2 倍而且收漲，常代表大資金進場。",
+  "爆量下跌": "成交量超過 20 日均量 2 倍而且收跌，常代表大資金出貨。",
+  "爆量": "成交量超過 20 日均量 2 倍，但價格沒有明顯方向。",
+  "量價背離": "股價創 20 日新高，但能量潮（OBV）沒有跟著創高，上漲的量能不足，要留意追高風險。",
+};
 const DEFAULT_MARKETS = [{ key: "us", label: "美股", file: "data.json", timezone: "America/New_York", open: "09:30", close: "16:00" }];
 let markets = [], market = null, data = null, tab = "h", theme = "全部", userPicked = false;
-let openTicker = null, chartView = null;
+let openTicker = null, chartView = null, query = "", onlyOk = false, onlyAlert = false, perfData = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
+
+let book = store.get("book") === "dip" ? "dip" : "strong";
+let sortBy = store.get("sort") || "score";
+
+// 目前選的名單：強勢在最上層欄位，跌深在 books.dip
+function B() {
+  const meta = data.books?.[book] || {};
+  if (book === "strong" || !data.books?.[book]) return { ...meta, key: data.books?.[book] ? book : "strong",
+    holdings: data.holdings, candidates: data.candidates, swaps: data.swaps, portfolio_changes: data.portfolio_changes,
+    components_meta: meta.components_meta || COMP };
+  return meta;
+}
+const allItems = () => [...B().holdings, ...B().candidates];
 
 async function getJson(url) {
   const r = await fetch(url, { cache: "no-store" });
@@ -219,6 +309,7 @@ function fmtPx(v) {
   return v.toLocaleString("en-US", { minimumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2, maximumFractionDigits: 2 });
 }
 const fmtPct = v => v == null ? "" : (v > 0 ? "+" : "") + v.toFixed(2) + "%";
+const fmtP1 = v => v == null ? "–" : (v > 0 ? "+" : "") + v.toFixed(1) + "%";
 const clsOf = v => v > 0 ? "up" : v < 0 ? "down" : "";
 
 function render() {
@@ -243,8 +334,41 @@ function render() {
   if (data.errors?.length) b.push(`<div class="banner warn">${data.errors.length} 檔抓不到資料：${data.errors.map(e => esc(e.ticker)).join("、")}</div>`);
   $("banners").innerHTML = b.join("");
 
+  renderBooks();
+  renderSummary();
   renderSwaps();
-  renderList();
+  if (tab === "p") renderPerf(); else renderList();
+}
+
+function renderBooks() {
+  const has = !!data.books?.dip;
+  $("books").style.display = has ? "" : "none";
+  if (!has) book = "strong";
+  for (const b of $("books").querySelectorAll(".bk")) b.setAttribute("aria-selected", b.dataset.b === book);
+}
+
+// 最上方摘要：大盤今天、今天有提示的股票數、快要換股的
+function renderSummary() {
+  const bk = B(), q = data.benchmark_quote;
+  const cells = [];
+  const bn = data.benchmark_name && data.benchmark_name !== data.benchmark ? data.benchmark_name : "大盤";
+  cells.push(`<div class="stat"><div class="k">${esc(data.benchmark || "")} ${esc(bn)}</div>
+    <div class="v ${clsOf(q?.chg_1d_pct)}">${q ? fmtPct(q.chg_1d_pct) : "–"}</div><div class="s">${q ? fmtPx(q.price) : ""}</div></div>`);
+  const alerted = allItems().filter(i => i.alerts?.length);
+  cells.push(`<button class="stat" id="statAlerts"><div class="k">今天有提示</div><div class="v">${alerted.length}<span class="small"> 檔</span></div>
+    <div class="s">${alerted.filter(i => bk.holdings.includes(i)).length} 檔是持股</div></button>`);
+  let near;
+  if (bk.key === "dip") {
+    const ok = bk.candidates.filter(c => c.entry_ok).length;
+    near = `<div class="stat"><div class="k">空位 / 可進場</div><div class="v">${bk.open_slots ?? 0}<span class="small"> 空</span> ${ok}<span class="small"> 檔</span></div>
+      <div class="s">${bk.open_slots ? "等合格的股票才補" : "名額已滿"}</div></div>`;
+  } else {
+    const nearSw = bk.candidates.filter(c => c.swap && (c.swap.status === "building" || c.swap.status === "confirmed"));
+    near = `<div class="stat"><div class="k">接近換股</div><div class="v">${nearSw.length}<span class="small"> 檔</span></div>
+      <div class="s">${nearSw.length ? esc(nearSw.sort((a, b) => b.swap.streak - a.swap.streak).slice(0, 2).map(c => c.ticker).join("、")) : "沒有"}</div></div>`;
+  }
+  cells.push(near);
+  $("summary").innerHTML = cells.join("");
 }
 
 function fmtAge(min) {
@@ -254,50 +378,87 @@ function fmtAge(min) {
 }
 
 function label(t) {
-  const it = [...(data.holdings || []), ...(data.candidates || [])].find(x => x.ticker === t);
+  const it = allItems().find(x => x.ticker === t);
   return esc(t) + (it?.name ? ` <span class="small">${esc(it.name)}</span>` : "");
 }
 
 function renderSwaps() {
+  const bk = B();
+  $("swapTitle").textContent = `換股訊號（${bk.label || "強勢"}）`;
   const rows = [];
-  for (const s of data.swaps || []) {
+  for (const s of bk.swaps || []) {
     const pill = s.status === "confirmed" ? `<span class="pill p-good">已確認</span>` : `<span class="pill p-warn">暫定</span>`;
     rows.push(`<div class="swap">${pill}<span class="tk">${label(s.out)}</span><span class="arrow">→</span>
       <span class="tk">${label(s.in)}</span><span class="small">高 ${s.gap} 分・連續 ${s.streak} 天</span></div>`);
   }
-  const building = (data.candidates || []).filter(c => c.swap?.status === "building")
+  const building = (bk.candidates || []).filter(c => c.swap?.status === "building")
     .sort((a, b) => b.swap.streak - a.swap.streak).slice(0, 3);
   for (const c of building)
     rows.push(`<div class="swap"><span class="pill p-mute">累積中 ${c.swap.streak}/${c.swap.need}</span>
       <span class="tk">${label(c.ticker)}</span><span class="small">比 ${esc(c.swap.out)} 高 ${c.swap.gap} 分</span></div>`);
-  const changes = (data.portfolio_changes || []).filter(c => c.action === "swap").slice(0, 3);
+  const changes = (bk.portfolio_changes || []).filter(c => c.action === "swap").slice(0, 3);
   for (const c of changes)
     rows.push(`<div class="swap"><span class="pill p-info">已換股</span><span class="tk">${label(c.out)}</span>
       <span class="arrow">→</span><span class="tk">${label(c.in)}</span><span class="small">${esc(c.date)}</span></div>`);
+  if (bk.key === "dip" && bk.open_slots)
+    rows.push(`<div class="swap"><span class="pill p-mute">空位 ${bk.open_slots}</span>
+      <span class="small">沒有夠格的跌深股就先空著（放現金），有新的「可進場」才補。</span></div>`);
   $("swaps").innerHTML = rows.join("") || `<div class="empty">目前沒有換股訊號。</div>`;
 }
 
 function renderList() {
-  const items = tab === "h" ? data.holdings : data.candidates;
+  const bk = B();
+  const items = tab === "h" ? bk.holdings : bk.candidates;
   const themes = ["全部", ...new Set(items.map(i => i.theme).filter(Boolean))];
   if (!themes.includes(theme)) theme = "全部";
-  $("chips").innerHTML = themes.map(t =>
-    `<button class="chip" aria-pressed="${t === theme}" data-theme="${esc(t)}">${esc(t)}</button>`).join("");
-  const shown = items.filter(i => theme === "全部" || i.theme === theme);
+  $("chips").innerHTML =
+    `<button class="chip flt" aria-pressed="${onlyOk}" data-f="ok">${tab === "h" ? "有動作" : "可進場"}</button>` +
+    `<button class="chip flt" aria-pressed="${onlyAlert}" data-f="alert">有提示</button><span class="chipsep"></span>` +
+    themes.map(t => `<button class="chip" aria-pressed="${t === theme}" data-theme="${esc(t)}">${esc(t)}</button>`).join("");
+  const q = query.trim().toLowerCase();
+  const act = i => tab === "h" ? !["hold", "strong", "none", "rebound"].includes(i.signal) : (i.entry_ok || i.signal === "buy" || i.signal === "swap_in");
+  const shown = items.filter(i => (theme === "全部" || i.theme === theme)
+    && (!q || i.ticker.toLowerCase().includes(q) || (i.name || "").toLowerCase().includes(q))
+    && (!onlyOk || act(i)) && (!onlyAlert || i.alerts?.length));
+  const key = {
+    score: i => -i.score,
+    chg: i => -(i.score_chg ?? -999),
+    day: i => -(i.chg_1d_pct ?? -999),
+    signal: i => SIG_ORDER.indexOf(i.signal) * 1000 - i.score,
+  }[sortBy] || (i => -i.score);
+  shown.sort((a, b) => key(a) - key(b));
   destroyChart();
-  $("list").innerHTML = shown.map(rowHtml).join("") || `<div class="empty">沒有資料。</div>`;
+  const hint = book === "dip" && tab === "h" && !items.length ? "跌深名單還沒有持股：目前沒有夠格的跌深股。" : "沒有符合的股票。";
+  $("list").innerHTML = shown.map(rowHtml).join("") || `<div class="empty">${hint}</div>`;
   if (openTicker) {
     const row = [...$("list").querySelectorAll(".row")].find(r => r.dataset.t === openTicker);
     if (row) openRow(row); else openTicker = null;
   }
 }
 
+// 近 30 天收盤的小走勢線，顏色看 30 天漲跌（紅漲綠跌）
+function sparkSvg(arr) {
+  const v = (arr || []).filter(x => x != null);
+  if (v.length < 2) return `<svg class="spark"></svg>`;
+  const lo = Math.min(...v), hi = Math.max(...v), W = 64, H = 30, pad = 2;
+  const pts = v.map((x, k) => `${(k / (v.length - 1) * W).toFixed(1)},${(pad + (hi === lo ? 0.5 : 1 - (x - lo) / (hi - lo)) * (H - 2 * pad)).toFixed(1)}`);
+  const c = v[v.length - 1] >= v[0] ? "var(--bad)" : "var(--good)";
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polyline points="${pts.join(" ")}" fill="none" stroke="${c}"
+    stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+function scoreChg(v) {
+  if (v == null) return `<div class="chg">新</div>`;
+  if (Math.abs(v) < 0.05) return `<div class="chg">–</div>`;
+  return `<div class="chg ${v > 0 ? "up" : "down"}">${v > 0 ? "▲" : "▼"}${Math.abs(v).toFixed(1)}</div>`;
+}
+
 function rowHtml(i) {
   const chg = i.chg_1d_pct;
   const sub = [i.theme, i.source === "auto" ? "自動" : i.source === "manual" ? "自選" : "", i.weakest ? "最弱" : ""]
     .filter(Boolean).join("・");
-  const comps = COMP.map(([k, lbl]) => {
-    const v = i.components[k];
+  const comps = B().components_meta.map(([k, lbl]) => {
+    const v = i.components[k] ?? 0;
     return `<div class="comp"><span>${lbl}</span><div class="track"><div class="fill${k === "risk" ? " risk" : ""}"
       style="width:${Math.max(0, Math.min(100, v))}%"></div></div><b>${Math.round(v)}</b></div>`;
   }).join("");
@@ -307,10 +468,10 @@ function rowHtml(i) {
     ? `<div class="px">${fmtPx(i.price)}<span class="${clsOf(chg)}">${fmtPct(chg)}</span>${lim}</div>`
     : `<div class="px ${clsOf(chg)}">${fmtPct(chg)}</div>`;
   return `<div class="row" data-t="${esc(i.ticker)}"><button aria-expanded="false">
-      <div><div class="tkr">${esc(i.ticker)}${i.name ? `<span class="nm">${esc(i.name)}</span>` : ""}</div>
-        ${px}<div class="sub">${esc(sub)}</div></div>
-      <span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span>
-      <div class="score">${Math.round(i.score)}</div>
+      <div style="min-width:0"><div class="tkr">${esc(i.ticker)}${i.name ? `<span class="nm">${esc(i.name)}</span>` : ""}</div>
+        ${px}<div class="subline"><span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span><span class="sub">${esc(sub)}</span></div></div>
+      ${sparkSvg(i.spark)}
+      <div class="scorebox"><div class="score">${Math.round(i.score)}</div>${scoreChg(i.score_chg)}</div>
     </button><div class="detail"><div class="chartbox"></div>${comps}${tags ? `<div class="tags">${tags}</div>` : ""}</div></div>`;
 }
 
@@ -319,7 +480,7 @@ function openRow(row) {
   row.classList.add("open");
   row.firstElementChild.setAttribute("aria-expanded", "true");
   openTicker = row.dataset.t;
-  const item = [...data.holdings, ...data.candidates].find(x => x.ticker === openTicker);
+  const item = allItems().find(x => x.ticker === openTicker);
   if (item && window.LightweightCharts) showChart(row.querySelector(".chartbox"), item);
 }
 function closeRow(row) {
@@ -330,10 +491,10 @@ function closeRow(row) {
 
 // ───────── 走勢圖 ─────────
 const IND = {
-  mfi: "MFI 資金流量", macd: "MACD", rsi: "RSI", obv: "OBV 能量潮", cmf: "CMF 資金流",
+  rs: "相對大盤", mfi: "MFI 資金流量", macd: "MACD", rsi: "RSI", obv: "OBV 能量潮", cmf: "CMF 資金流",
 };
 let range = store.get("range") || "6m";
-let subs = (store.get("subs") || "mfi,macd").split(",").filter(k => IND[k]).slice(0, 2);
+let subs = (store.get("subs") || "rs,mfi").split(",").filter(k => IND[k]).slice(0, 2);
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 function destroyChart() {
@@ -363,9 +524,19 @@ async function showChart(box, item) {
   destroyChart();
   box.innerHTML = `<div class="seg" role="group">${[["1d", "今日"], ["1m", "1 個月"], ["6m", "6 個月"], ["1y", "1 年"]]
     .map(([k, l]) => `<button data-r="${k}" aria-pressed="${k === range}">${l}</button>`).join("")}</div>
-    <div class="alerts">${(item.alerts || []).map(a => `<span class="tag alert">${esc(a)}</span>`).join("")}</div>
+    <div class="alerts">${(item.alerts || []).map(a => `<button class="tag alert" aria-pressed="false" data-a="${esc(a)}">${esc(a)} ⓘ</button>`).join("")}</div>
+    <div class="explain" hidden></div>
     <div class="cwrap"><div class="legend"></div><div class="cmain"></div></div>
     <div class="keys"></div><div class="subs"></div><div class="extra"></div>`;
+  box.querySelector(".alerts").addEventListener("click", e => {
+    const b = e.target.closest(".alert");
+    if (!b) return;
+    const ex = box.querySelector(".explain"), on = b.getAttribute("aria-pressed") !== "true";
+    for (const x of box.querySelectorAll(".alert")) x.setAttribute("aria-pressed", "false");
+    b.setAttribute("aria-pressed", on);
+    ex.hidden = !on;
+    ex.textContent = on ? `${b.dataset.a}：${ALERT_HELP[b.dataset.a] || "程式自動算的提示，只供參考。"}` : "";
+  });
   box.querySelector(".seg").addEventListener("click", e => {
     const b = e.target.closest("button[data-r]");
     if (!b) return;
@@ -436,7 +607,8 @@ async function drawDaily(box, item, view) {
     add: ["belowBar", "--info", "arrowUp"], in: ["belowBar", "--info", "arrowUp"], out: ["aboveBar", "--warn", "arrowDown"],
     buy: ["belowBar", "--bad", "arrowUp"], exit: ["aboveBar", "--good", "arrowDown"],
   };
-  const markers = (d.markers || []).filter(m => have.has(m.t)).map(m => {
+  const bm = book === "dip" && d.dip ? d.dip.markers : d.markers;
+  const markers = (bm || []).filter(m => have.has(m.t)).map(m => {
     const [position, c, shape] = MK[m.kind] || MK.add;
     return { time: m.t, position, color: css(c), shape, text: m.text };
   });
@@ -480,7 +652,7 @@ async function drawDaily(box, item, view) {
   for (const k of subs) {
     const wrap = document.createElement("div");
     wrap.className = "cwrap";
-    wrap.innerHTML = `<div class="sublabel">${IND[k]}</div><div class="csub"></div>`;
+    wrap.innerHTML = `<div class="sublabel">${k === "rs" ? `相對${esc(data.benchmark || "大盤")}（往上＝比大盤強）` : IND[k]}</div><div class="csub"></div>`;
     subBox.appendChild(wrap);
     const sc = LightweightCharts.createChart(wrap.querySelector(".csub"), baseOpts({ timeScale: { visible: false, rightOffset: 2 } }));
     view.charts.push(sc);
@@ -515,6 +687,11 @@ function drawIndicator(sc, k, d) {
       { time: t, value: d.macd_hist[i], color: (d.macd_hist[i] >= 0 ? css("--bad") : css("--good")) + "99" }));
     line(sc, css("--ma50")).setData(ser(d.macd));
     line(sc, css("--ma20")).setData(ser(d.macd_signal));
+  } else if (k === "rs") {
+    if (!d.rs) return;
+    const s = line(sc, css("--ma200"), { lastValueVisible: true, lineWidth: 2 });
+    s.setData(ser(d.rs));
+    ref(s, 100);
   } else if (k === "obv") {
     line(sc, css("--info"), { priceFormat: { type: "volume" } }).setData(ser(d.obv));
   } else {
@@ -527,14 +704,19 @@ function drawIndicator(sc, k, d) {
 }
 
 function drawScores(box, d, view) {
-  if (!d.scores || d.scores.length < 2) return;
-  box.innerHTML = `<div class="ctitle">分數走勢（收盤確認）</div><div class="cscore"></div>`;
+  const dip = book === "dip" && d.dip;
+  const scores = dip ? d.dip.scores : d.scores;
+  if (!scores || scores.length < 2) return;
+  box.innerHTML = `<div class="ctitle">${dip ? "跌深" : "強勢"}分數走勢（收盤確認）</div><div class="cscore"></div>`;
   const sc = LightweightCharts.createChart(box.querySelector(".cscore"), baseOpts({ handleScroll: false, handleScale: false }));
   view.charts.push(sc);
   const s = line(sc, css("--text"), { lineWidth: 2, lastValueVisible: true, crosshairMarkerVisible: true });
-  s.setData(d.scores.map(x => ({ time: x.t, value: x.v })));
-  s.createPriceLine({ price: 70, color: css("--bad"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false, title: "可進場 70" });
-  s.createPriceLine({ price: 50, color: css("--warn"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false, title: "轉弱 50" });
+  s.setData(scores.map(x => ({ time: x.t, value: x.v })));
+  if (dip) s.createPriceLine({ price: 60, color: css("--bad"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false, title: "可進場 60" });
+  else {
+    s.createPriceLine({ price: 70, color: css("--bad"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false, title: "可進場 70" });
+    s.createPriceLine({ price: 50, color: css("--warn"), lineWidth: 1, lineStyle: 2, axisLabelVisible: false, title: "轉弱 50" });
+  }
   sc.timeScale().fitContent();
 }
 
@@ -572,6 +754,82 @@ async function drawIntraday(box, item, view) {
     (data.quote_delay_minutes ? `<span>延遲約 ${data.quote_delay_minutes} 分鐘</span>` : "");
 }
 
+// ───────── 績效 ─────────
+let perfChart = null;
+const PERF_COLORS = { momentum: "--ma50", pullback: "--ma20", dip: "--ma200", bench: "--muted" };
+const pctOf = v => (v - 1) * 100;
+
+async function renderPerf() {
+  destroyChart();
+  destroyPerf();
+  const box = $("perf");
+  try {
+    if (!perfData || perfData.market !== data.market || perfData._v !== data.data_date) {
+      box.innerHTML = `<div class="empty">載入中…</div>`;
+      perfData = await getJson(`data/perf/${data.market}.json?v=${data.data_date}`);
+      perfData._v = data.data_date;
+    }
+  } catch {
+    box.innerHTML = `<div class="empty">績效資料還沒產生，下一次收盤確認後就會有。</div>`;
+    return;
+  }
+  if (tab !== "p") return;
+  const P = perfData, bt = P.backtest || {}, bb = P.backtest_benchmark;
+  const keys = Object.keys(bt).filter(k => bt[k]);
+  const mine = book === "dip" ? "dip" : "momentum";
+  const rows = keys.map(k => `<tr${k === mine ? ` style="font-weight:700"` : ""}><td><span class="sw" style="background:${css(PERF_COLORS[k])}"></span>${esc(bt[k].label)}</td>
+      <td class="${clsOf(bt[k].total_return_pct)}">${fmtP1(bt[k].total_return_pct)}</td>
+      <td>−${bt[k].max_drawdown_pct}%</td><td>${bt[k].swaps}</td></tr>`).join("") +
+    (bb ? `<tr><td><span class="sw" style="background:${css(PERF_COLORS.bench)}"></span>${esc(P.benchmark)} 大盤</td>
+      <td class="${clsOf(bb.total_return_pct)}">${fmtP1(bb.total_return_pct)}</td><td>−${bb.max_drawdown_pct}%</td><td>–</td></tr>` : "");
+  let verdict = "";
+  if (keys.length) {
+    const best = keys.reduce((a, b) => bt[b].total_return_pct > bt[a].total_return_pct ? b : a);
+    const calm = keys.reduce((a, b) => bt[b].max_drawdown_pct < bt[a].max_drawdown_pct ? b : a);
+    verdict = `過去一年報酬最高的是「${esc(bt[best].label)}」，回檔最小的是「${esc(bt[calm].label)}」。`;
+  }
+  const live = P.live || {};
+  const liveRow = (k, lbl) => {
+    const L = live[k];
+    if (!L) return `<tr><td>${lbl}</td><td colspan="3" class="small" style="text-align:right">紀錄累積中</td></tr>`;
+    return `<tr><td>${lbl}</td><td class="${clsOf(L.total_return_pct)}">${fmtP1(L.total_return_pct)}</td>
+      <td class="${clsOf(L.benchmark?.total_return_pct)}">${L.benchmark ? fmtP1(L.benchmark.total_return_pct) : "–"}</td>
+      <td>${L.curve.length - 1}</td></tr>`;
+  };
+  box.innerHTML = `<section class="card"><h2>回測：過去一年，三種選股方式</h2>
+      <div class="cwrap"><div class="cperf"></div></div>
+      <table class="ptable"><tr><th>選股方式</th><th>一年報酬</th><th>最大回檔</th><th>換股</th></tr>${rows}</table>
+      <p class="verdict">${verdict}</p>
+      <p class="note">${esc(P.note || "")}${P.demo ? "（目前是模擬資料，數字沒有意義）" : ""}</p></section>
+    <section class="card"><h2>實際紀錄（從開始記錄那天起）</h2>
+      <table class="ptable"><tr><th>名單</th><th>報酬</th><th>同期大盤</th><th>天數</th></tr>
+      ${liveRow("strong", "強勢")}${liveRow("dip", "跌深")}</table>
+      <p class="note">每個收盤確認日的持股等權重，算到下一個收盤確認日。只看百分比，不涉及金額。</p></section>`;
+  if (!window.LightweightCharts || !keys.length) return;
+  const chart = LightweightCharts.createChart(box.querySelector(".cperf"), baseOpts({ handleScroll: false, handleScale: false }));
+  perfChart = chart;
+  const fmt = { type: "custom", formatter: v => (v > 0 ? "+" : "") + v.toFixed(0) + "%" };
+  const add = (curve, key, w) => line(chart, css(PERF_COLORS[key]), { lineWidth: w, priceFormat: fmt, lastValueVisible: true })
+    .setData(curve.map(([t, v]) => ({ time: t, value: pctOf(v) })));
+  if (bb) add(bb.curve, "bench", 1);
+  for (const k of keys) add(bt[k].curve, k, k === mine ? 3 : 2);
+  chart.timeScale().fitContent();
+}
+function destroyPerf() {
+  if (perfChart) { try { perfChart.remove(); } catch {} perfChart = null; }
+}
+
+function showTab(t) {
+  tab = t; theme = "全部"; openTicker = null;
+  for (const [id, k] of [["tabH", "h"], ["tabC", "c"], ["tabP", "p"]]) $(id).setAttribute("aria-selected", t === k);
+  $("listTools").hidden = t === "p";
+  $("list").hidden = t === "p";
+  $("perf").hidden = t !== "p";
+  destroyPerf();
+  if (!data) return;
+  if (t === "p") renderPerf(); else renderList();
+}
+
 // ───────── 事件 ─────────
 $("list").addEventListener("click", e => {
   const btn = e.target.closest(".row > button");
@@ -581,7 +839,27 @@ $("list").addEventListener("click", e => {
 });
 $("chips").addEventListener("click", e => {
   const c = e.target.closest(".chip");
-  if (c) { theme = c.dataset.theme; renderList(); }
+  if (!c) return;
+  if (c.dataset.f === "ok") onlyOk = !onlyOk;
+  else if (c.dataset.f === "alert") onlyAlert = !onlyAlert;
+  else theme = c.dataset.theme;
+  renderList();
+});
+$("q").addEventListener("input", e => { query = e.target.value; if (data) renderList(); });
+$("sort").value = sortBy;
+$("sort").addEventListener("change", e => { sortBy = e.target.value; store.set("sort", sortBy); if (data) renderList(); });
+$("books").addEventListener("click", e => {
+  const b = e.target.closest(".bk");
+  if (!b || b.dataset.b === book) return;
+  book = b.dataset.b; store.set("book", book);
+  openTicker = null; theme = "全部";
+  if (data) render();
+});
+$("summary").addEventListener("click", e => {
+  if (!e.target.closest("#statAlerts")) return;
+  onlyAlert = true;
+  if (tab === "p") showTab("h"); else renderList();
+  $("tabH").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 $("markets").addEventListener("click", e => {
   const b = e.target.closest(".mkt");
@@ -593,13 +871,8 @@ $("markets").addEventListener("click", e => {
   $("meta").textContent = "載入中…";
   load();
 });
-for (const [id, t] of [["tabH", "h"], ["tabC", "c"]])
-  $(id).addEventListener("click", () => {
-    tab = t; theme = "全部"; openTicker = null;
-    $("tabH").setAttribute("aria-selected", t === "h");
-    $("tabC").setAttribute("aria-selected", t === "c");
-    if (data) renderList();
-  });
+for (const [id, t] of [["tabH", "h"], ["tabC", "c"], ["tabP", "p"]])
+  $(id).addEventListener("click", () => showTab(t));
 window.addEventListener("hashchange", () => {
   const h = location.hash.slice(1);
   if (h && h !== market && markets.some(m => m.key === h)) { market = h; openTicker = null; load(); }

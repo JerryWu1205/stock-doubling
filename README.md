@@ -6,6 +6,8 @@
 
 需要 Python 3.11 以上和 git。在這個資料夾開 PowerShell，執行 powershell -ExecutionPolicy Bypass -File setup.ps1。它會建立 .venv、安裝套件並建立 Windows 排程 StockDoublingScanner，每 15 分鐘在背景執行 run.bat。程式自己判斷每個市場是盤中、收盤還是休市，有新資料才推上 GitHub Pages。執行紀錄在 logs\run.log。
 
+網頁可以「加到主畫面」當成 App 用（docs/manifest.webmanifest 和圖示）。
+
 其他指令：python scan.py --market tw（只跑台股）、python scan.py --mode close（強制收盤確認）、python scan.py --demo（模擬資料，不連網）。
 
 ## 時間
@@ -22,22 +24,16 @@
 ## 要改的地方：config.toml
 
 - [us] / [tw]：兩個市場各一段。不想跑某個市場，在那段加 enabled = false。
-- [us.holdings] / [tw.holdings]：你自己指定的持股，程式不會自動換掉，只發訊號。其餘名額（共 16 檔）由程式從候選池挑分數最高的補滿，每個主題最多 4 檔。之後若候選股連續 3 個收盤日比最弱的「自動持股」高 15 分，程式會在收盤後自動換掉它，一天最多換一檔。目前美股、台股都沒有自選持股，16 檔全部由程式汰弱留強，換股時會發 Telegram 通知。
+- [us.holdings] / [tw.holdings]：你自己指定的持股，程式不會自動換掉，只發訊號。其餘名額（共 16 檔）由程式從候選池挑分數最高的補滿，每個主題最多 4 檔。之後若候選股連續 3 個收盤日比最弱的「自動持股」高 15 分，程式會在收盤後自動換掉它，一天最多換一檔。
 - [us.candidates] / [tw.candidates]：候選池，依主題分組。台股只寫數字代號，程式自己判斷上市（.TW）或上櫃（.TWO），結果存在 state/tw/suffix.json。
 - [tw.names]：網頁上顯示的台股中文名稱。
 - weights、swap_gap、swap_days：評分權重和換股門檻，兩個市場共用。
 
-## Telegram 通知
+## 兩套名單：強勢、跌深
 
-run.bat 每次掃描完會跑 notify.py，透過 AI情報官 的 Telegram Bot 發通知（Token 讀 ../ai-intel-officer/.env，設定在 config.toml 的 [notify]）。美股、台股分開，同一件事只發一次，狀態存在 state/<市場>/notify_state.json。
+網頁上可以切換「強勢」和「跌深」。兩套用同一批股票，各自評分、各自持股（state/<市場>/history_dip.json、portfolio_dip.json），換股規則一樣。跌深名單只收「可進場」的股票，沒有合格的就空著。backtest.py 用過去一年的資料回測三種選股方式（強勢、強勢等回檔、跌深反彈）和大盤，結果在網頁的「績效」分頁；回測不含手續費、稅和滑價，只供研究參考。
 
-- 盤中：持股出現出場訊號（分數低於 40 且跌破 50 日線）時立即通知，每檔每天一次。
-- 收盤確認後：自動換股、持股訊號改變、換股倒數（差一天就會換）、自選持股落後，彙整成一則。沒有變化就不發。
-- 測試：python notify.py --dry-run 只印出訊息，不發送。
-
-AI情報官 的 07:00 早報也會附上翻倍計畫摘要，Bot 可用 /double 查看完整持股。
-
-## 評分
+## 評分（強勢）
 
 相對強弱 30（1/3/6 個月報酬減大盤，在同市場裡排百分位）、資金流 25（MFI、CMF、上漲日量比）、趨勢 20（20/50/200 日線）、反彈 15（多頭拉回止跌），風險最多扣 10 分（波動率與最大回撤）。評分用還原股價，除權息不會打亂均線。
 
@@ -56,6 +52,8 @@ AI情報官 的 07:00 早報也會附上翻倍計畫摘要，Bot 可用 /double 
 - charts/<市場>/<代號>.json：一年日 K、均線、量價指標、trendlines、levels、hi52、lo52、markers、dividends、scores。
 - intraday/<市場>.json：當天所有股票的 5 分鐘價格和 VWAP（時間是當地時鐘）。
 - markets.json：有哪些市場、各自最後更新時間。
+- perf/<市場>.json：回測曲線、報酬、最大回檔、換股次數，以及兩套名單的實際紀錄（只有百分比）。收盤確認時更新。
+- us.json / tw.json 的 books.dip 是跌深名單；每檔另有 score_chg（和前一個收盤日比的分數變化）和 spark（近 30 天收盤）。圖檔另有 rs（相對大盤線）和 dip（跌深分數和標記）。
 - docs/data.json：美股列表的舊位置，給還沒重新整理的舊網頁用。
 
 state/<市場>/history.json 存最近 60 個收盤確認日的分數和訊號，用來算換股連續天數，請勿刪除。state/<市場>/portfolio.json 是自動挑選的持股，刪掉的話下次會重新挑。
