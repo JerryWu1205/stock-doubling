@@ -386,14 +386,18 @@ def rotation_backtest(close, dv, bench, members, key, k_groups=3, k_each=3, step
             "rule": f"每 {step} 個交易日換一次：最強 {k_groups} 個族群、每族群最強 {k_each} 檔，等權重；含交易成本"}
 
 
-def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70):
+def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, groups=None):
     """全市場（不是手挑的股票池）測持股檔數：每 step 天選相對強度＋資金流最高的前 N 檔（要站上 50 日線），等權重、含成本。
     另外把期間切成前後兩半，看結論是不是兩段都成立。"""
     rets = close.pct_change(fill_method=None).fillna(0).clip(-0.5, 1.0)
     flow = _flow(close, dv)
     idx = close.index
-    eq = {n: [1.0] for n in ns}
-    prev = {n: set() for n in ns}
+    # 另外三種選法（都是 16 檔）：只看 3 個月漲幅、加族群強度、加族群強度但不看 1 個月
+    gof = {t: g for g, ts in (groups or {}).items() for t in ts}
+    variants = ["16_r63", "16_grp", "16_grp_no21"] if gof else ["16_r63"]
+    keys = [str(n) for n in ns] + variants
+    eq = {k: [1.0] for k in keys}
+    prev = {k: set() for k in keys}
     dates = [idx[start]]
     cost = COST[key]
     for t in range(start, len(idx) - 1, step):
@@ -405,19 +409,31 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70):
         fl = flow.iloc[t].reindex(r63.index)
         sc = (r63.rank(pct=True) * 0.45 + r21.rank(pct=True) * 0.30 + fl.rank(pct=True) * 0.25).dropna()
         order = list(sc.sort_values(ascending=False).index)
+        picks = {str(n): order[:n] for n in ns}
+        picks["16_r63"] = list(r63.sort_values(ascending=False).index[:16])
+        if gof:
+            # 族群強度：族群成員（全部，不只站上 50 日線的）3 個月漲幅中位數的排名
+            all63 = (last / sub.iloc[-64] - 1).dropna()
+            gm = all63.groupby(all63.index.map(lambda x: gof.get(x, "_"))).median().drop("_", errors="ignore")
+            gr = gm.rank(pct=True)
+            gs = pd.Series([gr.get(gof.get(x), 0.5) for x in sc.index], sc.index)
+            picks["16_grp"] = list((sc * 0.8 + gs * 0.2).sort_values(ascending=False).index[:16])
+            sc2 = (r63.rank(pct=True) * 0.6 + fl.rank(pct=True) * 0.4).dropna()
+            gs2 = pd.Series([gr.get(gof.get(x), 0.5) for x in sc2.index], sc2.index)
+            picks["16_grp_no21"] = list((sc2 * 0.8 + gs2 * 0.2).sort_values(ascending=False).index[:16])
         end = min(t + step, len(idx) - 1)
-        for n in ns:
-            pk = order[:n]
+        for k in keys:
+            pk = picks[k]
             seg = (1 + rets.iloc[t + 1: end + 1][pk].mean(axis=1)).prod() if pk else 1.0
-            turn = len(set(pk) ^ prev[n]) / max(len(pk), 1)
-            eq[n].append(eq[n][-1] * seg * (1 - cost * turn))
-            prev[n] = set(pk)
+            turn = len(set(pk) ^ prev[k]) / max(len(pk), 1)
+            eq[k].append(eq[k][-1] * seg * (1 - cost * turn))
+            prev[k] = set(pk)
         dates.append(idx[end])
     out = {}
-    for n in ns:
-        s = pd.Series(eq[n], dates).reindex(idx).ffill().loc[dates[0]:]
+    for k in keys:
+        s = pd.Series(eq[k], dates).reindex(idx).ffill().loc[dates[0]:]
         h = len(s) // 2
-        out[str(n)] = {**_stats(s), "h1": _stats(s.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(s.iloc[h:]).get("cagr_pct")}
+        out[k] = {**_stats(s), "h1": _stats(s.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(s.iloc[h:]).get("cagr_pct")}
     bs = bench.reindex(idx).ffill().loc[dates[0]:]
     h = len(bs) // 2
     out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct")}
@@ -495,7 +511,8 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     close, dv, changed, pending = update_prices(key, syms, yf_download, now_utc)
     _probe[f"{key}_prices"] = {"have": int(close.shape[1]), "pending": pending, "rows": int(close.shape[0])}
     old = fu._load(out_path, {})
-    if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old:
+    if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old \
+            and "16_grp" in ((old.get("bt") or {}).get("counts") or {}):
         return
     if bench_sym not in close.columns or close.shape[0] < 80:
         return
@@ -551,12 +568,12 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     if pending:
         out["notes"]["pending"] = f"還有 {pending} 檔在下載，族群資料會越來越完整"
     # 回測：一天一次
-    if old.get("bt") and old.get("bt_date") == out["data_date"]:
+    if old.get("bt") and old.get("bt_date") == out["data_date"] and "16_grp" in (old["bt"].get("counts") or {}):
         out["bt"], out["bt_date"], out["lev"] = old["bt"], old["bt_date"], old.get("lev")
     elif not pending:
         try:
             out["bt"] = {k: rotation_backtest(close, dv, bench, m, key) for k, m in members.items()}
-            out["bt"]["counts"] = count_backtest(close, dv, bench, key)
+            out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"])
             out["bt_date"] = out["data_date"]
             out["bt_note"] = "名單是現在的股票，沒有包含過去下市或掉出門檻的股票（倖存者偏差），實際會比回測差一些。"
         except Exception:
