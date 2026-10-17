@@ -33,9 +33,7 @@ benchmark = "SPY"   # 比較相對強弱用的大盤基準
 # 其餘名額由程式從候選池挑分數最高的補滿，之後依汰弱留強規則自動換股。
 # 自動挑的名單存在 state/us/portfolio.json，網頁上會標「自動」。
 [us.holdings]
-tickers = [
-  "SOXL",
-]
+tickers = []
 target_count = 16   # 持股總檔數
 max_per_theme = 4   # 自動挑選時，每個主題最多幾檔，避免全押同一族群
 
