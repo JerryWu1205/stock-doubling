@@ -15,9 +15,12 @@ import traceback
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
+
+NY, TPE = ZoneInfo("America/New_York"), ZoneInfo("Asia/Taipei")
 
 HERE = Path(__file__).resolve().parent
 DATA_DIR = HERE / "docs" / "data"
@@ -392,12 +395,17 @@ def us_fundamentals(tickers, now_utc, budget=20):
     items = {}
     for t in tickers:
         c = cache.get(t)
-        if c and c.get("day") == today and c.get("v") == 2:
+        if c and c.get("day") == today and c.get("v") == 3:
             items[t] = c["data"]
             continue
         if budget <= 0:
             if c:
-                items[t] = c["data"]
+                d = c["data"]
+                if (c.get("v") or 1) < 2 and d.get("val"):  # 舊版快取的殖利率單位錯，先不顯示
+                    d = {**d, "val": {**d["val"], "dy": None}}
+                if (c.get("v") or 1) < 3 and d.get("earnings"):  # 舊版財報日可能差一天，先標成預估
+                    d = {**d, "earnings": {**d["earnings"], "est": True}}
+                items[t] = d
             continue
         budget -= 1
         it = {}
@@ -451,10 +459,19 @@ def us_fundamentals(tickers, now_utc, budget=20):
                 it["est"] = est
             try:
                 cal = tk.calendar or {}
+                # 財報日：用美東時間算日期（電腦在台北，直接轉日期會把盤後公布的算成隔天）
+                ts = info.get("earningsTimestampStart") or info.get("earningsTimestamp")
                 ed = cal.get("Earnings Date") if isinstance(cal, dict) else None
-                if ed:
+                if ts and ts > _time.time() - 86400:
+                    et = datetime.fromtimestamp(ts, NY)
+                    e = {"date": et.date().isoformat(), "est": bool(info.get("isEarningsDateEstimate", True))}
+                    if not e["est"] and (et.hour, et.minute) != (0, 0):
+                        e["when"] = "盤前" if et.hour < 10 else "盤後" if et.hour >= 16 else "盤中"
+                        e["tw_time"] = datetime.fromtimestamp(ts, TPE).strftime("%m/%d %H:%M")
+                    it["earnings"] = e
+                elif ed:
                     d0 = ed[0] if isinstance(ed, (list, tuple)) else ed
-                    it["earnings"] = {"date": str(pd.Timestamp(d0).date())}
+                    it["earnings"] = {"date": str(pd.Timestamp(d0).date()), "est": True}
                 exd = cal.get("Ex-Dividend Date") if isinstance(cal, dict) else None
                 if exd and str(pd.Timestamp(exd).date()) >= today:
                     it["exdiv"] = {"date": str(pd.Timestamp(exd).date())}
@@ -465,7 +482,7 @@ def us_fundamentals(tickers, now_utc, budget=20):
             if c:
                 items[t] = c["data"]
             continue
-        cache[t] = {"day": today, "v": 2, "data": it}
+        cache[t] = {"day": today, "v": 3, "data": it}
         items[t] = it
         _time.sleep(0.3)
     _save(path, cache, compact=True)
@@ -513,7 +530,7 @@ def run(cfg_key, tickers, yf_download, now_utc, force=False, dash=True):
     # 美股分批更新：快取裡還有今天沒更新到的就繼續跑
     uc = _load(STATE / "us" / "fund_cache.json", {}) if cfg_key == "us" else {}
     us_pending = cfg_key == "us" and any(
-        (uc.get(t) or {}).get("v") != 2 or (uc.get(t) or {}).get("day") != date.today().isoformat()
+        (uc.get(t) or {}).get("v") != 3 or (uc.get(t) or {}).get("day") != date.today().isoformat()
         for t in tickers)
     if force or age_h >= (6 if cfg_key == "tw" else 20) or us_pending:
         try:

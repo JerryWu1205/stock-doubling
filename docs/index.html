@@ -574,8 +574,15 @@ function upcoming() {
       if (!keep.has(tk)) continue;
       const n = data.names?.[tk] || allItems().find(i => i.ticker === tk)?.name || "";
       const who = n ? `${tk} ${n}` : tk;
-      if (f.earnings?.date && !ev.some(e => e.date === f.earnings.date && (e.tickers || []).includes(tk)))
-        ev.push({ date: f.earnings.date, time: "", title: `${who} 財報`, why: "財報前後波動通常變大", tickers: [tk] });
+      if (f.earnings?.date) {
+        // 確定的財報有台北時間；預估的只有美東日期
+        const E = f.earnings, tw = E.tw_time && !E.est;
+        const d = tw ? `${E.date.slice(0, 4)}-${E.tw_time.slice(0, 2)}-${E.tw_time.slice(3, 5)}` : E.date;
+        const near = x => Math.abs(Date.parse(x) - Date.parse(d)) <= 86400e3;
+        if (!ev.some(e => near(e.date) && (e.tickers || []).includes(tk)))
+          ev.push({ date: d, time: tw ? E.tw_time.slice(6) : "", time_tbd: !!E.est,
+            title: `${who} 財報${E.est ? "（日期是預估，公司還沒公告）" : E.when ? `（美東${E.when}）` : ""}`, why: "財報前後波動通常變大", tickers: [tk] });
+      }
       if (f.exdiv?.date)
         ev.push({ date: f.exdiv.date, time: "", title: `${who} ${exKind(f.exdiv.kind)}`,
           why: f.exdiv.cash ? `現金股利 ${f.exdiv.cash} 元` : "除權息當天股價會扣掉配發的金額", tickers: [] });
@@ -601,11 +608,12 @@ function renderDashChart() {
   if (!d) { box.hidden = true; box.innerHTML = ""; return; }
   box.hidden = false;
   const h = d.hist;
-  box.innerHTML = `<div class="hd2"><b>${esc(d.label)}</b>${h ? `<div class="seg" style="margin:0;flex:none;width:150px">${[["1y", "1 年"], ["5y", "5 年"]].map(([k, l]) =>
+  box.innerHTML = `<div class="hd2"><b>${esc(d.label)}</b>${h ? `<div class="seg" style="margin:0;flex:none;width:240px">${[["1m", "1 月"], ["6m", "6 月"], ["1y", "1 年"], ["5y", "5 年"]].map(([k, l]) =>
     `<button data-dr="${k}" aria-pressed="${k === dashRange}">${l}</button>`).join("")}</div>` : ""}</div><div class="cline"></div>
-    <div class="note">${d.note ? esc(d.note) + "。" : ""}${h ? (dashRange === "5y" ? "5 年用週線。" : "近一年日線。") : "這項從開始記錄那天起累積，資料還不多。"}</div>`;
+    <div class="note">${d.note ? esc(d.note) + "。" : ""}${h ? (dashRange === "5y" ? "5 年用週線。" : "日線。") : "這項從開始記錄那天起累積，資料還不多。"}</div>`;
   dashView = { charts: [] };
-  const s = h ? (dashRange === "5y" ? h.w : h.d) : { t: [], v: d.spark || [] };
+  const cut = { "1m": 22, "6m": 126 }[dashRange];
+  const s = h ? (dashRange === "5y" ? h.w : cut ? { t: h.d.t.slice(-cut), v: h.d.v.slice(-cut) } : h.d) : { t: [], v: d.spark || [] };
   if (!h) {  // 沒有日期的（期交所資料）：用最近幾天
     const n = s.v.length, today = new Date();
     s.t = s.v.map((_, i) => new Date(today - (n - 1 - i) * 86400e3).toISOString().slice(0, 10));
@@ -691,7 +699,7 @@ function fundHtml(tk) {
       <div><span>本益比</span><b>${fmtN(v.pe)}</b>${pctBar(v.pe_pct)}</div>
       <div><span>淨值比</span><b>${fmtN(v.pb, 2)}</b>${pctBar(v.pb_pct)}</div>
       <div><span>殖利率</span><b>${v.dy == null ? "–" : v.dy.toFixed(2) + "%"}</b>${pctBar(v.dy_pct, true)}</div></div>
-      ${v.fpe != null ? `<div class="note">預估本益比 ${fmtN(v.fpe)}</div>` : ""}
+      ${v.fpe != null ? `<div class="note">預估本益比 ${fmtN(v.fpe)}（用下一個完整會計年度的預估 EPS 算，和網站常見的「未來 12 個月」算法不同，成長股會看起來比較低）</div>` : ""}
       <div class="note">${n ? `歷史位置用過去 ${n} ${v.hist_months ? "個月" : "天"}的資料${n < 24 && v.hist_months ? "（還在累積）" : ""}` : "歷史位置資料還在累積"}</div>`);
   }
   if (f.margin || f.sbl) {
@@ -717,7 +725,7 @@ function fundHtml(tk) {
     const px = o.spot;
     const rel = k => k == null || !px ? "" : `（${fmtP1((k / px - 1) * 100)}）`;
     out.push(`<h3>期權（${esc(o.move_exp || "")} 到期）</h3><div class="kv">
-      <div><span>賣權/買權未平倉</span><b>${fmtN(o.pc_oi, 2)}</b><span>${o.pc_oi == null ? "" : o.pc_oi >= 1.5 ? "避險多・可能見底" : o.pc_oi <= 0.5 ? "很樂觀・小心過熱" : "正常"}</span></div>
+      <div><span>近月賣權/買權未平倉</span><b>${fmtN(o.pc_oi, 2)}</b><span>${o.pc_oi == null ? "" : o.pc_oi >= 1.5 ? "避險多・可能見底" : o.pc_oi <= 0.5 ? "很樂觀・小心過熱" : "正常"}</span></div>
       <div><span>預期漲跌幅</span><b>±${fmtN(o.move_pct)}%</b><span>${o.iv != null ? `隱含波動 ${o.iv}%` : ""}${o.iv_pct != null ? `・位置 ${Math.round(o.iv_pct)}` : ""}</span></div>
       <div><span>最大痛點</span><b>${fmtPx(o.max_pain)}</b><span>${rel(o.max_pain)}</span></div></div>
       <div class="note">${o.call_wall != null ? `上方壓力（買權未平倉最多）${fmtPx(o.call_wall)}${rel(o.call_wall)}` : ""}${o.put_wall != null ? `・下方支撐（賣權未平倉最多）${fmtPx(o.put_wall)}${rel(o.put_wall)}` : ""}</div>
@@ -725,7 +733,7 @@ function fundHtml(tk) {
       ${(o.unusual || []).length ? `<div class="note">異常大量：${o.unusual.map(u => `${u.kind} ${fmtPx(u.strike)}（${esc(u.exp.slice(5))}）${u.vol.toLocaleString()} 口，未平倉 ${u.oi.toLocaleString()}`).join("；")}</div>` : ""}`);
   }
   const dates = [];
-  if (f.earnings?.date) dates.push(`下次財報 ${f.earnings.date}`);
+  if (f.earnings?.date) dates.push(`下次財報 ${f.earnings.est ? `${f.earnings.date}（預估，公司還沒公告）` : f.earnings.tw_time ? `台北 ${f.earnings.tw_time}（美東 ${f.earnings.date} ${f.earnings.when || ""}）` : f.earnings.date}`);
   if (f.exdiv?.date) dates.push(`${exKind(f.exdiv.kind)} ${f.exdiv.date}${f.exdiv.cash ? `（現金 ${f.exdiv.cash}）` : ""}`);
   if (dates.length) out.push(`<div class="note">${dates.join("・")}</div>`);
   return out.length ? `<div class="fund">${out.join("")}<div class="note">基本面只供參考，不算進分數。</div></div>` : "";
@@ -1595,8 +1603,8 @@ const GLOSS = {
   "券資比": "融券 ÷ 融資。偏高代表很多人看空，也可能出現軋空。",
   "目標價": "分析師給的 12 個月目標價平均，只是參考，常常追著股價調。",
   "EPS": "EPS（每股盈餘）：公司賺的錢 ÷ 股數。",
-  "賣權/買權未平倉": "Put/Call 比：買賣權留倉量的比例。很高＝大家在買保險避險（常在低點）；很低＝大家太樂觀（小心過熱）。",
-  "P/C": "Put/Call 比：賣權 ÷ 買權。高＝避險多、偏悲觀；低＝偏樂觀。極端值常是反向訊號。",
+  "賣權/買權未平倉": "只算 45 天內到期的選擇權（短線部位），和網站上算全部到期日的數字會不同。Put/Call 比：買賣權留倉量的比例。很高＝大家在買保險避險（常在低點）；很低＝大家太樂觀（小心過熱）。",
+  "P/C": "Put/Call 比：賣權 ÷ 買權。美股個股：高＝買保險避險多、偏悲觀；低＝偏樂觀，極端值常是反向訊號。台指的慣例相反（見台指 P/C 比）。",
   "預期漲跌幅": "從選擇權價格反推，市場預期到期前大概會漲跌多少 %（約 68% 機率落在這範圍）。",
   "隱含波動": "IV：選擇權價格隱含的未來波動率。越高＝市場越緊張；位置＝在過去一年裡的高低（0～100）。",
   "最大痛點": "Max Pain：到期時讓買選擇權的人賠最多的價格。結算前股價有時會被吸過去。",
@@ -1612,7 +1620,7 @@ const GLOSS = {
   "布蘭特原油": "國際油價基準（歐洲北海）。油價大漲推升通膨、利率預期，對科技股不利、對石油股有利。",
   "WTI 原油": "美國西德州原油價格，美國油價基準。",
   "台積電 ADR 溢價": "台積電在美國的 ADR 換算成台幣後，比台股股價貴多少。溢價擴大常代表外資看好、隔天台股偏強。",
-  "台指 P/C 比": "台指選擇權賣權 ÷ 買權未平倉。高＝避險多；低＝偏樂觀。",
+  "台指 P/C 比": "台指選擇權賣權 ÷ 買權未平倉（%）。台股的賣權多半是法人在「賣」（看撐），所以慣例是：比率高（100% 以上）偏多、比率低（80% 以下）偏保守；和美股個股的看法相反。",
   "外資台指期淨單": "外資在台指期的多單減空單口數。正＝偏多、負＝偏空（避險），常領先現貨方向。",
   "站上 50 日線": "這一群裡有幾 % 的股票在 50 日均線上面，越高代表這群普遍強（廣度）。",
   "資金淨流入": "這一群上漲日成交金額減下跌日成交金額，正＝資金流入。",

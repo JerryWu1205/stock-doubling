@@ -203,7 +203,7 @@ def tw_options(now_utc):
     try:
         rows = fu._fetch("taifex_inst_fut", f"{TAIFEX}/MarketDataOfMajorInstitutionalTradersDetailsOfFuturesContractsBytheDate")
         for r in rows or []:
-            name = str(fu._pick(r, "商品名稱", "ContractName", "Contract") or "")
+            name = str(fu._pick(r, "商品名稱", "ContractCode", "ContractName", "Contract", "商品代號") or "")
             who = str(fu._pick(r, "身份別", "身分別", "Item", "Identity") or "")
             if "臺股期貨" not in name and "台股期貨" not in name and name.strip() != "TX":
                 continue
