@@ -18,6 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import flows
 import fundamentals as fu
 
 HERE = Path(__file__).resolve().parent
@@ -386,7 +387,7 @@ def rotation_backtest(close, dv, bench, members, key, k_groups=3, k_each=3, step
             "rule": f"每 {step} 個交易日換一次：最強 {k_groups} 個族群、每族群最強 {k_each} 檔，等權重；含交易成本"}
 
 
-def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, groups=None):
+def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, groups=None, inst=None):
     """全市場（不是手挑的股票池）測持股檔數：每 step 天選相對強度＋資金流最高的前 N 檔（要站上 50 日線），等權重、含成本。
     另外把期間切成前後兩半，看結論是不是兩段都成立。"""
     rets = close.pct_change(fill_method=None).fillna(0).clip(-0.5, 1.0)
@@ -395,6 +396,8 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
     # 另外三種選法（都是 16 檔）：只看 3 個月漲幅、加族群強度、加族群強度但不看 1 個月
     gof = {t: g for g, ts in (groups or {}).items() for t in ts}
     variants = ["16_r63", "16_grp", "16_grp_no21"] if gof else ["16_r63"]
+    if inst is not None:
+        variants += ["16_inst"]
     keys = [str(n) for n in ns] + variants
     eq = {k: [1.0] for k in keys}
     prev = {k: set() for k in keys}
@@ -421,6 +424,10 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
             sc2 = (r63.rank(pct=True) * 0.6 + fl.rank(pct=True) * 0.4).dropna()
             gs2 = pd.Series([gr.get(gof.get(x), 0.5) for x in sc2.index], sc2.index)
             picks["16_grp_no21"] = list((sc2 * 0.8 + gs2 * 0.2).sort_values(ascending=False).index[:16])
+        if inst is not None:
+            # 外資＋投信近 20 天買賣超金額占成交金額的比例，排名；沒資料（上櫃）給中間值
+            ir = inst.iloc[t].reindex(sc.index).rank(pct=True).fillna(0.5)
+            picks["16_inst"] = list((sc * 0.8 + ir * 0.2).sort_values(ascending=False).index[:16])
         end = min(t + step, len(idx) - 1)
         for k in keys:
             pk = picks[k]
@@ -438,7 +445,8 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
     h = len(bs) // 2
     out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct")}
     out["rule"] = (f"全市場每 {step} 個交易日換一次：站上 50 日線的股票裡，近 3 月漲幅 45%＋近 1 月 30%＋資金流 25% 排名最高的前 N 檔，"
-                   "等權重、含交易成本；h1／h2 是前半段／後半段的年化")
+                   "等權重、含交易成本；h1／h2 是前半段／後半段的年化。16_r63＝只看 3 個月漲幅；16_grp＝加族群強度 20%；"
+                   "16_grp_no21＝加族群強度、不看 1 個月漲幅；16_inst＝加外資＋投信近 20 天買賣超 20%（只有上市股）")
     return out
 
 
@@ -511,8 +519,18 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     close, dv, changed, pending = update_prices(key, syms, yf_download, now_utc)
     _probe[f"{key}_prices"] = {"have": int(close.shape[1]), "pending": pending, "rows": int(close.shape[0])}
     old = fu._load(out_path, {})
-    if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old \
-            and "16_grp" in ((old.get("bt") or {}).get("counts") or {}):
+    # 台股三大法人個股買賣超：每輪補抓幾天，抓滿一年才拿來回測
+    inst_days, inst_ready = {}, True
+    if key == "tw" and close.shape[0] >= 80:
+        try:
+            inst_days = flows.update(CACHE / key, list(close.index[-250:]), probe=_probe)
+        except Exception:
+            _probe["tw_inst_error"] = traceback.format_exc()[-300:]
+        inst_ready = len(inst_days) >= 230
+        changed = changed or (_probe.get("tw_inst") or {}).get("new", 0) > 0
+    need_bt = "16_grp" not in ((old.get("bt") or {}).get("counts") or {}) or \
+        (key == "tw" and inst_ready and "16_inst" not in ((old.get("bt") or {}).get("counts") or {}))
+    if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
     if bench_sym not in close.columns or close.shape[0] < 80:
         return
@@ -568,12 +586,16 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     if pending:
         out["notes"]["pending"] = f"還有 {pending} 檔在下載，族群資料會越來越完整"
     # 回測：一天一次
-    if old.get("bt") and old.get("bt_date") == out["data_date"] and "16_grp" in (old["bt"].get("counts") or {}):
+    if old.get("bt") and old.get("bt_date") == out["data_date"] and not need_bt:
         out["bt"], out["bt_date"], out["lev"] = old["bt"], old["bt_date"], old.get("lev")
     elif not pending:
         try:
             out["bt"] = {k: rotation_backtest(close, dv, bench, m, key) for k, m in members.items()}
-            out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"])
+            inst = None
+            if key == "tw" and inst_ready:
+                nv = flows.net_value(inst_days, close, list(close.columns))
+                inst = nv.rolling(20, min_periods=15).sum() / dv.rolling(20).sum()
+            out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"], inst=inst)
             out["bt_date"] = out["data_date"]
             out["bt_note"] = "名單是現在的股票，沒有包含過去下市或掉出門檻的股票（倖存者偏差），實際會比回測差一些。"
         except Exception:
