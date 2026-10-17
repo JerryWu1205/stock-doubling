@@ -172,6 +172,16 @@ def expected_close_date(now_et):
     return d.date().isoformat()
 
 
+def minutes_until_next_open(now_utc):
+    """收盤確認後，到下一個平日開盤後 45 分鐘（第一筆盤中資料應該出現）為止都不算過期。"""
+    t = now_utc.astimezone(ET)
+    d = t.date() if t.time() < time(9, 30) else (pd.Timestamp(t.date()) + pd.Timedelta(days=1)).date()
+    while d.weekday() >= 5:
+        d = (pd.Timestamp(d) + pd.Timedelta(days=1)).date()
+    nxt = datetime.combine(d, time(10, 15), tzinfo=ET)
+    return int((nxt - t).total_seconds() // 60)
+
+
 def date_lt(d, iso):
     return d.isoformat() < iso
 
@@ -480,7 +490,7 @@ def build_output(cfg, results, errors, mode, session, now_utc, swaps, weakest, d
         "generated_at_et": now_utc.astimezone(ET).strftime("%Y-%m-%d %H:%M ET"),
         "data_date": data_date,
         # 網頁用：超過這個分鐘數沒更新就顯示「資料過期」
-        "stale_after_minutes": 40 if mode == "intraday" else 60 * 30,
+        "stale_after_minutes": 40 if mode == "intraday" else minutes_until_next_open(now_utc),
         "benchmark": cfg["benchmark"],
         "weights": cfg["weights"],
         "swap_rule": {"gap": cfg["swap_gap"], "days": need},
