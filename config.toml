@@ -1,0 +1,50 @@
+# 股票翻倍計畫：掃描器設定檔
+# 用記事本打開就能改。改完存檔，下一次掃描自動生效。
+# 代號用 Yahoo Finance 的寫法（例如台股是 2330.TW，美股直接寫代號）。
+
+# 比較相對強弱用的大盤基準
+benchmark = "SPY"
+
+# 輸出位置（相對於這個資料夾）。docs 資料夾就是 GitHub Pages 的網頁。
+output_path = "docs/data.json"
+
+# 汰弱留強規則：候選股分數比最弱的持股高出 swap_gap 分，
+# 連續 swap_days 個「收盤確認」交易日，才發出換股訊號。
+swap_gap = 15
+swap_days = 3
+
+# 評分權重（百分比）。risk 是扣分項：風險越高扣越多，最多扣 risk 分。
+[weights]
+relative_strength = 30
+money_flow = 25
+trend = 20
+rebound = 15
+risk = 10
+
+# ───── 持股（目標 16 檔）─────
+# tickers：你自己指定的持股，程式不會自動換掉，只會發訊號。想加就直接加在這裡。
+# 其餘名額由程式從候選池挑分數最高的補滿，之後依汰弱留強規則自動換股。
+# 自動挑的名單存在 state/portfolio.json，網頁上會標「自動」。
+[holdings]
+tickers = [
+  "SOXL",
+]
+target_count = 16   # 持股總檔數
+max_per_theme = 4   # 自動挑選時，每個主題最多幾檔，避免全押同一族群
+
+# ───── 候選池 ─────
+# 可以新增或刪除代號、主題。從這裡刪掉的代號，若在自動持股中也會一併移除。
+[candidates]
+"半導體" = ["NVDA", "AMD", "AVGO", "TSM", "MU", "ASML", "AMAT", "LRCX", "KLAC", "MRVL",
+          "ARM", "QCOM", "INTC", "TXN", "ADI", "NXPI", "ON", "MPWR", "TER", "ALAB", "SMCI"]
+"光通訊" = ["COHR", "LITE", "CIEN", "AAOI", "FN", "CRDO", "ANET", "GLW", "CLS", "MTSI"]
+"電力與核能" = ["VST", "CEG", "GEV", "OKLO", "SMR", "CCJ", "NRG", "TLN", "BWXT", "LEU",
+             "NNE", "ETN", "VRT", "PWR"]
+"新雲端" = ["CRWV", "NBIS", "IREN", "CIFR", "APLD", "WULF", "CORZ", "ORCL"]
+"軟體" = ["PLTR", "MSFT", "CRM", "NOW", "SNOW", "DDOG", "CRWD", "NET", "PANW", "ZS",
+        "MDB", "APP", "SHOP", "ADBE"]
+"石油" = ["XOM", "CVX", "OXY", "COP", "SLB", "EOG", "DVN", "HAL"]
+
+# 持股的主題標籤（選填）。沒寫的話，若該代號也在候選池裡就沿用那邊的主題。
+[holding_themes]
+"SOXL" = "半導體"
