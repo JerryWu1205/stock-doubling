@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 
 import flows
+import twhist
 import fundamentals as fu
 
 HERE = Path(__file__).resolve().parent
@@ -387,7 +388,11 @@ def rotation_backtest(close, dv, bench, members, key, k_groups=3, k_each=3, step
             "rule": f"每 {step} 個交易日換一次：最強 {k_groups} 個族群、每族群最強 {k_each} 檔，等權重；含交易成本"}
 
 
-def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, groups=None, inst=None):
+def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, groups=None, inst=None,
+                   factors=None, excl=None, rate=None):
+    """factors：{名稱: DataFrame(日期 × 代號)} 數值越大越好，排名後占 20% 加進分數；
+    excl：{名稱: DataFrame(日期 × 代號) 布林}，True 的那天不能選；
+    rate：美國 10 年債殖利率（%），用來測「殖利率 20 天急升 0.25 個百分點以上就降到半倉」。"""
     """全市場（不是手挑的股票池）測持股檔數：每 step 天選相對強度＋資金流最高的前 N 檔（要站上 50 日線），等權重、含成本。
     另外把期間切成前後兩半，看結論是不是兩段都成立。"""
     rets = close.pct_change(fill_method=None).fillna(0).clip(-0.5, 1.0)
@@ -396,8 +401,15 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
     # 另外三種選法（都是 16 檔）：只看 3 個月漲幅、加族群強度、加族群強度但不看 1 個月
     gof = {t: g for g, ts in (groups or {}).items() for t in ts}
     variants = ["16_r63", "16_grp", "16_grp_no21"] if gof else ["16_r63"]
+    factors = dict(factors or {})
     if inst is not None:
-        variants += ["16_inst"]
+        factors["16_inst"] = inst
+    excl = excl or {}
+    variants += list(factors) + list(excl) + ["16_iv"] + (["16_rate"] if rate is not None else [])
+    vol = rets.rolling(20).std()
+    def at(df, t):
+        """月資料或缺日資料：取 t 那天以前最近一筆。"""
+        return df.loc[:idx[t]].iloc[-1] if len(df.loc[:idx[t]]) else pd.Series(dtype=float)
     keys = [str(n) for n in ns] + variants
     eq = {k: [1.0] for k in keys}
     prev = {k: set() for k in keys}
@@ -424,14 +436,33 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
             sc2 = (r63.rank(pct=True) * 0.6 + fl.rank(pct=True) * 0.4).dropna()
             gs2 = pd.Series([gr.get(gof.get(x), 0.5) for x in sc2.index], sc2.index)
             picks["16_grp_no21"] = list((sc2 * 0.8 + gs2 * 0.2).sort_values(ascending=False).index[:16])
-        if inst is not None:
-            # 外資＋投信近 20 天買賣超金額占成交金額的比例，排名；沒資料（上櫃）給中間值
-            ir = inst.iloc[t].reindex(sc.index).rank(pct=True).fillna(0.5)
-            picks["16_inst"] = list((sc * 0.8 + ir * 0.2).sort_values(ascending=False).index[:16])
+        for name, f in factors.items():
+            # 例如外資＋投信近 20 天買賣超占成交金額比例、月營收年增率；沒資料的給中間值
+            fr = at(f, t).reindex(sc.index).rank(pct=True).fillna(0.5)
+            picks[name] = list((sc * 0.8 + fr * 0.2).sort_values(ascending=False).index[:16])
+        for name, m in excl.items():
+            bad = at(m, t).reindex(sc.index).fillna(False).astype(bool)
+            picks[name] = list(sc[~bad].sort_values(ascending=False).index[:16])
+        picks["16_iv"] = picks["16"]
+        if rate is not None:
+            picks["16_rate"] = picks["16"]
+        w_iv = 1 / vol.iloc[t].reindex(picks["16"]).replace(0, np.nan)
+        w_iv = (w_iv / w_iv.sum()).fillna(0) if w_iv.notna().any() else None
+        half = False
+        if rate is not None:
+            rr = rate.loc[:idx[t]].dropna()
+            half = len(rr) > 21 and rr.iloc[-1] - rr.iloc[-21] >= 0.25
         end = min(t + step, len(idx) - 1)
         for k in keys:
             pk = picks[k]
-            seg = (1 + rets.iloc[t + 1: end + 1][pk].mean(axis=1)).prod() if pk else 1.0
+            seg_r = rets.iloc[t + 1: end + 1][pk]
+            if k == "16_iv" and w_iv is not None:
+                daily = (seg_r * w_iv.reindex(pk).to_numpy()).sum(axis=1)
+            else:
+                daily = seg_r.mean(axis=1)
+            if k == "16_rate" and half:
+                daily = daily * 0.5
+            seg = (1 + daily).prod() if pk else 1.0
             turn = len(set(pk) ^ prev[k]) / max(len(pk), 1)
             eq[k].append(eq[k][-1] * seg * (1 - cost * turn))
             prev[k] = set(pk)
@@ -446,7 +477,9 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
     out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct")}
     out["rule"] = (f"全市場每 {step} 個交易日換一次：站上 50 日線的股票裡，近 3 月漲幅 45%＋近 1 月 30%＋資金流 25% 排名最高的前 N 檔，"
                    "等權重、含交易成本；h1／h2 是前半段／後半段的年化。16_r63＝只看 3 個月漲幅；16_grp＝加族群強度 20%；"
-                   "16_grp_no21＝加族群強度、不看 1 個月漲幅；16_inst＝加外資＋投信近 20 天買賣超 20%（只有上市股）")
+                   "16_grp_no21＝加族群強度、不看 1 個月漲幅；16_inst＝加外資＋投信近 20 天買賣超 20%（只有上市股）；"
+                   "16_rev＝加月營收年增率 20%；16_val＝加本益比便宜程度 20%；16_pe＝排除本益比最高 10% 或虧損的；"
+                   "16_iv＝同 16 檔但波動小的放多一點（依 20 天波動反比配重）；16_rate＝10 年債殖利率 20 天升 0.25 個百分點以上時半倉")
     return out
 
 
@@ -527,9 +560,29 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         except Exception:
             _probe["tw_inst_error"] = traceback.format_exc()[-300:]
         inst_ready = len(inst_days) >= 230
+        try:  # 網頁用：每檔外資、投信近 5 天、20 天買賣超（張）
+            recent = sorted(inst_days)[-20:]
+            if recent:
+                f5 = pd.concat([inst_days[d] for d in recent[-5:]]).groupby(level=0).sum() / 1000
+                f20 = pd.concat([inst_days[d] for d in recent]).groupby(level=0).sum() / 1000
+                f5 = f5.reindex(f20.index).fillna(0)
+                fu._save(DATA_DIR / "inst" / "tw.json", {
+                    "date": recent[-1].date().isoformat(), "days": len(recent),
+                    "items": {c: [int(f5.at[c, "fi"]), int(f20.at[c, "fi"]), int(f5.at[c, "it"]), int(f20.at[c, "it"])]
+                              for c in f20.index if c in uni}})
+        except Exception:
+            _probe["tw_inst_page"] = traceback.format_exc()[-300:]
         changed = changed or (_probe.get("tw_inst") or {}).get("new", 0) > 0
-    need_bt = "16_grp" not in ((old.get("bt") or {}).get("counts") or {}) or \
-        (key == "tw" and inst_ready and "16_inst" not in ((old.get("bt") or {}).get("counts") or {}))
+    rev = pe = None
+    hist_ready = True
+    if key == "tw" and close.shape[0] >= 80:
+        try:
+            rev, pe, hist_ready = twhist.update(CACHE / key, list(close.index[-250:]), probe=_probe)
+        except Exception:
+            _probe["tw_hist_error"] = traceback.format_exc()[-300:]
+    oc = (old.get("bt") or {}).get("counts") or {}
+    need_bt = "16_iv" not in oc or (key == "tw" and inst_ready and "16_inst" not in oc) or \
+        (key == "tw" and hist_ready and rev is not None and "16_rev" not in oc)
     if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
     if bench_sym not in close.columns or close.shape[0] < 80:
@@ -595,7 +648,24 @@ def _run(key, cfg, yf_download, now_utc, in_session):
             if key == "tw" and inst_ready:
                 nv = flows.net_value(inst_days, close, list(close.columns))
                 inst = nv.rolling(20, min_periods=15).sum() / dv.rolling(20).sum()
-            out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"], inst=inst)
+            factors, excl = {}, {}
+            if rev is not None and hist_ready:
+                factors["16_rev"] = rev.reindex(columns=close.columns)
+            if pe is not None and hist_ready:
+                pe_ = pe.reindex(columns=close.columns).where(lambda x: x > 0)
+                factors["16_val"] = -pe_
+                excl["16_pe"] = pe_.ge(pe_.quantile(0.9, axis=1), axis=0)
+            rate = None
+            try:
+                tn = yf_download(["^TNX"], period="2y", interval="1d")
+                rate = (tn["^TNX"]["Close"] if "^TNX" in tn else tn["Close"]).dropna()
+                rate.index = pd.to_datetime(rate.index)
+                if rate.index.tz is not None:
+                    rate.index = rate.index.tz_localize(None)
+            except Exception:
+                _probe[f"{key}_tnx"] = traceback.format_exc()[-300:]
+            out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"], inst=inst,
+                                                 factors=factors, excl=excl, rate=rate)
             out["bt_date"] = out["data_date"]
             out["bt_note"] = "名單是現在的股票，沒有包含過去下市或掉出門檻的股票（倖存者偏差），實際會比回測差一些。"
         except Exception:

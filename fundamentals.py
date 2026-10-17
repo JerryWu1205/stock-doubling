@@ -416,6 +416,10 @@ def us_fundamentals(tickers, now_utc, budget=20):
             px_ = info.get("currentPrice") or info.get("regularMarketPrice")
             rate = info.get("dividendRate") or info.get("trailingAnnualDividendRate")
             dy = rate / px_ if rate and px_ else None
+            if info.get("heldPercentInstitutions") is not None:
+                it["own"] = {"inst": _r(info["heldPercentInstitutions"] * 100),
+                             "insider": _r((info.get("heldPercentInsiders") or 0) * 100),
+                             "short": _r((info.get("shortPercentOfFloat") or 0) * 100) if info.get("shortPercentOfFloat") is not None else None}
             it["val"] = {"pe": _r(info.get("trailingPE")), "fpe": _r(info.get("forwardPE")),
                          "pb": _r(info.get("priceToBook")), "dy": _r(dy * 100) if dy else None}
             try:
@@ -502,6 +506,26 @@ def us_fundamentals(tickers, now_utc, budget=20):
         for i, k in enumerate(("pe", "pb", "dy")):
             v[f"{k}_pct"] = _pct_rank([s[i] for s in series], v.get(k))
         v["hist_days"] = len(series)
+    # 分析師 EPS 預估的上修／下修：每天記今年、明年 EPS 預估，和約 4 週前比
+    eh = STATE / "us" / "est_hist.json"
+    eph = _load(eh, {})
+    eph[today] = {t: [(i.get("est") or {}).get("eps_0y"), (i.get("est") or {}).get("eps_+1y"),
+                      (i.get("own") or {}).get("inst")] for t, i in items.items()}
+    for d in sorted(eph)[:-400]:
+        del eph[d]
+    _save(eh, eph)
+    past = [d for d in sorted(eph) if d <= (date.fromisoformat(today) - timedelta(days=28)).isoformat()]
+    if past:
+        ref = eph[past[-1]]
+        for t, it in items.items():
+            e, o = it.get("est"), ref.get(t)
+            if not e or not o:
+                continue
+            for j, k in ((0, "eps_0y"), (1, "eps_+1y")):
+                if o[j] and e.get(k) and abs(o[j]) > 0.01:
+                    e[f"{k}_rev4w"] = _r((e[k] / o[j] - 1) * 100 * (1 if o[j] > 0 else -1))
+            if it.get("own") and o[2] is not None and it["own"].get("inst") is not None:
+                it["own"]["inst_chg4w"] = _r(it["own"]["inst"] - o[2])
     return {"market": "us", "generated_at": now_utc.isoformat(timespec="seconds").replace("+00:00", "Z"),
             "items": items,
             "notes": {"val": "本益比（近四季）、預估本益比、淨值比、殖利率；歷史位置從開始記錄那天起累積",

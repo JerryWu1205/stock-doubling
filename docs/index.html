@@ -545,6 +545,7 @@ function renderTodo() {
 }
 
 // 國際大事、行事曆：由每小時的新聞巡檢寫進 data/news.json、data/events.json
+let instTW = null;
 let dash = null, fund = null, opt = null, optTW = null, exitsBt = null, news = null, events = null, newsOpen = false, eventsOpen = false, ext = null;
 async function loadExtras() {
   // 美股盤前盤後價格（只當參考）；一小時內的才顯示
@@ -557,6 +558,7 @@ async function loadExtras() {
   try { opt = await getJson(`data/options/${market}.json?t=` + Date.now()); } catch { opt = null; }
   try { const P = await getJson(`data/perf/${market}.json?t=` + Date.now()); exitsBt = P.exits || null; } catch { exitsBt = null; }
   try { optTW = market === "tw" ? opt : await getJson("data/options/tw.json?t=" + Date.now()); } catch { optTW = null; }
+  try { instTW = market === "tw" ? await getJson("data/inst/tw.json?t=" + Date.now()) : null; } catch { instTW = null; }
   try { news = await getJson("data/news.json?t=" + Date.now()); } catch { news = null; }
   try { events = await getJson("data/events.json?t=" + Date.now()); } catch { events = null; }
   renderDash(); renderNews(); renderEvents();
@@ -693,6 +695,21 @@ function fundHtml(tk) {
       <div><span>${tw ? "月增 MoM" : "季增 QoQ"}</span><b class="${clsOf(tw ? r.mom : r.qoq)}">${fmtP1(tw ? r.mom : r.qoq)}</b></div>
       <div><span>${tw ? "今年累計年增" : "營收"}</span><b class="${tw ? clsOf(r.cum_yoy) : ""}">${tw ? fmtP1(r.cum_yoy) : fmtBig(r.rev)}</b></div></div>`);
   }
+  const ins = tw ? instTW?.items?.[tk] : null;
+  if (ins) {
+    const z = x => `<b class="${clsOf(x)}">${x > 0 ? "+" : ""}${x.toLocaleString()}</b>`;
+    out.push(`<h3>三大法人買賣超（張，至 ${esc((instTW.date || "").slice(5).replace("-", "/"))}）</h3><div class="kv">
+      <div><span>外資 5 日</span>${z(ins[0])}<span>20 日 ${ins[1] > 0 ? "+" : ""}${ins[1].toLocaleString()}</span></div>
+      <div><span>投信 5 日</span>${z(ins[2])}<span>20 日 ${ins[3] > 0 ? "+" : ""}${ins[3].toLocaleString()}</span></div></div>
+      <div class="note">只有上市股票；外資不含外資自營商。${ins[0] > 0 && ins[2] > 0 ? "外資、投信同步買超。" : ins[0] < 0 && ins[2] < 0 ? "外資、投信同步賣超，留意。" : ""}</div>`);
+  }
+  if (f.own) {
+    const o = f.own;
+    out.push(`<h3>持股結構</h3><div class="kv">
+      <div><span>機構持股</span><b>${fmtN(o.inst, 1)}%</b><span class="${clsOf(o.inst_chg4w)}">${o.inst_chg4w == null ? "" : `4 週 ${o.inst_chg4w > 0 ? "+" : ""}${fmtN(o.inst_chg4w, 1)}`}</span></div>
+      <div><span>內部人持股</span><b>${fmtN(o.insider, 1)}%</b></div>
+      ${o.short != null ? `<div><span>放空比例</span><b>${fmtN(o.short, 1)}%</b><span>${o.short >= 10 ? "偏高・可能軋空" : ""}</span></div>` : ""}</div>`);
+  }
   if (f.val) {
     const v = f.val, n = v.hist_months || v.hist_days || 0;
     out.push(`<h3>估值</h3><div class="kv">
@@ -717,6 +734,7 @@ function fundHtml(tk) {
     out.push(`<h3>分析師預估${e.analysts ? `（${e.analysts} 位）` : ""}</h3><div class="kv">
       <div><span>目標價（平均）</span><b>${fmtPx(e.target)}</b><span class="${clsOf(up)}">${up == null ? "" : "空間 " + fmtP1(up)}</span></div>
       <div><span>本季 EPS 預估</span><b>${fmtN(e.eps_0q, 2)}</b><span class="${clsOf(e.eps_0q_g)}">${e.eps_0q_g == null ? "" : "年增 " + fmtP1(e.eps_0q_g)}</span></div>
+      ${e["eps_+1y_rev4w"] != null ? `<div><span>EPS 預估 4 週修正</span><b class="${clsOf(e["eps_+1y_rev4w"])}">${fmtP1(e["eps_+1y_rev4w"])}</b><span>${e["eps_+1y_rev4w"] > 1 ? "上修中" : e["eps_+1y_rev4w"] < -1 ? "下修中" : "持平"}</span></div>` : ""}
       <div><span>明年 EPS 預估</span><b>${fmtN(e["eps_+1y"], 2)}</b><span class="${clsOf(e["eps_+1y_g"])}">${e["eps_+1y_g"] == null ? "" : "年增 " + fmtP1(e["eps_+1y_g"])}</span></div></div>
       <div class="note">${e.rating ? `評等：${RT[e.rating] || esc(e.rating)}・` : ""}${e.target_lo != null ? `目標價區間 ${fmtPx(e.target_lo)}～${fmtPx(e.target_hi)}` : ""}${e.rev_0q ? `・本季營收預估 ${fmtBig(e.rev_0q)}${e.rev_0q_g != null ? `（年增 ${fmtP1(e.rev_0q_g)}）` : ""}` : ""}</div>`);
   }
@@ -1601,6 +1619,13 @@ const GLOSS = {
   "融券餘額": "借股票來放空的張數。很高時若股價上漲，空方回補會推升股價（軋空）。",
   "借券賣出": "法人借股票來賣（放空或避險）的張數，增加通常偏空。",
   "券資比": "融券 ÷ 融資。偏高代表很多人看空，也可能出現軋空。",
+  "外資 5 日": "外資（不含外資自營商）近 5 個交易日買賣超張數，正＝買超。外資連續買超常是台股資金流入最直接的訊號。",
+  "投信 5 日": "投信（國內基金）近 5 個交易日買賣超張數。投信買超常集中在中小型股，作帳行情時特別明顯。",
+  "三大法人": "外資、投信、自營商。這裡只看外資和投信，自營商多是短線避險。",
+  "機構持股": "基金、退休金等機構持有的比例；4 週變化看機構是在加碼還是減碼（季報 13F 更新時才會大動）。",
+  "內部人持股": "董監事、經理人持有的比例。",
+  "放空比例": "流通股裡被放空的比例。10% 以上算高，股價一漲空方被迫回補，可能軋空。",
+  "EPS 預估 4 週修正": "分析師對明年 EPS 的平均預估，和 4 週前比改了多少。持續上修的股票通常比較強，下修則要小心。",
   "目標價": "分析師給的 12 個月目標價平均，只是參考，常常追著股價調。",
   "EPS": "EPS（每股盈餘）：公司賺的錢 ÷ 股數。",
   "賣權/買權未平倉": "只算 45 天內到期的選擇權（短線部位），和網站上算全部到期日的數字會不同。Put/Call 比：買賣權留倉量的比例。很高＝大家在買保險避險（常在低點）；很低＝大家太樂觀（小心過熱）。",
