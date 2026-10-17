@@ -471,12 +471,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     members = {"ind": {}, "theme": {}}
     for t in tks:
         members["ind"].setdefault(uni[t]["ind"], []).append(t)
-    themes = {**(US_THEMES if key == "us" else TW_THEMES)}
-    for t, th in cfg.get("themes", {}).items():  # 設定檔裡的主題也算進來
-        if th and th not in themes:
-            themes[th] = []
-        if th and t not in themes[th]:
-            themes[th] = themes[th] + [t]
+    themes = US_THEMES if key == "us" else TW_THEMES  # 設定檔的主題和這裡重疊，不另外合併，避免同一個題材出現兩次
     members["theme"] = {g: [t for t in v if t in close.columns] for g, v in themes.items()}
     res = {}
     for kind, mem in members.items():

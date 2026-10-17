@@ -326,8 +326,8 @@ def tw_exdividend():
     for r in _fetch("tpex_exdiv", f"{TPEX}/tpex_exright_prepost") or []:
         code = str(_pick(r, "SecuritiesCompanyCode", "代號") or "").strip()
         if code:
-            out.setdefault(code, {"date": _roc_to_iso(_pick(r, "ExRightsExDividendDate", "除權息日期", "Date")),
-                                  "kind": _pick(r, "ExRightsExDividendType", "除權息"),
+            out.setdefault(code, {"date": _roc_to_iso(_pick(r, "ExRrightsExDividendDate", "ExRightsExDividendDate", "除權息日期", "Date")),
+                                  "kind": _pick(r, "ExRrightsExDividend", "ExRightsExDividend", "除權息"),
                                   "cash": _num(_pick(r, "CashDividend", "現金股利"))})
     return out
 
@@ -381,7 +381,7 @@ def us_fundamentals(tickers, now_utc, budget=20):
     items = {}
     for t in tickers:
         c = cache.get(t)
-        if c and c.get("day") == today:
+        if c and c.get("day") == today and c.get("v") == 2:
             items[t] = c["data"]
             continue
         if budget <= 0:
@@ -393,9 +393,10 @@ def us_fundamentals(tickers, now_utc, budget=20):
         try:
             tk = yf.Ticker(t)
             info = tk.info or {}
-            dy = info.get("dividendYield")
-            if dy is not None and dy > 1:  # 新版 yfinance 已經是百分比
-                dy = dy / 100
+            # 殖利率：用每股股利 ÷ 股價自己算，yfinance 的 dividendYield 各版本單位不一致
+            px_ = info.get("currentPrice") or info.get("regularMarketPrice")
+            rate = info.get("dividendRate") or info.get("trailingAnnualDividendRate")
+            dy = rate / px_ if rate and px_ else None
             it["val"] = {"pe": _r(info.get("trailingPE")), "fpe": _r(info.get("forwardPE")),
                          "pb": _r(info.get("priceToBook")), "dy": _r(dy * 100) if dy else None}
             try:
@@ -453,7 +454,7 @@ def us_fundamentals(tickers, now_utc, budget=20):
             if c:
                 items[t] = c["data"]
             continue
-        cache[t] = {"day": today, "data": it}
+        cache[t] = {"day": today, "v": 2, "data": it}
         items[t] = it
         _time.sleep(0.3)
     _save(path, cache, compact=True)
@@ -499,8 +500,9 @@ def run(cfg_key, tickers, yf_download, now_utc, force=False, dash=True):
         age_h = (now_utc - datetime.fromisoformat(old["generated_at"].replace("Z", "+00:00"))).total_seconds() / 3600
     # 台股的月營收、融資融券晚上才更新，所以 6 小時重抓一次；美股一天一次
     # 美股分批更新：快取裡還有今天沒更新到的就繼續跑
+    uc = _load(STATE / "us" / "fund_cache.json", {}) if cfg_key == "us" else {}
     us_pending = cfg_key == "us" and any(
-        (_load(STATE / "us" / "fund_cache.json", {}).get(t) or {}).get("day") != date.today().isoformat()
+        (uc.get(t) or {}).get("v") != 2 or (uc.get(t) or {}).get("day") != date.today().isoformat()
         for t in tickers)
     if force or age_h >= (6 if cfg_key == "tw" else 20) or us_pending:
         try:

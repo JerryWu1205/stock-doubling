@@ -84,9 +84,25 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .chip { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 999px;
   padding: 4px 11px; font: inherit; font-size: 13px; cursor: pointer; }
 .chip[aria-pressed="true"] { color: var(--info); background: var(--info-bg); border-color: transparent; font-weight: 600; }
-.row { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; }
-.row > button { all: unset; display: grid; grid-template-columns: minmax(0, 1fr) 64px 50px; align-items: center; gap: 10px;
-  width: 100%; padding: 11px 12px; cursor: pointer; box-sizing: border-box; }
+.row { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; display: flex; flex-wrap: wrap; }
+.row > .detail { flex-basis: 100%; min-width: 0; }
+.qstar { all: unset; flex: none; width: 34px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+  color: var(--muted); cursor: pointer; border-radius: 12px 0 0 12px; }
+.qstar[aria-pressed="true"] { color: var(--warn); }
+.qstar:focus-visible { outline: 2px solid var(--info); }
+.pos { font-size: 13px; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.pos b { font-weight: 700; }
+.posedit { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; margin: 8px 0; align-items: end; }
+.posedit label { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+.posedit input { font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; width: 100%; box-sizing: border-box; }
+.posedit button, .pfrm { font: inherit; font-size: 14px; border: 1px solid var(--info); color: var(--info); background: var(--info-bg); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+.pfrm { border-color: var(--line); color: var(--muted); background: var(--card); }
+.pfsum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pfsum div { background: var(--bg); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+.pfsum span { display: block; font-size: 11px; color: var(--muted); }
+.pfsum b { font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row > button.rb { all: unset; display: grid; grid-template-columns: minmax(0, 1fr) 64px 50px; align-items: center; gap: 10px;
+  flex: 1; min-width: 0; padding: 11px 12px 11px 2px; cursor: pointer; box-sizing: border-box; }
 .tkr { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tkr .nm { font-weight: 600; font-size: 14px; margin-left: 4px; }
 .px { font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 600; }
@@ -317,7 +333,27 @@ function toggleMine(t) {
   const m = mine();
   m.has(t) ? m.delete(t) : m.add(t);
   store.set(mineKey(), JSON.stringify([...m]));
+  if (!m.has(t)) setPos(t, null);
 }
+// 股數與均價：也只存在這台裝置的瀏覽器，不會上傳
+const posKey = () => "pos_" + (data?.market || market);
+const positions = () => { try { return JSON.parse(store.get(posKey()) || "{}") || {}; } catch { return {}; } };
+function setPos(t, p) {
+  const all = positions();
+  if (p) all[t] = p; else delete all[t];
+  store.set(posKey(), JSON.stringify(all));
+}
+// 損益：成本、市值、未實現損益、今日損益（只算有填股數和均價、而且有報價的）
+function pnlOf(t) {
+  const p = positions()[t], i = allItems().find(x => x.ticker === t);
+  if (!p || !(p.sh > 0) || !(p.avg > 0) || i?.price == null) return null;
+  const cost = p.sh * p.avg, val = p.sh * i.price;
+  const prev = i.chg_1d_pct != null ? i.price / (1 + i.chg_1d_pct / 100) : null;
+  return { sh: p.sh, avg: p.avg, cost, val, pnl: val - cost, pct: (val / cost - 1) * 100, day: prev ? p.sh * (i.price - prev) : null };
+}
+const cur = () => data?.market === "tw" ? "NT$" : "US$";
+const fmtMoney = v => v == null ? "–" : (v < 0 ? "-" : "") + cur() + Math.abs(v).toLocaleString("en-US", { maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 });
+const fmtSigned = v => v == null ? "–" : (v > 0 ? "+" : "") + fmtMoney(v);
 let sortBy = store.get("sort") || "score";
 
 // 目前選的名單：強勢在最上層欄位，跌深在 books.dip
@@ -718,9 +754,12 @@ function renderList() {
   }[sortBy] || (i => -i.score);
   shown.sort((a, b) => key(a) - key(b));
   destroyChart();
-  const hint = tab === "m" && !items.length ? "還沒有加入任何股票。打開任何一檔（可以用上面的搜尋），按「☆ 加入我的持股」。"
+  const hint = tab === "m" && !items.length ? "還沒有加入任何股票。在程式選股或候選按每檔左邊的 ☆ 就會加進來（也可以用上面的搜尋找全部股票）。"
     : book === "dip" && tab === "h" && !items.length ? "跌深名單目前沒有選股：沒有夠格的跌深股。" : "沒有符合的股票。";
-  $("list").innerHTML = shown.map(rowHtml).join("") || `<div class="empty">${hint}</div>`;
+  const gone = tab === "m" ? [...my].filter(t => !items.some(i => i.ticker === t)) : [];
+  const goneHtml = gone.map(t => `<div class="row" data-t="${esc(t)}"><button class="qstar" aria-pressed="true" aria-label="從我的持股移除" title="從我的持股移除">★</button>
+      <div style="padding:11px 12px;flex:1"><div class="tkr">${esc(t)}</div><div class="small">這檔已經不在程式選股或候選名單，暫時沒有報價。按 ★ 可以移除。</div></div></div>`).join("");
+  $("list").innerHTML = (tab === "m" ? portfolioHtml(items) : "") + (shown.map(rowHtml).join("") + goneHtml || `<div class="empty">${hint}</div>`);
   if (openTicker) {
     const row = [...$("list").querySelectorAll(".row")].find(r => r.dataset.t === openTicker);
     if (row) openRow(row); else openTicker = null;
@@ -744,6 +783,18 @@ function scoreChg(v) {
   return `<div class="chg ${v > 0 ? "up" : "down"}">${v > 0 ? "▲" : "▼"}${Math.abs(v).toFixed(1)}</div>`;
 }
 
+function portfolioHtml(items) {
+  const rows = items.map(i => pnlOf(i.ticker)).filter(Boolean);
+  if (!rows.length) return items.length ? `<section class="card"><h2>我的持股損益</h2><div class="small">打開下面任何一檔，填上股數和均價，這裡就會加總損益。資料只存在這台裝置的瀏覽器，不會上傳。</div></section>` : "";
+  const sum = k => rows.reduce((a, r) => a + (r[k] ?? 0), 0);
+  const cost = sum("cost"), val = sum("val"), pnl = val - cost, day = sum("day");
+  return `<section class="card"><h2>我的持股損益（${rows.length} 檔有填）</h2><div class="pfsum">
+      <div><span>總成本</span><b>${fmtMoney(cost)}</b></div>
+      <div><span>目前市值</span><b>${fmtMoney(val)}</b></div>
+      <div><span>未實現損益</span><b class="${clsOf(pnl)}">${fmtSigned(pnl)}</b><span class="${clsOf(pnl)}">${fmtP1((val / cost - 1) * 100)}</span></div></div>
+      <div class="small" style="margin-top:6px">今天 <b class="${clsOf(day)}">${fmtSigned(day)}</b>・報價時間同上方更新時間，盤中是延遲報價；未含手續費和稅。資料只存在這台裝置的瀏覽器，不會上傳。</div></section>`;
+}
+
 function rowHtml(i) {
   const chg = i.chg_1d_pct;
   const isMine = mine().has(i.ticker);
@@ -765,25 +816,33 @@ function rowHtml(i) {
   const px = i.price != null
     ? `<div class="px">${fmtPx(i.price)}<span class="${clsOf(chg)}">${fmtPct(chg)}</span>${lim}${earnTag}${revTag}</div>`
     : `<div class="px ${clsOf(chg)}">${fmtPct(chg)}</div>`;
-  return `<div class="row" data-t="${esc(i.ticker)}"><button aria-expanded="false">
+  const pl = isMine ? pnlOf(i.ticker) : null;
+  const posLine = pl ? `<div class="pos">${pl.sh.toLocaleString()} 股・均價 ${fmtPx(pl.avg)}・損益 <b class="${clsOf(pl.pnl)}">${fmtSigned(pl.pnl)}（${fmtP1(pl.pct)}）</b></div>`
+    : isMine && tab === "m" ? `<div class="pos small">展開後填股數和均價，就會算損益</div>` : "";
+  const p0 = positions()[i.ticker] || {};
+  const posEdit = isMine ? `<div class="posedit" data-t="${esc(i.ticker)}">
+      <label>股數${data.market === "tw" ? "（1 張＝1000 股）" : ""}<input class="psh" type="number" inputmode="decimal" min="0" step="any" value="${p0.sh ?? ""}" placeholder="例如 ${data.market === "tw" ? "1000" : "10"}"></label>
+      <label>均價<input class="pavg" type="number" inputmode="decimal" min="0" step="any" value="${p0.avg ?? ""}" placeholder="買進平均成本"></label>
+      <button class="psave">儲存</button></div>` : "";
+  return `<div class="row" data-t="${esc(i.ticker)}"><button class="qstar" aria-pressed="${isMine}" aria-label="${isMine ? "從我的持股移除" : "加入我的持股"}" title="${isMine ? "從我的持股移除" : "加入我的持股"}">${isMine ? "★" : "☆"}</button><button class="rb" aria-expanded="false">
       <div style="min-width:0"><div class="tkr">${esc(i.ticker)}${i.name ? `<span class="nm">${esc(i.name)}</span>` : ""}${isMine ? `<span class="star">★</span>` : ""}</div>
-        ${px}${extTag}<div class="subline"><span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span><span class="sub">${esc(sub)}</span></div></div>
+        ${px}${extTag}${posLine}<div class="subline"><span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span><span class="sub">${esc(sub)}</span></div></div>
       ${sparkSvg(i.spark)}
       <div class="scorebox"><div class="score">${Math.round(i.score)}</div>${scoreChg(i.score_chg)}</div>
-    </button><div class="detail"><button class="starbtn" aria-pressed="${isMine}">${isMine ? "★ 已在我的持股（再按移除）" : "☆ 加入我的持股"}</button><div class="chartbox"></div>${comps}${tags ? `<div class="tags">${tags}</div>` : ""}${fundHtml(i.ticker)}</div></div>`;
+    </button><div class="detail"><button class="starbtn" aria-pressed="${isMine}">${isMine ? "★ 已在我的持股（再按移除）" : "☆ 加入我的持股"}</button>${posEdit}<div class="chartbox"></div>${comps}${tags ? `<div class="tags">${tags}</div>` : ""}${fundHtml(i.ticker)}</div></div>`;
 }
 
 function openRow(row) {
   for (const r of $("list").querySelectorAll(".row.open")) if (r !== row) closeRow(r);
   row.classList.add("open");
-  row.firstElementChild.setAttribute("aria-expanded", "true");
+  row.querySelector(".rb").setAttribute("aria-expanded", "true");
   openTicker = row.dataset.t;
   const item = allItems().find(x => x.ticker === openTicker);
   if (item && window.LightweightCharts) showChart(row.querySelector(".chartbox"), item);
 }
 function closeRow(row) {
   row.classList.remove("open");
-  row.firstElementChild.setAttribute("aria-expanded", "false");
+  row.querySelector(".rb").setAttribute("aria-expanded", "false");
   if (row.dataset.t === openTicker) { destroyChart(); openTicker = null; }
 }
 
@@ -1216,20 +1275,26 @@ function showTab(t) {
 
 // ───────── 事件 ─────────
 $("list").addEventListener("click", e => {
-  const star = e.target.closest(".starbtn");
+  const star = e.target.closest(".starbtn, .qstar");
   if (star) {
     const row = star.closest(".row"), t = row.dataset.t;
+    const had = mine().has(t);
+    if (had && positions()[t] && !confirm(`把 ${t} 從我的持股移除？填過的股數和均價也會刪掉。`)) return;
     toggleMine(t);
-    const on = mine().has(t);
-    star.setAttribute("aria-pressed", on);
-    star.textContent = on ? "★ 已在我的持股（再按移除）" : "☆ 加入我的持股";
-    const tk = row.querySelector(".tkr");
-    tk.querySelector(".star")?.remove();
-    if (on) tk.insertAdjacentHTML("beforeend", `<span class="star">★</span>`);
-    renderSummary(); renderTodo();
+    if (!had) openTicker = t;  // 剛加入就打開，方便填股數和均價
+    renderSummary(); renderTodo(); renderList();
     return;
   }
-  const btn = e.target.closest(".row > button");
+  const save = e.target.closest(".psave");
+  if (save) {
+    const box = save.closest(".posedit"), t = box.dataset.t;
+    const sh = parseFloat(box.querySelector(".psh").value), avg = parseFloat(box.querySelector(".pavg").value);
+    setPos(t, sh > 0 && avg > 0 ? { sh, avg } : null);
+    openTicker = t;
+    renderList();
+    return;
+  }
+  const btn = e.target.closest(".row > button.rb");
   if (!btn) return;
   const row = btn.parentElement;
   row.classList.contains("open") ? closeRow(row) : openRow(row);

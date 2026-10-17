@@ -210,7 +210,7 @@ def tw_options(now_utc):
             if "外資" not in who and "Foreign" not in who:
                 continue
             d = fu._roc_to_iso(fu._pick(r, "日期", "Date"))
-            net = fu._num(fu._pick(r, "多空未平倉口數淨額", "未平倉口數淨額", "OpenInterestNet", "NetOpenInterest"))
+            net = fu._num(fu._pick(r, "多空未平倉口數淨額", "未平倉口數淨額", "OpenInterest(Net)", "OpenInterestNet", "NetOpenInterest"))
             if d and net is not None:
                 h.setdefault(d, {})["fi_net"] = net
     except Exception:
