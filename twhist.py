@@ -12,7 +12,10 @@ import pandas as pd
 
 import fundamentals as fu
 
-MOPS = "https://mops.twse.com.tw/nas/t21/{mk}/t21sc03_{y}_{m}_{k}.html"
+# 2025 年起舊版觀測站搬到 mopsov，兩個都試
+MOPS_HOSTS = ("https://mopsov.twse.com.tw", "https://mops.twse.com.tw")
+MOPS = "{host}/nas/t21/{mk}/t21sc03_{y}_{m}_{k}.html"
+_diag = {}
 BWI = "https://www.twse.com.tw/rwd/zh/afterTrading/BWIBBU_d?date={d}&selectType=ALL&response=json"
 BROWSER = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"}
 _TD = re.compile(r"<td[^>]*>(.*?)</td>", re.S | re.I)
@@ -25,12 +28,23 @@ def _rev_month(y, m):
     out, got = {}, False
     for mk in ("sii", "otc"):
         for k in (0, 1):
-            url = MOPS.format(mk=mk, y=y - 1911, m=m, k=k)
-            req = urllib.request.Request(url, headers=BROWSER)
-            try:
-                with urllib.request.urlopen(req, timeout=30) as r:
-                    html = r.read().decode("big5", "ignore")
-            except Exception:
+            html = None
+            for host in MOPS_HOSTS:
+                url = MOPS.format(host=host, mk=mk, y=y - 1911, m=m, k=k)
+                req = urllib.request.Request(url, headers=BROWSER)
+                try:
+                    with urllib.request.urlopen(req, timeout=30) as r:
+                        raw = r.read()
+                    html = raw.decode("big5", "ignore")
+                    if "t21sc03" in url and len(_TR.findall(html)) > 5:
+                        _diag["mops_ok"] = host
+                        break
+                    _diag["mops_short"] = f"{url} {len(raw)}B {html[:120]!r}"
+                    html = None
+                except Exception as e:
+                    _diag["mops_err"] = f"{url} {type(e).__name__}: {e}"[:200]
+                time.sleep(1)
+            if html is None:
                 continue
             time.sleep(1.5)
             for tr in _TR.findall(html):
@@ -65,10 +79,10 @@ def update(cache_dir, dates, budget=8, probe=None):
     # 需要的月份：回測開始前 2 個月到上個月
     months = pd.period_range((first - pd.DateOffset(months=2)).to_period("M"), (last - pd.DateOffset(months=1)).to_period("M"), freq="M")
     month_ends = [d for d in pd.Series(dates).groupby(pd.Series(dates).dt.to_period("M")).max()]
-    n = 0
+    n = m = 0
     try:
         for p in reversed(months):
-            if n >= budget:
+            if n >= budget // 2:
                 break
             key = str(p)
             if key in h["rev"]:
@@ -80,25 +94,30 @@ def update(cache_dir, dates, budget=8, probe=None):
             r = _rev_month(p.year, p.month)
             if r:
                 h["rev"][key] = r
+        m = 0  # 本益比另外算額度
         for d in reversed(month_ends):
-            if n >= budget:
+            if m >= budget // 2:
                 break
             key = d.strftime("%Y-%m-%d")
             if key in h["pe"]:
                 continue
-            n += 1
-            r = _pe_day(d)
+            m += 1
+            try:
+                r = _pe_day(d)
+            except Exception as e:
+                _diag["pe_err"] = f"{key} {type(e).__name__}: {e}"[:200]
+                r = None
             time.sleep(2)
             if r:
                 h["pe"][key] = r
     except Exception:
         if probe is not None:
             probe["tw_hist_error"] = traceback.format_exc()[-300:]
-    if n:
+    if n or m:
         cache_dir.mkdir(parents=True, exist_ok=True)
         pd.to_pickle(h, path)
     if probe is not None:
-        probe["tw_hist"] = {"rev_months": len(h["rev"]), "rev_want": len(months), "pe_days": len(h["pe"]), "pe_want": len(month_ends)}
+        probe["tw_hist"] = {"rev_months": len(h["rev"]), "rev_want": len(months), "pe_days": len(h["pe"]), "pe_want": len(month_ends), **_diag}
     rev = pd.DataFrame({pd.Timestamp(pd.Period(k).year, pd.Period(k).month, 1) + pd.DateOffset(months=1, days=10): v
                         for k, v in h["rev"].items()}).T.sort_index() if h["rev"] else None
     pe = pd.DataFrame({pd.Timestamp(k): v for k, v in h["pe"].items()}).T.sort_index() if h["pe"] else None
