@@ -1,17 +1,31 @@
 {
  "markets": [
   {
+   "key": "us",
+   "label": "美股",
+   "file": "data/us.json",
+   "timezone": "America/New_York",
+   "open": "09:30",
+   "close": "16:00",
+   "generated_at": "2026-10-17T10:49:08Z",
+   "mode": "close",
+   "mode_label": "收盤確認",
+   "market_session": "closed",
+   "stale_after_minutes": 3085,
+   "demo": false
+  },
+  {
    "key": "tw",
    "label": "台股",
    "file": "data/tw.json",
    "timezone": "Asia/Taipei",
    "open": "09:00",
    "close": "13:30",
-   "generated_at": "2026-10-17T06:45:03Z",
+   "generated_at": "2026-10-17T10:49:08Z",
    "mode": "close",
    "mode_label": "收盤確認",
    "market_session": "closed",
-   "stale_after_minutes": 2579,
+   "stale_after_minutes": 2335,
    "demo": false
   }
  ]
