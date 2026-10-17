@@ -143,16 +143,20 @@ def prepare(frames, bench_close, cfg, strategy, p=None):
     ok = entry_ok(p, strategy, score)
     closes = pd.DataFrame({t: df["Close"] for t, df in frames.items()})
     sma200 = bench_close.rolling(200, min_periods=150).mean()
+    atr = pd.DataFrame({t: ind.atr(df) for t, df in frames.items()})
     return {"strategy": strategy, "score": score, "ok": ok, "closes": closes, "rets": closes.pct_change(),
-            "bench": bench_close, "risk_on": (bench_close >= sma200) | sma200.isna()}
+            "bench": bench_close, "risk_on": (bench_close >= sma200) | sma200.isna(),
+            "atr": atr, "sma50": closes.rolling(50, min_periods=50).mean()}
 
 
-def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250):
+def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250, exit_rule=None, cooldown=10):
     """依換股規則逐日模擬（rules = scan 模組，用同一套選股和換股函式）。
 
     top_n：持股檔數（預設用設定檔的 target_count）
     regime：大盤收盤在 200 日線下就全部換成現金，站回再買回
     costs：{"buy": 比例, "sell": 比例}，每次買賣都扣
+    exit_rule：持股另外加停損（收盤跌破就賣，之後 cooldown 天不買回）
+      "sma50"＝跌破 50 日線；"atr3"＝吊燈停損（持有期間最高收盤 − 3 倍 ATR）；"pct8"＝比買進價跌 8%
     """
     fill_portfolio, execute_swap = rules.fill_portfolio, rules.execute_swap
     swap_analysis, apply_portfolio = rules.swap_analysis, rules.apply_portfolio
@@ -174,7 +178,24 @@ def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250):
     sell = (costs or {}).get("sell", 0.0)
     value, curve, swaps_n, cost_total = 1.0, [], 0, 0.0
     held_prev = []
-    for d in dates:
+    entry, peak, cool, stops_n = {}, {}, {}, 0
+    atr, sma50 = prep.get("atr"), prep.get("sma50")
+
+    def hit(t, d):
+        px = closes.at[d, t]
+        if not np.isfinite(px):
+            return False
+        if exit_rule == "sma50":
+            m = sma50.at[d, t]
+            return bool(np.isfinite(m) and px < m)
+        if exit_rule == "atr3":
+            a = atr.at[d, t]
+            return bool(np.isfinite(a) and px < peak.get(t, px) - 3 * a)
+        if exit_rule == "pct8":
+            return bool(px < entry.get(t, px) * 0.92)
+        return False
+
+    for k, d in enumerate(dates):
         slots = max(c["target_count"], len(held_prev), 1)
         if held_prev:  # 前一天收盤的持股，吃到今天的報酬
             r = rets.loc[d, held_prev].fillna(0.0)
@@ -184,7 +205,7 @@ def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250):
         sc = score.loc[d]
         okd = ok.loc[d]
         results = {t: {"score": float(sc[t]), "entry_ok": bool(okd[t])} for t in sc.index
-                   if np.isfinite(sc[t])}
+                   if np.isfinite(sc[t]) and cool.get(t, -1) < k}
         if not results:
             continue
         day = d.date().isoformat()
@@ -199,6 +220,24 @@ def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250):
             hist["confirmed"][day]["holdings"] = [t for t in c["holdings"] if t in results]
             fill_portfolio(c, port, results, day, gate=gate)
         held = [t for t in c["holdings"] if t in closes.columns]
+        if exit_rule:
+            for t in held:
+                if t in held_prev:
+                    peak[t] = max(peak.get(t, 0), closes.at[d, t])
+            stopped = [t for t in held if t in held_prev and hit(t, d)]
+            if stopped:
+                stops_n += len(stopped)
+                for t in stopped:
+                    cool[t] = k + cooldown
+                    results.pop(t, None)
+                    if t in port["auto"]:
+                        port["auto"].remove(t)
+                apply_portfolio(c, port)
+                fill_portfolio(c, port, results, day, gate=gate)
+                held = [t for t in c["holdings"] if t in closes.columns and cool.get(t, -1) < k]
+            for t in held:
+                if t not in held_prev:
+                    entry[t] = peak[t] = closes.at[d, t]
         if regime and not bool(risk_on.loc[d]):
             held = []  # 大盤轉空：選股照常更新，但資金放現金
         sold, bought = set(held_prev) - set(held), set(held) - set(held_prev)
@@ -217,7 +256,7 @@ def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250):
             "max_drawdown_pct": round(float((1 - vals / peak).max()) * 100, 1),
             "swaps": swaps_n,
             "cost_pct": round(cost_total * 100, 1),
-            "top_n": c["target_count"], "regime": regime,
+            "top_n": c["target_count"], "regime": regime, "exit_rule": exit_rule, "stops": stops_n,
             "final_holdings": list(c["holdings"])}
 
 

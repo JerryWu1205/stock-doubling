@@ -508,6 +508,7 @@ function renderTodo() {
   const bk = B(), rows = [], my = mine();
   const nm = t => { const it = allItems().find(x => x.ticker === t); return `<b>${esc(t)}</b>${it?.name ? ` ${esc(it.name)}` : ""}`; };
   const add = (cls, tag, html) => rows.push(`<div class="todo"><span class="pill ${cls}">${tag}</span><span>${html}</span></div>`);
+  const urgent = (cls, tag, html) => rows.unshift(`<div class="todo"><span class="pill ${cls}">${tag}</span><span>${html}</span></div>`);
   const q = data.benchmark_quote;
   if (q?.vs_sma200_pct != null && q.vs_sma200_pct < 0)
     add("p-bad", "大盤", `${esc(data.benchmark)} 在 200 日線下，屬於空頭，新買進要保守。績效頁可以看「加大盤濾網」的回測。`);
@@ -517,6 +518,8 @@ function renderTodo() {
     if (weak) add("p-bad", "我的", `${nm(i.ticker)} 轉弱（${Math.round(i.score)} 分${i.above_sma50 === false ? "、跌破 50 日線" : ""}），考慮減碼`);
     else if (bad.length) add("p-warn", "我的", `${nm(i.ticker)} ${bad.map(esc).join("、")}`);
     if (i.signal === "take") add("p-warn", "我的", `${nm(i.ticker)} 反彈接近半年高點，可以考慮分批獲利`);
+    const st = stopOf(i);
+    if (st && i.price != null && i.price < st.px) urgent("p-bad", "出場", `${nm(i.ticker)} 收盤 ${fmtPx(i.price)} 跌破${st.how} ${fmtPx(st.px)}，依規則該出場`);
   }
   for (const s of (bk.swaps || []).filter(s => s.status === "confirmed"))
     add("p-info", "換股", `${nm(s.out)} → ${nm(s.in)}（高 ${s.gap} 分、連續 ${s.streak} 天）`);
@@ -529,7 +532,7 @@ function renderTodo() {
 }
 
 // 國際大事、行事曆：由每小時的新聞巡檢寫進 data/news.json、data/events.json
-let dash = null, fund = null, opt = null, optTW = null, news = null, events = null, newsOpen = false, eventsOpen = false, ext = null;
+let dash = null, fund = null, opt = null, optTW = null, exitsBt = null, news = null, events = null, newsOpen = false, eventsOpen = false, ext = null;
 async function loadExtras() {
   // 美股盤前盤後價格（只當參考）；一小時內的才顯示
   try {
@@ -539,10 +542,12 @@ async function loadExtras() {
   try { dash = await getJson("data/dash.json?t=" + Date.now()); } catch { dash = null; }
   try { fund = await getJson(`data/fund/${market}.json?t=` + Date.now()); } catch { fund = null; }
   try { opt = await getJson(`data/options/${market}.json?t=` + Date.now()); } catch { opt = null; }
+  try { const P = await getJson(`data/perf/${market}.json?t=` + Date.now()); exitsBt = P.exits || null; } catch { exitsBt = null; }
   try { optTW = market === "tw" ? opt : await getJson("data/options/tw.json?t=" + Date.now()); } catch { optTW = null; }
   try { news = await getJson("data/news.json?t=" + Date.now()); } catch { news = null; }
   try { events = await getJson("data/events.json?t=" + Date.now()); } catch { events = null; }
   renderDash(); renderNews(); renderEvents();
+  if (data) renderTodo();
   if (data && tab !== "p") renderList();
 }
 const todayTW = () => new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
@@ -783,6 +788,49 @@ function scoreChg(v) {
   return `<div class="chg ${v > 0 ? "up" : "down"}">${v > 0 ? "▲" : "▼"}${Math.abs(v).toFixed(1)}</div>`;
 }
 
+// ───────── 退場價 ─────────
+const EXIT_LBL = { none: "不設停損（只靠分數換股）", sma50: "跌破 50 日線", atr3: "吊燈停損（最高收盤 − 3 倍 ATR）", pct8: "比買進價跌 8%" };
+// 回測裡年化最好的停損規則；還沒有回測就先用吊燈停損
+function bestExit() {
+  const rows = (exitsBt || []).filter(r => r.cagr_pct != null);
+  if (!rows.length) return { rule: "atr3", row: null, base: null };
+  const top = rows.reduce((a, b) => (b.cagr_pct > a.cagr_pct || (b.cagr_pct === a.cagr_pct && b.max_drawdown_pct < a.max_drawdown_pct)) ? b : a);
+  return { rule: top.rule, row: top, base: rows.find(r => r.rule === "none") };
+}
+// 建議退場價：依回測最好的規則；「不設停損」最好時，仍給吊燈停損當保命線
+function stopOf(i) {
+  const x = i.exit || {}, p = positions()[i.ticker], { rule } = bestExit();
+  if (rule === "sma50" && x.sma50) return { px: x.sma50, how: "50 日線" };
+  if (rule === "pct8" && p?.avg > 0) return { px: p.avg * 0.92, how: "成本 −8%" };
+  return x.trail ? { px: x.trail, how: "吊燈停損" } : null;
+}
+function exitHtml(i) {
+  const x = i.exit;
+  if (!x || i.price == null) return "";
+  const p = positions()[i.ticker], px = i.price;
+  const d = v => v == null ? "" : `<span class="${clsOf(v - px)}">${fmtP1((v / px - 1) * 100)}</span>`;
+  const st = stopOf(i), be = bestExit();
+  const broke = st && px < st.px;
+  const cells = [
+    `<div${be.rule === "atr3" || be.rule === "none" ? ` style="outline:1px solid var(--info)"` : ""}><span>吊燈停損</span><b>${fmtPx(x.trail)}</b>${d(x.trail)}</div>`,
+    `<div${be.rule === "sma50" ? ` style="outline:1px solid var(--info)"` : ""}><span>50 日線</span><b>${fmtPx(x.sma50)}</b>${d(x.sma50)}</div>`,
+    p?.avg > 0 ? `<div${be.rule === "pct8" ? ` style="outline:1px solid var(--info)"` : ""}><span>成本 −8%</span><b>${fmtPx(p.avg * 0.92)}</b>${d(p.avg * 0.92)}</div>`
+      : `<div><span>每天正常波動</span><b>${fmtPx(x.atr)}</b><span>${fmtP1(x.atr / px * 100).replace("+", "±")}</span></div>`,
+  ].join("");
+  let risk = "";
+  if (st && p?.sh > 0 && p?.avg > 0) {
+    const atStop = (st.px - p.avg) * p.sh;
+    risk = `<div class="note">若收盤跌到${st.how} ${fmtPx(st.px)} 出場，這筆${atStop >= 0 ? "還會賺" : "會虧"} <b class="${clsOf(atStop)}">${fmtMoney(Math.abs(atStop))}</b>（${fmtP1((st.px / p.avg - 1) * 100)}）。`
+      + (st.px > p.avg ? "停損線已經在成本之上，這筆最差也是保本出場。" : "") + `</div>`;
+  }
+  const btx = be.row ? `回測（過去一年、強勢名單）年化最好的是「${EXIT_LBL[be.rule]}」${fmtP1(be.row.cagr_pct)}、最大回檔 ${be.row.max_drawdown_pct}%`
+    + (be.base && be.rule !== "none" ? `；不設停損是 ${fmtP1(be.base.cagr_pct)}、回檔 ${be.base.max_drawdown_pct}%` : "") + "。" : "回測還在算，先用吊燈停損。";
+  return `<div class="fund"><h3>退場參考價（收盤跌破就出場，框起來的是建議）</h3>
+    ${broke ? `<div class="pill p-bad" style="display:inline-block;margin-bottom:6px">已跌破${st.how} ${fmtPx(st.px)}，依規則該出場</div>` : ""}
+    <div class="kv">${cells}</div>${risk}
+    <div class="note">${btx}停利不設固定價：停損線會跟著股價往上移，讓獲利繼續跑；漲多了可以先賣一半入袋。吊燈停損＝近 22 天最高收盤 − 3 倍 ATR（ATR＝每天平均波動）。</div></div>`;
+}
+
 function portfolioHtml(items) {
   const rows = items.map(i => pnlOf(i.ticker)).filter(Boolean);
   if (!rows.length) return items.length ? `<section class="card"><h2>我的持股損益</h2><div class="small">打開下面任何一檔，填上股數和均價，這裡就會加總損益。資料只存在這台裝置的瀏覽器，不會上傳。</div></section>` : "";
@@ -817,6 +865,8 @@ function rowHtml(i) {
     ? `<div class="px">${fmtPx(i.price)}<span class="${clsOf(chg)}">${fmtPct(chg)}</span>${lim}${earnTag}${revTag}</div>`
     : `<div class="px ${clsOf(chg)}">${fmtPct(chg)}</div>`;
   const pl = isMine ? pnlOf(i.ticker) : null;
+  const stp = isMine ? stopOf(i) : null;
+  const brokeTag = stp && i.price != null && i.price < stp.px ? ` <span class="tag lim">跌破退場線</span>` : "";
   const posLine = pl ? `<div class="pos">${pl.sh.toLocaleString()} 股・均價 ${fmtPx(pl.avg)}・損益 <b class="${clsOf(pl.pnl)}">${fmtSigned(pl.pnl)}（${fmtP1(pl.pct)}）</b></div>`
     : isMine && tab === "m" ? `<div class="pos small">展開後填股數和均價，就會算損益</div>` : "";
   const p0 = positions()[i.ticker] || {};
@@ -826,10 +876,10 @@ function rowHtml(i) {
       <button class="psave">儲存</button></div>` : "";
   return `<div class="row" data-t="${esc(i.ticker)}"><button class="qstar" aria-pressed="${isMine}" aria-label="${isMine ? "從我的持股移除" : "加入我的持股"}" title="${isMine ? "從我的持股移除" : "加入我的持股"}">${isMine ? "★" : "☆"}</button><button class="rb" aria-expanded="false">
       <div style="min-width:0"><div class="tkr">${esc(i.ticker)}${i.name ? `<span class="nm">${esc(i.name)}</span>` : ""}${isMine ? `<span class="star">★</span>` : ""}</div>
-        ${px}${extTag}${posLine}<div class="subline"><span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span><span class="sub">${esc(sub)}</span></div></div>
+        ${px.replace(/<\/div>$/, brokeTag + "</div>")}${extTag}${posLine}<div class="subline"><span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span><span class="sub">${esc(sub)}</span></div></div>
       ${sparkSvg(i.spark)}
       <div class="scorebox"><div class="score">${Math.round(i.score)}</div>${scoreChg(i.score_chg)}</div>
-    </button><div class="detail"><button class="starbtn" aria-pressed="${isMine}">${isMine ? "★ 已在我的持股（再按移除）" : "☆ 加入我的持股"}</button>${posEdit}<div class="chartbox"></div>${comps}${tags ? `<div class="tags">${tags}</div>` : ""}${fundHtml(i.ticker)}</div></div>`;
+    </button><div class="detail"><button class="starbtn" aria-pressed="${isMine}">${isMine ? "★ 已在我的持股（再按移除）" : "☆ 加入我的持股"}</button>${posEdit}<div class="chartbox"></div>${comps}${tags ? `<div class="tags">${tags}</div>` : ""}${exitHtml(i)}${fundHtml(i.ticker)}</div></div>`;
 }
 
 function openRow(row) {

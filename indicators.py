@@ -25,6 +25,25 @@ def sma(s, n):
     return s.rolling(n, min_periods=n).mean()
 
 
+def atr(df, n=14):
+    """平均真實波幅（ATR）：一天正常會晃多少錢，用來設停損距離。"""
+    prev = df["Close"].shift(1)
+    tr = pd.concat([df["High"] - df["Low"], (df["High"] - prev).abs(), (df["Low"] - prev).abs()], axis=1).max(axis=1)
+    return tr.rolling(n, min_periods=n).mean()
+
+
+def exit_levels(raw, n_hi=22, k=3.0):
+    """退場參考價（用未還原價，才能和報價直接比）：
+    trail＝吊燈停損：近 22 天最高收盤 − 3 倍 ATR；sma50＝50 日線；atr＝14 日 ATR。"""
+    a = atr(raw).iloc[-1]
+    c = raw["Close"]
+    hi = c.iloc[-n_hi:].max()
+    return {"atr": float(a) if np.isfinite(a) else None,
+            "trail": float(hi - k * a) if np.isfinite(a) else None,
+            "hi22": float(hi),
+            "sma50": float(sma(c, 50).iloc[-1]) if len(c) >= 50 else None}
+
+
 def rsi(close, n=14):
     delta = close.diff()
     gain = delta.clip(lower=0).ewm(alpha=1 / n, adjust=False).mean()

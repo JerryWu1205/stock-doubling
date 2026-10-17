@@ -666,6 +666,7 @@ def score_universe(raw_data, cfg, asof=None):
             "limit": limit,
             "data_date": raw.index[-1].date().isoformat(),
             "spark": [charts._r(float(x)) for x in rc.iloc[-30:]],
+            "exit": {k: (charts._r(v) if v is not None else None) for k, v in ind.exit_levels(raw).items()},
             "bar": {"t": raw.index[-1].date().isoformat(), "o": charts._r(float(bar["Open"])),
                     "h": charts._r(float(bar["High"])), "l": charts._r(float(bar["Low"])),
                     "c": charts._r(float(bar["Close"])), "v": int(bar["Volume"])},
@@ -1118,7 +1119,7 @@ def run_market(cfg, args, now_utc):
             traceback.print_exc()
     # 剛升級到兩套名單時，跌深紀錄或績效檔還不存在，就算休市也先跑一次收盤確認把它們產生出來
     upgraded = (cfg["history_path"].with_name(cfg["history_path"].stem + "_dip.json").exists()
-                and "scorecard" in read_json(DATA_DIR / "perf" / f"{key}.json", {}))
+                and "exits" in read_json(DATA_DIR / "perf" / f"{key}.json", {}))
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
             and upgraded and nothing_to_do(cfg, now, hist):
         print(f"{tag} 休市中，最近一次收盤已確認，這次不更新。")
@@ -1267,14 +1268,14 @@ def run_market(cfg, args, now_utc):
     perf_path = DATA_DIR / "perf" / f"{key}.json"
     if mode == "close" or not perf_path.exists():
         old = read_json(perf_path, {})
-        if old.get("data_date") != date or "scorecard" not in old or args.demo:
+        if old.get("data_date") != date or "exits" not in old or args.demo:
             try:
                 write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, args.demo)
             except Exception:
                 print(f"{tag} 回測失敗（不影響評分）：", file=sys.stderr)
                 traceback.print_exc()
                 # 留一個空的績效檔，免得休市時每 15 分鐘重跑
-                write_json_atomic(perf_path, {"market": key, "data_date": date, "backtest": {}, "variants": [], "scorecard": [], "live": {},
+                write_json_atomic(perf_path, {"market": key, "data_date": date, "backtest": {}, "variants": [], "scorecard": [], "exits": [], "live": {},
                                               "note": "這次回測失敗，下一個收盤日會重算。"})
     update_markets_index(cfg, out)
     print(f"{tag} {out['mode_label']}｜資料日期 {date}｜強勢持股 {len(out['holdings'])} 檔、"
@@ -1315,6 +1316,14 @@ def write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, demo):
                 if best is None or (r["cagr_pct"] or -999) > (best["cagr_pct"] or -999):
                     best = dict(r, strategy=strat)
     variants.sort(key=lambda r: -(r["cagr_pct"] if r["cagr_pct"] is not None else -999))
+    # 出場方式比較：強勢名單＋不同停損規則
+    exits = []
+    if "momentum" in preps:
+        bb = dict(cfg, holdings=list(cfg["fixed"]), candidates=list(cfg["pool"]))
+        for rule in (None, "sma50", "atr3", "pct8"):
+            r = tests.get("momentum") if rule is None else bt.simulate(preps["momentum"], bb, rules, costs=costs, exit_rule=rule)
+            if r:
+                exits.append({"rule": rule or "none", **{k: v for k, v in r.items() if k not in ("curve", "final_holdings")}})
     first = next(iter(tests.values()), None)
     dates = [d for d, _ in first["curve"]] if first else []
     out = {
@@ -1331,6 +1340,7 @@ def write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, demo):
         "best": best,
         "goal": bt.goal_curve(dates),
         "scorecard": bt.scorecard(preps),
+        "exits": exits,
         "live": {"strong": bt.live_curve(hist, frames, bench, cfg["target_count"]),
                  "dip": bt.live_curve(dhist, frames, bench, dcfg["target_count"])},
         "note": f"回測假設每個收盤確認日依規則換股、持股等權重、空位放現金；每次買賣扣 {costs['buy'] * 100:.2f}%"
