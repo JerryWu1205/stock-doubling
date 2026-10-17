@@ -95,7 +95,7 @@ details p { margin: 6px 0; }
   padding: 5px 0; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
 .seg button[aria-pressed="true"] { color: var(--text); border-color: var(--text); }
 .cwrap { position: relative; }
-.cmain { height: 260px; }
+.cmain { height: 300px; }
 .csub { height: 92px; margin-top: 4px; }
 .cscore { height: 100px; }
 .legend { position: absolute; left: 4px; top: 2px; z-index: 3; font-size: 11px; line-height: 1.35; pointer-events: none;
@@ -399,11 +399,11 @@ async function drawDaily(box, item, view) {
   const candles = chart.addCandlestickSeries({ upColor: UP, downColor: DOWN, borderUpColor: UP, borderDownColor: DOWN,
     wickUpColor: UP, wickDownColor: DOWN, priceLineVisible: false });
   candles.setData(bars.map(({ v, ...x }) => x));
-  candles.priceScale().applyOptions({ scaleMargins: { top: 0.16, bottom: 0.24 } });
+  candles.priceScale().applyOptions({ scaleMargins: { top: 0.15, bottom: 0.2 } });
 
   // 成交量：紅漲綠跌，爆量（> 2 倍 20 日均量）不透明，其他半透明
   const vol = chart.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" }, lastValueVisible: false, priceLineVisible: false });
-  chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+  chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.84, bottom: 0 } });
   vol.setData(bars.map((x, i) => {
     const avg = d.vma20[Math.min(i, d.vma20.length - 1)];
     const spike = avg && x.v > 2 * avg;
@@ -414,20 +414,21 @@ async function drawDaily(box, item, view) {
   vma.setData(d.t.map((t, i) => d.vma20[i] == null ? { time: t } : { time: t, value: d.vma20[i] }));
 
   const mas = [["sma20", "--ma20", "MA20"], ["sma50", "--ma50", "MA50"], ["sma200", "--ma200", "MA200"]];
+  // 200 日線和趨勢線離現價很遠時不拉寬價格軸，避免 K 線被壓扁
+  const noScale = { autoscaleInfoProvider: () => null };
   for (const [k, c] of mas)
-    line(chart, css(c), { lineWidth: k === "sma200" ? 2 : 1 }).setData(d.t.map((t, i) => d[k][i] == null ? { time: t } : { time: t, value: d[k][i] }));
+    line(chart, css(c), { lineWidth: k === "sma200" ? 2 : 1, ...(k === "sma200" ? noScale : {}) }).setData(d.t.map((t, i) => d[k][i] == null ? { time: t } : { time: t, value: d[k][i] }));
 
   // 自動趨勢線
   for (const tl of d.trendlines || []) {
-    line(chart, css("--trend"), { lineWidth: 2, lineStyle: tl.broken ? 2 : 0 })
+    line(chart, css("--trend"), { lineWidth: 2, lineStyle: tl.broken ? 2 : 0, ...noScale })
       .setData([{ time: tl.from.t, value: tl.from.v }, { time: tl.to.t, value: tl.to.v }]);
   }
   // 支撐壓力、52 週高低
-  for (const lv of d.levels || [])
+  const lastClose = bars[bars.length - 1].close;
+  for (const lv of (d.levels || []).filter(l => Math.abs(l.price / lastClose - 1) <= 0.15))
     candles.createPriceLine({ price: lv.price, color: css(lv.kind === "support" ? "--info" : "--warn"), lineWidth: 1, lineStyle: 2,
       axisLabelVisible: true, title: (lv.kind === "support" ? "支撐" : "壓力") + (lv.touches > 1 ? `×${lv.touches}` : "") });
-  if (d.hi52) candles.createPriceLine({ price: d.hi52, color: css("--muted"), lineWidth: 1, lineStyle: 1, axisLabelVisible: false, title: "52週高" });
-  if (d.lo52) candles.createPriceLine({ price: d.lo52, color: css("--muted"), lineWidth: 1, lineStyle: 1, axisLabelVisible: false, title: "52週低" });
 
   // 標記：選入、換股、進出場訊號、除息
   const have = new Set(bars.map(x => x.time));
@@ -458,7 +459,7 @@ async function drawDaily(box, item, view) {
     const di = Math.min(i, d.t.length - 1);
     const ma = mas.map(([k, c, l]) => d[k][di] != null ? `<span style="color:${css(c)}">${l} ${fmtPx(d[k][di])}</span>` : "").join(" ");
     legend.innerHTML = `${x.time.slice(5)} <i>開</i>${fmtPx(x.open)} <i>高</i>${fmtPx(x.high)} <i>低</i>${fmtPx(x.low)} <i>收</i>${fmtPx(x.close)}
-      <span class="${clsOf(chg)}">${fmtPct(chg)}</span><br>${ma}`;
+      <span class="${clsOf(chg)}">${fmtPct(chg)}</span><br>${ma}${d.hi52 ? `<br><i>52週 高</i>${fmtPx(d.hi52)} <i>低</i>${fmtPx(d.lo52)}` : ""}`;
   };
   showLegend(null);
   chart.subscribeCrosshairMove(p => showLegend(p.time));
