@@ -406,6 +406,11 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
         factors["16_inst"] = inst
     excl = excl or {}
     variants += list(factors) + list(excl) + ["16_iv"] + (["16_rate"] if rate is not None else [])
+    # 16_cap4＝同族群最多 4 檔；16_mkt50＝大盤跌破 50 日線時半倉；16_mkt50_0＝跌破時全部空手；
+    # 16_avgdown＝攤平：已持有的股票跌破 50 日線不賣，還放兩倍資金，剩下的位子才補強勢股
+    variants += (["16_cap4"] if gof else []) + ["16_mkt50", "16_mkt50_0", "16_avgdown"]
+    bx = bench.reindex(idx).ffill()
+    wts = {}
     vol = rets.rolling(20).std()
     def at(df, t):
         """月資料或缺日資料：取 t 那天以前最近一筆。"""
@@ -444,6 +449,22 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
             bad = at(m, t).reindex(sc.index).fillna(False).astype(bool)
             picks[name] = list(sc[~bad].sort_values(ascending=False).index[:16])
         picks["16_iv"] = picks["16"]
+        if gof:
+            cnt, cap = {}, []
+            for x in order:
+                g = gof.get(x, x)
+                if cnt.get(g, 0) < 4:
+                    cap.append(x)
+                    cnt[g] = cnt.get(g, 0) + 1
+                if len(cap) == 16:
+                    break
+            picks["16_cap4"] = cap
+        picks["16_mkt50"] = picks["16_mkt50_0"] = picks["16"]
+        mkt_down = t >= 50 and bx.iloc[t] < bx.iloc[t - 49: t + 1].mean()
+        keep = [x for x in prev["16_avgdown"] if not ok.get(x, False) and pd.notna(last.get(x))]
+        fill = [x for x in order if x not in keep][: max(16 - len(keep), 0)]
+        picks["16_avgdown"] = keep + fill
+        wts["16_avgdown"] = np.array([2.0] * len(keep) + [1.0] * len(fill))
         if rate is not None:
             picks["16_rate"] = picks["16"]
         w_iv = 1 / vol.iloc[t].reindex(picks["16"]).replace(0, np.nan)
@@ -458,10 +479,15 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
             seg_r = rets.iloc[t + 1: end + 1][pk]
             if k == "16_iv" and w_iv is not None:
                 daily = (seg_r * w_iv.reindex(pk).to_numpy()).sum(axis=1)
+            elif k == "16_avgdown" and pk:
+                w = wts[k] / wts[k].sum()
+                daily = (seg_r * w).sum(axis=1)
             else:
                 daily = seg_r.mean(axis=1)
             if k == "16_rate" and half:
                 daily = daily * 0.5
+            if mkt_down and k in ("16_mkt50", "16_mkt50_0"):
+                daily = daily * (0.5 if k == "16_mkt50" else 0.0)
             seg = (1 + daily).prod() if pk else 1.0
             turn = len(set(pk) ^ prev[k]) / max(len(pk), 1)
             eq[k].append(eq[k][-1] * seg * (1 - cost * turn))
@@ -479,7 +505,9 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
                    "等權重、含交易成本；h1／h2 是前半段／後半段的年化。16_r63＝只看 3 個月漲幅；16_grp＝加族群強度 20%；"
                    "16_grp_no21＝加族群強度、不看 1 個月漲幅；16_inst＝加外資＋投信近 20 天買賣超 20%（只有上市股）；"
                    "16_rev＝加月營收年增率 20%；16_val＝加本益比便宜程度 20%；16_pe＝排除本益比最高 10% 或虧損的；"
-                   "16_iv＝同 16 檔但波動小的放多一點（依 20 天波動反比配重）；16_rate＝10 年債殖利率 20 天升 0.25 個百分點以上時半倉")
+                   "16_iv＝同 16 檔但波動小的放多一點（依 20 天波動反比配重）；16_rate＝10 年債殖利率 20 天升 0.25 個百分點以上時半倉；"
+                   "16_cap4＝同族群最多 4 檔；16_mkt50＝大盤指數跌破 50 日線時半倉（16_mkt50_0＝全部空手）；"
+                   "16_avgdown＝攤平：已持有的跌破 50 日線不賣、放兩倍資金")
     return out
 
 
@@ -581,7 +609,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         except Exception:
             _probe["tw_hist_error"] = traceback.format_exc()[-300:]
     oc = (old.get("bt") or {}).get("counts") or {}
-    need_bt = "16_iv" not in oc or (key == "tw" and inst_ready and "16_inst" not in oc) or \
+    need_bt = "16_avgdown" not in oc or (key == "tw" and inst_ready and "16_inst" not in oc) or \
         (key == "tw" and hist_ready and rev is not None and "16_rev" not in oc)
     if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
