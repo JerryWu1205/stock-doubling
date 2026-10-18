@@ -284,6 +284,29 @@ def update_prices(key, syms, yf_download, now_utc, max_new=250):
     return close, dv, changed, pending
 
 
+def update_long(key, syms, yf_download, max_new=250):
+    """5 年股價快取（給長期回測用），每輪補抓 max_new 檔，抓完就不再更新；最近的日子由 1 年快取補上。
+    回傳 (close, dollar_volume, 還沒抓的檔數)。"""
+    path = CACHE / key / "px5.pkl"
+    try:
+        px = pd.read_pickle(path)
+    except Exception:
+        px = {"close": pd.DataFrame(), "dv": pd.DataFrame(), "failed": []}
+    close, dv, failed = px["close"], px["dv"], set(px.get("failed", []))
+    new = [s for s in syms if s not in close.columns and s not in failed][:max_new]
+    if new:
+        c, v = _pull(yf_download, new, "5y", 125)
+        close = pd.concat([close, c], axis=1) if len(close.columns) else c
+        dv = pd.concat([dv, v], axis=1) if len(dv.columns) else v
+        failed |= set(new) - set(c.columns)
+        close = close.sort_index().loc[:, ~close.columns.duplicated()]
+        dv = dv.sort_index().loc[:, ~dv.columns.duplicated()]
+        path.parent.mkdir(parents=True, exist_ok=True)
+        pd.to_pickle({"close": close, "dv": dv, "failed": sorted(failed)}, path)
+    pending = len([s for s in syms if s not in close.columns and s not in failed])
+    return close, dv, pending
+
+
 # ───────── 族群計算 ─────────
 
 def _flow(close, dv, n=20):
@@ -389,10 +412,11 @@ def rotation_backtest(close, dv, bench, members, key, k_groups=3, k_each=3, step
 
 
 def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, groups=None, inst=None,
-                   factors=None, excl=None, rate=None):
+                   factors=None, excl=None, rate=None, pit_liq=False):
     """factors：{名稱: DataFrame(日期 × 代號)} 數值越大越好，排名後占 20% 加進分數；
     excl：{名稱: DataFrame(日期 × 代號) 布林}，True 的那天不能選；
-    rate：美國 10 年債殖利率（%），用來測「殖利率 20 天急升 0.25 個百分點以上就降到半倉」。"""
+    rate：美國 10 年債殖利率（%），用來測「殖利率 20 天急升 0.25 個百分點以上就降到半倉」；
+    pit_liq：每次選股時才用當時的 20 日成交金額、股價門檻篩（長期回測用，避免用今天的流動性挑過去的股票）。"""
     """全市場（不是手挑的股票池）測持股檔數：每 step 天選相對強度＋資金流最高的前 N 檔（要站上 50 日線），等權重、含成本。
     另外把期間切成前後兩半，看結論是不是兩段都成立。"""
     rets = close.pct_change(fill_method=None).fillna(0).clip(-0.5, 1.0)
@@ -424,6 +448,8 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
         sub = close.iloc[: t + 1]
         last = sub.iloc[-1]
         ok = last > sub.iloc[-50:].mean()
+        if pit_liq:
+            ok &= (dv.iloc[max(t - 19, 0): t + 1].mean() >= MIN_DV[key]) & (last >= MIN_PX[key])
         r63 = (last / sub.iloc[-64] - 1)[ok].dropna()
         r21 = (last / sub.iloc[-22] - 1).reindex(r63.index)
         fl = flow.iloc[t].reindex(r63.index)
@@ -494,13 +520,20 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
             prev[k] = set(pk)
         dates.append(idx[end])
     out = {}
+
+    def years(s):
+        """每 252 個交易日一段的年化（最後一段不足 60 天就不算），長期回測看每一年是不是都成立。"""
+        return [_stats(s.iloc[i: i + 253]).get("cagr_pct") for i in range(0, len(s) - 60, 252)]
     for k in keys:
         s = pd.Series(eq[k], dates).reindex(idx).ffill().loc[dates[0]:]
         h = len(s) // 2
-        out[k] = {**_stats(s), "h1": _stats(s.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(s.iloc[h:]).get("cagr_pct")}
+        out[k] = {**_stats(s), "h1": _stats(s.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(s.iloc[h:]).get("cagr_pct"),
+                  "years": years(s)}
     bs = bench.reindex(idx).ffill().loc[dates[0]:]
     h = len(bs) // 2
-    out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct")}
+    out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct"),
+                    "years": years(bs)}
+    out["period"] = [str(dates[0].date()), str(dates[-1].date())]
     out["rule"] = (f"全市場每 {step} 個交易日換一次：站上 50 日線的股票裡，近 3 月漲幅 45%＋近 1 月 30%＋資金流 25% 排名最高的前 N 檔，"
                    "等權重、含交易成本；h1／h2 是前半段／後半段的年化。16_r63＝只看 3 個月漲幅；16_grp＝加族群強度 20%；"
                    "16_grp_no21＝加族群強度、不看 1 個月漲幅；16_inst＝加外資＋投信近 20 天買賣超 20%（只有上市股）；"
@@ -579,6 +612,14 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     syms = [bench_sym] + [sym(c) for c in uni]
     close, dv, changed, pending = update_prices(key, syms, yf_download, now_utc)
     _probe[f"{key}_prices"] = {"have": int(close.shape[1]), "pending": pending, "rows": int(close.shape[0])}
+    c5 = d5 = None
+    pending5 = None
+    if not pending:  # 1 年快取抓完才開始抓 5 年的
+        try:
+            c5, d5, pending5 = update_long(key, syms, yf_download)
+            _probe[f"{key}_prices5"] = {"have": int(c5.shape[1]), "pending": pending5, "rows": int(c5.shape[0])}
+        except Exception:
+            _probe[f"{key}_prices5_error"] = traceback.format_exc()[-300:]
     old = fu._load(out_path, {})
     # 台股三大法人個股買賣超：每輪補抓幾天，抓滿一年才拿來回測
     inst_days, inst_ready = {}, True
@@ -609,13 +650,14 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         except Exception:
             _probe["tw_hist_error"] = traceback.format_exc()[-300:]
     oc = (old.get("bt") or {}).get("counts") or {}
-    need_bt = "16_avgdown" not in oc or (key == "tw" and inst_ready and "16_inst" not in oc) or \
+    need_bt = "16_avgdown" not in oc or (pending5 == 0 and "counts5" not in (old.get("bt") or {})) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
         (key == "tw" and hist_ready and rev is not None and "16_rev" not in oc)
     if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
     if bench_sym not in close.columns or close.shape[0] < 80:
         return
     back = {sym(c): c for c in uni}
+    raw_close, raw_dv = close, dv  # 5 年回測要接最近的資料（還沒做流動性篩選）
     bench = close[bench_sym]
     close = close.drop(columns=[bench_sym]).rename(columns=back)
     dv = dv.drop(columns=[bench_sym], errors="ignore").rename(columns=back)
@@ -685,7 +727,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
                 excl["16_pe"] = pe_.ge(pe_.quantile(0.9, axis=1), axis=0)
             rate = None
             try:
-                tn = yf_download(["^TNX"], period="2y", interval="1d")
+                tn = yf_download(["^TNX"], period="6y", interval="1d")
                 rate = (tn["^TNX"]["Close"] if "^TNX" in tn else tn["Close"]).dropna()
                 rate.index = pd.to_datetime(rate.index)
                 if rate.index.tz is not None:
@@ -694,6 +736,23 @@ def _run(key, cfg, yf_download, now_utc, in_session):
                 _probe[f"{key}_tnx"] = traceback.format_exc()[-300:]
             out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"], inst=inst,
                                                  factors=factors, excl=excl, rate=rate)
+            if pending5 == 0 and c5 is not None and bench_sym in c5.columns:
+                try:  # 5 年回測：5 年快取接上最近的 1 年快取，全部股票都放進來，選股時才用當時的流動性篩
+                    c5 = pd.concat([c5, raw_close.loc[raw_close.index > c5.index[-1], c5.columns.intersection(raw_close.columns)]])
+                    d5 = pd.concat([d5, raw_dv.loc[raw_dv.index > d5.index[-1], d5.columns.intersection(raw_dv.columns)]])
+                    b5 = c5[bench_sym]
+                    c5 = c5.drop(columns=[bench_sym]).rename(columns=back)
+                    d5 = d5.drop(columns=[bench_sym], errors="ignore").rename(columns=back).reindex(columns=c5.columns)
+                    g5 = {}
+                    for t in c5.columns:
+                        if t in uni:
+                            g5.setdefault(uni[t]["ind"], []).append(t)
+                    out["bt"]["counts5"] = count_backtest(c5, d5, b5, key, groups=g5, rate=rate, pit_liq=True)
+                except Exception:
+                    _probe[f"{key}_bt5"] = traceback.format_exc()[-400:]
+                    out["bt"]["counts5"] = {"error": "5 年回測失敗，明天再試"}  # 不讓每 15 分鐘重算
+            elif (old.get("bt") or {}).get("counts5"):
+                out["bt"]["counts5"] = old["bt"]["counts5"]
             out["bt_date"] = out["data_date"]
             out["bt_note"] = "名單是現在的股票，沒有包含過去下市或掉出門檻的股票（倖存者偏差），實際會比回測差一些。"
         except Exception:
