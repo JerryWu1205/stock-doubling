@@ -1,4 +1,4 @@
-"""模擬倉 Telegram 通知：每筆模擬買賣都發（同一天的交易合成一則），發過的不再發。
+"""模擬帳戶 Telegram 通知：模擬倉和核心＋衛星的每筆買賣都發（同一天兩個帳戶的交易合成一則），發過的不再發。
 
 run.bat 在 notify.py 之後呼叫。讀 docs/data/sim/<市場>.json 的交易紀錄，
 已通知的交易記在 state/<市場>/sim_notify.json。Bot 設定沿用 notify.py（AI情報官的 Bot）。
@@ -32,13 +32,14 @@ def pct(v):
     return "–" if v is None else f"{v:+.2f}%"
 
 
-def trade_key(x):
-    return f"{x['date']}|{x['side']}|{x['t']}"
+def trade_key(x, book=""):
+    return f"{book}{x['date']}|{x['side']}|{x['t']}"
 
 
 def trade_line(x, cur):
     nm = f"{x['t']} {x['name']}" if x.get("name") and x["name"] != x["t"] else x["t"]
-    s = f"{'🟢買' if x['side'] == '買' else '🔴賣'} {nm} {x['sh']:,} 股 @ {x['px']:,.2f} ＝ {money(x['amount'], cur)}（費用 {money(x['fee'], cur)}）"
+    at = "開盤 " if x.get("at") == "open" else ""
+    s = f"{'🟢買' if x['side'] == '買' else '🔴賣'} {nm} {x['sh']:,} 股 @ {at}{x['px']:,.2f} ＝ {money(x['amount'], cur)}（費用 {money(x['fee'], cur)}）"
     if x["side"] == "賣":
         s += f"\n    損益 {signed(x['pnl'], cur)}（{pct(x['pnl_pct'])}）・持有 {x.get('days', '?')} 天"
     if x.get("reason"):
@@ -46,21 +47,34 @@ def trade_line(x, cur):
     return s
 
 
-def build(key, sim, sent):
-    cur = sim["currency"]
-    new = [x for x in reversed(sim.get("trades") or []) if trade_key(x) not in sent]  # 舊到新
+def foot(sim, cur):
+    r, b, g = sim.get("ret") or {}, sim.get("bench") or {}, sim.get("goal") or {}
+    return (f"淨值 {money(sim['nav'], cur, 0)}（總報酬 {pct(r.get('total'))}，今日 {pct(r.get('day'))}）"
+            f"\n同樣的錢買大盤 {pct(b.get('total'))}・翻倍目標 {pct(g.get('total'))}"
+            f"\n現金 {money(sim['cash'], cur, 0)}・持股 {len(sim.get('positions') or [])} 檔")
+
+
+def build(key, books, sent):
+    """books：[(標題, 前綴, 模擬帳戶 json)]。同一天兩個帳戶的交易合成一則。"""
+    new = {}
+    for title, pre, sim in books:
+        for x in reversed(sim.get("trades") or []):  # 舊到新
+            if trade_key(x, pre) not in sent:
+                new.setdefault(x["date"], []).append((title, pre, sim, x))
     msgs, keys = [], []
-    for d in sorted({x["date"] for x in new}):
-        xs = [x for x in new if x["date"] == d]
-        xs.sort(key=lambda x: (x["side"] != "賣", x["t"]))  # 先賣後買
-        r, b, g = sim.get("ret") or {}, sim.get("bench") or {}, sim.get("goal") or {}
-        head = f"🧪 模擬倉｜{LABEL.get(key, key)} {d} 收盤成交 {len(xs)} 筆"
-        foot = (f"\n淨值 {money(sim['nav'], cur, 0)}（總報酬 {pct(r.get('total'))}，今日 {pct(r.get('day'))}）"
-                f"\n同樣的錢買大盤 {pct(b.get('total'))}・翻倍目標 {pct(g.get('total'))}"
-                f"\n現金 {money(sim['cash'], cur, 0)}・持股 {len(sim.get('positions') or [])} 檔"
-                "\n（模擬帳戶，不是實際下單，不是投資建議）")
-        msgs.append(head + "\n\n" + "\n".join(trade_line(x, cur) for x in xs) + "\n" + foot)
-        keys += [trade_key(x) for x in xs]
+    for d in sorted(new):
+        parts = []
+        for title, pre, sim in books:
+            xs = [x for t_, p_, s_, x in new[d] if p_ == pre]
+            if not xs:
+                continue
+            cur = sim["currency"]
+            xs.sort(key=lambda x: (x["side"] != "賣", x["t"]))  # 先賣後買
+            parts.append(f"【{title}】{len(xs)} 筆\n" + "\n".join(trade_line(x, cur) for x in xs) + "\n" + foot(sim, cur))
+            keys += [trade_key(x, pre) for x in xs]
+        n = len(new[d])
+        msgs.append(f"🧪 模擬帳戶｜{LABEL.get(key, key)} {d} 成交 {n} 筆\n\n" + "\n\n".join(parts)
+                    + "\n（模擬帳戶，不是實際下單，不是投資建議）")
     return msgs, keys
 
 
@@ -74,17 +88,20 @@ def main():
     token = chat_id = None
     rc = 0
     for key in ("us", "tw"):
-        path = notify.DATA_DIR / "sim" / f"{key}.json"
-        if not path.exists():
+        books = []
+        for title, pre, fn in (("模擬倉", "", f"{key}.json"), ("核心＋衛星", "cs|", f"{key}_cs.json")):
+            path = notify.DATA_DIR / "sim" / fn
+            if path.exists():
+                books.append((title, pre, json.loads(path.read_text(encoding="utf-8"))))
+        if not books:
             continue
         spath = HERE / "state" / key / "sim_notify.json"
         try:
-            sim = json.loads(path.read_text(encoding="utf-8"))
             try:
                 sent = set(json.loads(spath.read_text(encoding="utf-8"))["sent"])
             except (OSError, ValueError, KeyError):
                 sent = set()
-            msgs, keys = build(key, sim, sent)
+            msgs, keys = build(key, books, sent)
             if args.dry_run:
                 for m in msgs:
                     print(m, end="\n\n")

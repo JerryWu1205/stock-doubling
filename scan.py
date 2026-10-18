@@ -1169,6 +1169,7 @@ def run_market(cfg, args, now_utc):
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
             and upgraded and nothing_to_do(cfg, now, hist) \
             and (DATA_DIR / "sim" / f"{key}.json").exists() \
+            and (DATA_DIR / "sim" / f"{key}_cs.json").exists() \
             and not config_newer(key):  # 模擬倉還沒建、或剛改過設定檔：休市也跑一次
         print(f"{tag} 休市中，最近一次收盤已確認，這次不更新。")
         return 0
@@ -1338,6 +1339,11 @@ def run_market(cfg, args, now_utc):
             sim.update(cfg, raw_data, hist, DATA_DIR, cfg["history_path"].parent, out["generated_at"])
         except Exception:
             print(f"{tag} 模擬倉更新失敗（不影響評分）：", file=sys.stderr)
+            traceback.print_exc()
+        try:  # 核心＋衛星：一半槓桿 ETF、一半程式選股
+            sim.update_cs(cfg, raw_data, hist, DATA_DIR, cfg["history_path"].parent, out["generated_at"], fetch_daily)
+        except Exception:
+            print(f"{tag} 核心＋衛星模擬帳戶更新失敗（不影響評分）：", file=sys.stderr)
             traceback.print_exc()
     update_markets_index(cfg, out)
     print(f"{tag} {out['mode_label']}｜資料日期 {date}｜強勢持股 {len(out['holdings'])} 檔、"

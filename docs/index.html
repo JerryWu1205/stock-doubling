@@ -1431,7 +1431,8 @@ async function renderPerf() {
 })();
 
 // ───────── 模擬倉 ─────────
-let simData = null, simTradesOpen = false;
+let simData = null, simCs = null, simTradesOpen = false, simBook = "main";
+try { simBook = localStorage.getItem("simBook") || "main"; } catch {}
 const SIM_EXIT = { none: "不設停損（被換出名單才賣）", sma50: "跌破 50 日線就賣", atr3: "跌破吊燈停損就賣", pct8: "跌破成本 −8% 就賣" };
 async function renderSim() {
   destroyPerf();
@@ -1441,13 +1442,17 @@ async function renderSim() {
       box.innerHTML = `<div class="empty">載入中…</div>`;
       simData = await getJson(`data/sim/${data.market}.json?t=` + Date.now());
       simData._v = data.generated_at;
+      try { simCs = await getJson(`data/sim/${data.market}_cs.json?t=` + Date.now()); } catch { simCs = null; }
     }
   } catch {
     box.innerHTML = `<div class="empty">模擬倉還沒開始，電腦下一次更新後就會用 10/16 收盤價建倉。</div>`;
     return;
   }
   if (tab !== "s") return;
-  const S = simData, cur = S.currency === "TWD" ? "NT$" : "US$";
+  const both = [["main", "程式選股", simData], ["cs", "核心＋衛星", simCs]].filter(b => b[2]);
+  if (!both.some(b => b[0] === simBook)) simBook = "main";
+  const S = simBook === "cs" ? simCs : simData, O = simBook === "cs" ? simData : simCs;
+  const cur = S.currency === "TWD" ? "NT$" : "US$";
   const dp = S.currency === "TWD" ? 0 : 2;
   const money = (v, d = dp) => v == null ? "–" : cur + Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
   const p2 = v => v == null ? "–" : (v > 0 ? "+" : "") + v.toFixed(2) + "%";
@@ -1462,11 +1467,21 @@ async function renderSim() {
       <td class="${clsOf(p.pnl)}">${signed(p.pnl)}<div class="small">${fmtP1(p.pnl_pct)}</div></td><td>${esc(p.date.slice(5))}</td></tr>`).join("");
   const trades = S.trades || [];
   const shown = simTradesOpen ? trades : trades.slice(0, 20);
-  const trRows = shown.map(x => `<tr><td>${esc(x.date.slice(5))}</td><td class="${x.side === "買" ? "up" : "down"}">${x.side}</td>
+  const trRows = shown.map(x => `<tr><td>${esc(x.date.slice(5))}${x.at === "open" ? `<div class="small">開盤</div>` : ""}</td><td class="${x.side === "買" ? "up" : "down"}">${x.side}</td>
       <td>${nm(x.t, x.name)}</td><td>${x.sh.toLocaleString()}</td><td>${px(x.px)}</td><td>${money(x.amount)}</td><td>${money(x.fee)}</td>
       <td class="${clsOf(x.pnl)}">${x.pnl != null ? signed(x.pnl) + `<div class="small">${fmtP1(x.pnl_pct)}・持有 ${x.days} 天</div>` : "–"}</td>
       <td class="small" style="text-align:left">${esc(x.reason || "")}</td></tr>`).join("");
-  box.innerHTML = `<section class="card"><h2>模擬倉：照程式選股自動買賣（${S.start_date ? esc(S.start_date) + " 起" : "等待建倉"}）</h2>
+  const Lv = simCs?.lev;
+  const cmp = both.length > 1 ? `<section class="card"><h2>兩個模擬帳戶並排比較</h2>
+      <div class="simscroll"><table class="ptable"><tr><th></th>${both.map(b => `<th>${b[1]}</th>`).join("")}</tr>
+      <tr><td>淨值</td>${both.map(b => `<td>${money(b[2].live_nav ?? b[2].nav, 0)}</td>`).join("")}</tr>
+      <tr><td>總報酬</td>${both.map(b => `<td class="${clsOf(b[2].ret?.total)}">${p2(b[2].ret?.total)}</td>`).join("")}</tr>
+      <tr><td>最大回檔</td>${both.map(b => `<td>${b[2].max_dd == null ? "–" : "−" + b[2].max_dd.toFixed(2) + "%"}</td>`).join("")}</tr>
+      <tr><td>贏大盤</td>${both.map(b => { const x = b[2].ret?.total != null && b[2].bench?.total != null ? b[2].ret.total - b[2].bench.total : null; return `<td class="${clsOf(x)}">${x == null ? "–" : (x > 0 ? "+" : "") + x.toFixed(2) + " 點"}</td>`; }).join("")}</tr>
+      <tr><td>對翻倍進度</td>${both.map(b => { const x = b[2].ret?.total != null && b[2].goal?.total != null ? b[2].ret.total - b[2].goal.total : null; return `<td class="${clsOf(x)}">${x == null ? "–" : x >= 0 ? `超前 ${x.toFixed(1)}` : `落後 ${(-x).toFixed(1)}`}</td>`; }).join("")}</tr></table></div>
+      ${Lv ? `<p class="note">核心＋衛星的 ${esc(Lv.sym)} ${esc(Lv.name)}：${esc(Lv.ref)} 趨勢${Lv.trend_on ? "成立" : "不成立"}、總經風險燈${Lv.red ? "紅燈" : "不是紅燈"}，目前${Lv.held ? "持有" : "放現金"}${Lv.order ? `，下一個交易日開盤${Lv.order === "buy" ? "買進" : "賣出"}` : ""}。</p>` : ""}
+      <div class="seg" style="margin-top:8px">${both.map(b => `<button data-book="${b[0]}" aria-pressed="${b[0] === simBook}">看${b[1]}明細</button>`).join("")}</div></section>` : "";
+  box.innerHTML = cmp + `<section class="card"><h2>${simBook === "cs" ? "核心＋衛星：一半槓桿 ETF、一半程式選股" : "模擬倉：照程式選股自動買賣"}（${S.start_date ? esc(S.start_date) + " 起" : "等待建倉"}）</h2>
       <div class="simtop">
         <div><div class="k">目前淨值</div><div class="v">${money(S.live_nav ?? S.nav, 0)}</div><div class="small">起始 ${money(S.start_cash, 0)}</div></div>
         <div><div class="k">總報酬</div><div class="v ${clsOf(R.total)}">${p2(R.total)}</div><div class="small">${signed((S.nav ?? 0) - S.start_cash, 0)}</div></div>
@@ -1476,7 +1491,7 @@ async function renderSim() {
         <div><div class="k">現金／持股</div><div class="v" style="font-size:15px">${money(S.cash, 0)}</div><div class="small">${(S.positions || []).length} 檔・${esc(SIM_EXIT[S.exit_rule] || S.exit_rule)}</div></div>
       </div>
       <div class="cwrap"><div class="cperf"></div></div>
-      <p class="note">實線＝模擬倉淨值，灰線＝同樣的錢買 ${esc(bname)}，紅色虛線＝年化翻倍目標。淨值以收盤確認日計，盤中「目前淨值」用最新價估算。</p></section>
+      <p class="note">粗線＝這個帳戶淨值${O ? "，細線＝另一個帳戶" : ""}，灰線＝同樣的錢買 ${esc(bname)}，紅色虛線＝年化翻倍目標。淨值以收盤確認日計，盤中「目前淨值」用最新價估算。</p></section>
     <section class="card"><h2>持倉（${(S.positions || []).length} 檔）</h2>
       ${posRows ? `<div class="simscroll"><table class="ptable"><tr><th>股票</th><th>股數</th><th>成本</th><th>現價</th><th>市值</th><th>占比</th><th>損益</th><th>買入</th></tr>${posRows}</table></div>` : `<div class="empty">還沒建倉</div>`}</section>
     <section class="card"><h2>交易紀錄（${trades.length} 筆）</h2>
@@ -1493,12 +1508,16 @@ async function renderSim() {
     .setData(c.filter(r => r[2] != null).map(r => ({ time: r[0], value: r[2] })));
   line(chart, css(PERF_COLORS.goal), { lineWidth: 1, lineStyle: 2, priceFormat: fmt, lastValueVisible: false })
     .setData(c.map((r, i) => ({ time: r[0], value: S.start_cash * Math.pow(2, i / 252) })));
+  if (O && (O.curve || []).length) line(chart, css(PERF_COLORS.pullback), { lineWidth: 1, priceFormat: fmt, lastValueVisible: false })
+    .setData(O.curve.map(r => ({ time: r[0], value: r[1] })));
   line(chart, css(PERF_COLORS.momentum), { lineWidth: 3, priceFormat: fmt, lastValueVisible: true })
     .setData(c.map(r => ({ time: r[0], value: r[1] })));
   chart.timeScale().fitContent();
 }
 $("sim").addEventListener("click", e => {
   if (e.target.id === "simMore") { simTradesOpen = !simTradesOpen; renderSim(); }
+  const bk = e.target.closest("button[data-book]");
+  if (bk) { simBook = bk.dataset.book; simTradesOpen = false; try { localStorage.setItem("simBook", simBook); } catch {} renderSim(); }
 });
 // ───────── 類股輪動 ─────────
 let rotData = null, rotKind = "themes", rotOpen = false, rotGroup = null, rotView = null;

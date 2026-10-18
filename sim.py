@@ -71,8 +71,9 @@ def _new_ledger(key):
             "bench_units": None, "last": None}
 
 
-def step(L, key, d, holdings, raw, bench, rule, slots, names):
-    """處理一個收盤確認日 d（字串 YYYY-MM-DD）。"""
+def step(L, key, d, holdings, raw, bench, rule, slots, names, extra=0.0, frac=1.0):
+    """處理一個收盤確認日 d（字串 YYYY-MM-DD）。
+    extra：帳上另外的部位市值（核心＋衛星的槓桿 ETF），算淨值用；frac：選股這一半占淨值的比例。"""
     ts = pd.Timestamp(d)
     pos = L["positions"]
     # 1. 賣：被換出名單，或觸發出場規則
@@ -102,7 +103,7 @@ def step(L, key, d, holdings, raw, bench, rule, slots, names):
         del pos[t]
     # 2. 買：名單裡有、手上沒有、沒觸發出場
     nav = L["cash"] + sum(p["sh"] * (_px(raw.get(t), ts) or p["last"]) for t, p in pos.items())
-    slot = nav / max(slots, 1)
+    slot = (nav + extra) * frac / max(slots, 1)
     for t in holdings:
         if t in pos:
             continue
@@ -129,7 +130,7 @@ def step(L, key, d, holdings, raw, bench, rule, slots, names):
     # 3. 收盤淨值
     for t, p in pos.items():
         p["last"] = _px(raw.get(t), ts) or p["last"]
-    nav = L["cash"] + sum(p["sh"] * p["last"] for p in pos.values())
+    nav = L["cash"] + sum(p["sh"] * p["last"] for p in pos.values()) + extra
     b = _px(bench, ts)
     if L["bench_units"] is None and b:
         L["bench_units"] = L["start_cash"] / b
@@ -176,10 +177,14 @@ def summarize(L, key, raw, names, rule, slots, now_iso):
     days = max(len(nav) - 1, 0)
     bench_last = nav[-1][2] if nav and nav[-1][2] else None
     goal = start * 2 ** (days / 252)
+    peak, mdd = start, 0.0
+    for _, v, _ in nav:
+        peak = max(peak, v)
+        mdd = max(mdd, 1 - v / peak)
     return {
         "market": key, "currency": L["currency"], "generated_at": now_iso, "start_date": L["start_date"],
         "start_cash": start, "data_date": today, "exit_rule": rule, "slots": slots,
-        "nav": last_nav, "live_nav": round(live, 2), "cash": round(L["cash"], 2),
+        "nav": last_nav, "live_nav": round(live, 2), "cash": round(L["cash"], 2), "max_dd": round(mdd * 100, 2),
         "ret": {"day": ret(prev_day), "week": ret(_since(nav, week_cut) or start) if today else None,
                 "month": ret(_since(nav, month_cut) or start) if today else None, "total": ret(start)},
         "bench": {"nav": bench_last, "total": round((bench_last / start - 1) * 100, 2) if bench_last else None},
@@ -221,4 +226,136 @@ def update(cfg, raw_data, hist, data_dir, state_dir, now_iso):
     tmp = data_dir / "sim" / f"{key}.json.tmp"
     tmp.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     tmp.replace(data_dir / "sim" / f"{key}.json")
+    return out
+
+
+# ───────── 核心＋衛星：一半槓桿 ETF（有趨勢、總經不是紅燈才拿），一半程式選股 ─────────
+CS_LEV = {"us": ("SOXL", "SOXX"), "tw": ("00631L", "0050")}  # (槓桿 ETF, 看趨勢的原型)
+CS_NAMES = {"SOXL": "三倍做多半導體ETF", "SOXX": "費城半導體ETF", "00631L": "元大台灣50正2", "0050": "元大台灣50"}
+CS_REFRESH_MIN = 60  # 沒有新收盤日時，槓桿 ETF 和總經資料多久重抓一次（盤中估值用）
+
+
+def _trend_on(df, ts):
+    """收盤站上 50 日線，而且 50 日線在 200 日線上面（和績效頁槓桿 ETF 的趨勢規則一樣）。"""
+    if df is None:
+        return False
+    c = df["Close"].loc[:ts].dropna()
+    if len(c) < 200 or c.index[-1] != ts:
+        return False
+    s50, s200 = float(c.iloc[-50:].mean()), float(c.iloc[-200:].mean())
+    return float(c.iloc[-1]) > s50 > s200
+
+
+def _red_on(red, ts):
+    """ts 那天（或之前最近一天，最多差 5 天）總經風險燈是不是紅燈。"""
+    if red is None:
+        return False
+    r = red.loc[:ts]
+    return bool(len(r) and r.index[-1] >= ts - pd.Timedelta(days=5) and r.iloc[-1])
+
+
+def step_cs(L, key, d, holdings, raw, bench, rule, slots, names, red=None):
+    lev_sym, ref_sym = CS_LEV[key]
+    ts = pd.Timestamp(d)
+    ldf = raw.get(lev_sym)
+    # 1. 前一個收盤日決定的槓桿 ETF 買賣，今天開盤成交
+    order = L.get("lev_order")
+    if order and ldf is not None and ts in ldf.index:
+        opx = ldf.at[ts, "Open"] if "Open" in ldf.columns else None
+        opx = float(opx) if opx is not None and pd.notna(opx) and opx > 0 else _px(ldf, ts)
+        lev = L.get("lev")
+        if opx and order == "sell" and lev:
+            gross = lev["sh"] * opx
+            fee = _fee(key, gross, "sell")
+            L["cash"] += gross - fee
+            pnl = gross - fee - lev["cost_total"]
+            L["trades"].append({"date": d, "at": "open", "side": "賣", "t": lev_sym, "name": names.get(lev_sym, ""),
+                                "sh": lev["sh"], "px": round(opx, 4), "amount": round(gross, 2), "fee": round(fee, 2),
+                                "reason": L.get("lev_why") or "趨勢轉弱", "pnl": round(pnl, 2),
+                                "pnl_pct": round(pnl / lev["cost_total"] * 100, 2), "buy_date": lev["date"],
+                                "days": int(np.busday_count(_date.fromisoformat(lev["date"]), _date.fromisoformat(d)))})
+            L["lev"] = None
+        elif opx and order == "buy" and not lev:
+            nav = L["cash"] + sum(p["sh"] * p["last"] for p in L["positions"].values())
+            budget = min(nav * 0.5, L["cash"])
+            sh = math.floor(budget / (opx * (1 + bt.COSTS.get(key, bt.COSTS["us"])["buy"])))
+            while sh > 0 and sh * opx + _fee(key, sh * opx, "buy") > L["cash"]:
+                sh -= 1
+            if sh > 0:
+                gross = sh * opx
+                fee = _fee(key, gross, "buy")
+                L["cash"] -= gross + fee
+                L["lev"] = {"sh": sh, "cost": round((gross + fee) / sh, 4), "cost_total": round(gross + fee, 2),
+                            "date": d, "last": opx}
+                L["trades"].append({"date": d, "at": "open", "side": "買", "t": lev_sym, "name": names.get(lev_sym, ""),
+                                    "sh": sh, "px": round(opx, 4), "amount": round(gross, 2), "fee": round(fee, 2),
+                                    "reason": f"{ref_sym} 趨勢成立、總經不是紅燈"})
+        L["lev_order"] = None
+    # 2. 選股這一半照程式選股名單（每檔＝淨值 × 一半 ÷ 檔數），淨值含槓桿 ETF
+    lev = L.get("lev")
+    if lev:
+        lev["last"] = _px(ldf, ts) or lev["last"]
+    step(L, key, d, holdings, raw, bench, rule, slots, names, extra=lev["sh"] * lev["last"] if lev else 0.0, frac=0.5)
+    # 3. 收盤判斷，下一個交易日開盤買賣槓桿 ETF
+    trend, is_red = _trend_on(raw.get(ref_sym), ts), _red_on(red, ts)
+    L["trend_on"], L["red"] = trend, is_red
+    if trend and not is_red and not lev:
+        L["lev_order"] = "buy"
+    elif (not trend or is_red) and lev:
+        L["lev_order"] = "sell"
+        L["lev_why"] = "總經風險燈紅燈" if trend else f"{ref_sym} 趨勢轉弱"
+
+
+def update_cs(cfg, raw_data, hist, data_dir, state_dir, now_iso, fetch):
+    """fetch(代號清單) → {代號: 日線}，用來抓槓桿 ETF、原型和總經資料（scan.fetch_daily）。"""
+    import pickle
+    import time
+    import macro
+    key = cfg["key"]
+    lev_sym, ref_sym = CS_LEV[key]
+    path = state_dir / "sim_cs.json"
+    try:
+        L = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        L = _new_ledger(key)
+        L.update({"book": "cs", "lev": None, "lev_order": None, "trend_on": None, "red": None})
+    todo = [d for d in sorted(hist["confirmed"]) if d >= START_DATE and not (L["last"] and d <= L["last"])]
+    cache = state_dir / "sim_cs_px.pkl"
+    extra = None
+    try:
+        if not todo and time.time() - cache.stat().st_mtime < CS_REFRESH_MIN * 60:
+            extra = pickle.loads(cache.read_bytes())
+    except OSError:
+        pass
+    if extra is None:
+        sfx = ".TW" if key == "tw" else ""
+        got = fetch([lev_sym + sfx, ref_sym + sfx] + macro.SYMS)
+        extra = {(s[: -len(sfx)] if sfx and s.endswith(sfx) else s): df for s, df in got.items()}
+        cache.write_bytes(pickle.dumps(extra))
+    ms = macro.series(extra)
+    red = ms["total"] >= macro.RED if ms is not None else None
+    rule = _exit_rule(cfg)
+    slots = cfg["target_count"]
+    names = {**cfg["names"], **CS_NAMES}
+    bench = raw_data.get(cfg["benchmark"])
+    raw = {**{k: v for k, v in extra.items() if k in (lev_sym, ref_sym)}, **raw_data}
+    for d in todo:
+        if L["start_date"] is None:
+            L["start_date"] = d
+        step_cs(L, key, d, list(hist["confirmed"][d]["holdings"]), raw, bench, rule, slots, names, red)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(L, ensure_ascii=False), encoding="utf-8")
+    view = dict(L, positions={**L["positions"], **({lev_sym: L["lev"]} if L.get("lev") else {})})
+    out = summarize(view, key, raw, names, rule, slots, now_iso)
+    out.update({"book": "cs", "title": "核心＋衛星",
+                "lev": {"sym": lev_sym, "name": CS_NAMES[lev_sym], "ref": ref_sym, "trend_on": L.get("trend_on"),
+                        "red": L.get("red"), "order": L.get("lev_order"), "held": bool(L.get("lev"))},
+                "note": f"一半放 {lev_sym} {CS_NAMES[lev_sym]}：{ref_sym} 收盤站上 50 日線、50 日線在 200 日線上面，"
+                        "而且總經風險燈不是紅燈才持有；收盤判斷、下一個交易日開盤買賣，不持有時放現金。"
+                        "另一半照程式選股名單，每檔＝淨值 × 一半 ÷ 持股檔數，出場規則和模擬倉一樣。"
+                        "手續費、稅照模擬倉，股利不計。模擬帳戶，不是實際下單，不是投資建議。"})
+    (data_dir / "sim").mkdir(parents=True, exist_ok=True)
+    tmp = data_dir / "sim" / f"{key}_cs.json.tmp"
+    tmp.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    tmp.replace(data_dir / "sim" / f"{key}_cs.json")
     return out
