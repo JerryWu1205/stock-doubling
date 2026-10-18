@@ -255,6 +255,14 @@ def date_lt(d, iso):
     return d.isoformat() < iso
 
 
+def config_newer(key):
+    """config.toml 比網頁資料新（剛加了候選股）就要重跑一次。"""
+    try:
+        return (HERE / "config.toml").stat().st_mtime > (DATA_DIR / f"{key}.json").stat().st_mtime
+    except OSError:
+        return False
+
+
 def nothing_to_do(cfg, now, hist):
     """自動模式下，休市時段且最近一次收盤已確認，就不必再抓資料。
 
@@ -1158,7 +1166,8 @@ def run_market(cfg, args, now_utc):
                 and charts_have_weekly(key))
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
             and upgraded and nothing_to_do(cfg, now, hist) \
-            and (DATA_DIR / "sim" / f"{key}.json").exists():  # 模擬倉還沒建：休市也跑一次，用最近收盤建倉
+            and (DATA_DIR / "sim" / f"{key}.json").exists() \
+            and not config_newer(key):  # 模擬倉還沒建、或剛改過設定檔：休市也跑一次
         print(f"{tag} 休市中，最近一次收盤已確認，這次不更新。")
         return 0
 

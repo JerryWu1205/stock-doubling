@@ -81,6 +81,12 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .tkr .star { color: var(--warn); font-size: 13px; margin-left: 4px; }
 .tab[aria-selected="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
 .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 6px; scrollbar-width: none; }
+@media (hover: hover) and (pointer: fine) {
+  .chips { scrollbar-width: thin; cursor: grab; }
+  .chips.dragging { cursor: grabbing; user-select: none; }
+  .chips::-webkit-scrollbar { height: 6px; }
+  .chips::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+}
 .chip { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 999px;
   padding: 4px 11px; font: inherit; font-size: 13px; cursor: pointer; }
 .chip[aria-pressed="true"] { color: var(--info); background: var(--info-bg); border-color: transparent; font-weight: 600; }
@@ -1380,6 +1386,36 @@ async function renderPerf() {
   for (const k of keys) add(bt[k].curve, k, k === mine ? 3 : 2);
   chart.timeScale().fitContent();
 }
+// ───────── 分類標籤：電腦上用滾輪或拖曳左右滑 ─────────
+(() => {
+  let drag = null, moved = false;
+  document.addEventListener("wheel", e => {
+    const row = e.target.closest(".chips");
+    if (!row || row.scrollWidth <= row.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    row.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener("mousedown", e => {
+    const row = e.target.closest(".chips");
+    if (!row || e.button !== 0 || row.scrollWidth <= row.clientWidth) return;
+    drag = { row, x: e.clientX, left: row.scrollLeft };
+    moved = false;
+  });
+  document.addEventListener("mousemove", e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 5) { moved = true; drag.row.classList.add("dragging"); }
+    if (moved) drag.row.scrollLeft = drag.left - dx;
+  });
+  document.addEventListener("mouseup", () => {
+    if (drag) drag.row.classList.remove("dragging");
+    drag = null;
+  });
+  document.addEventListener("click", e => {  // 拖曳完放開不要當成點選
+    if (moved && e.target.closest(".chips")) { e.stopPropagation(); e.preventDefault(); moved = false; }
+  }, true);
+})();
+
 // ───────── 模擬倉 ─────────
 let simData = null, simTradesOpen = false;
 const SIM_EXIT = { none: "不設停損（被換出名單才賣）", sma50: "跌破 50 日線就賣", atr3: "跌破吊燈停損就賣", pct8: "跌破成本 −8% 就賣" };
