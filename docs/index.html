@@ -198,9 +198,9 @@ button.stat { font: inherit; color: inherit; text-align: left; cursor: pointer; 
 @media (max-width: 380px) { .dash { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .fund { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; font-size: 13px; }
 .fund h3 { font-size: 13px; margin: 8px 0 4px; color: var(--muted); }
-.fund .kv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-.fund .kv div { background: var(--bg); border-radius: 8px; padding: 5px 7px; min-width: 0; }
-.fund .kv span { display: block; font-size: 11px; color: var(--muted); }
+.fund .kv, .dashchart .kv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.fund .kv div, .dashchart .kv div { background: var(--bg); border-radius: 8px; padding: 5px 7px; min-width: 0; }
+.fund .kv span, .dashchart .kv span { display: block; font-size: 11px; color: var(--muted); }
 .fund .kv b { font-variant-numeric: tabular-nums; }
 .fund .pbar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 3px; position: relative; }
 .fund .pbar i { position: absolute; top: -2px; width: 8px; height: 8px; border-radius: 50%; background: var(--info); margin-left: -4px; }
@@ -626,6 +626,7 @@ function renderDashChart() {
   const h = d.hist;
   box.innerHTML = `<div class="hd2"><b>${esc(d.label)}</b>${h ? `<div class="seg" style="margin:0;flex:none;width:240px">${[["1m", "1 月"], ["6m", "6 月"], ["1y", "1 年"], ["5y", "5 年"]].map(([k, l]) =>
     `<button data-dr="${k}" aria-pressed="${k === dashRange}">${l}</button>`).join("")}</div>` : ""}</div><div class="cline"></div>
+    ${d.inputs ? `<div class="kv">${d.inputs.map(x => `<div><span>${esc(x.label)}</span><b style="color:var(--${x.pts >= 20 ? "bad" : x.pts >= 10 ? "warn" : "good"})">${x.pts} 分</b><span>${esc(x.text || "")}</span></div>`).join("")}</div>` : ""}
     <div class="note">${d.note ? esc(d.note) + "。" : ""}${h ? (dashRange === "5y" ? "5 年用週線。" : "日線。") : "這項從開始記錄那天起累積，資料還不多。"}</div>`;
   dashView = { charts: [] };
   const cut = { "1m": 22, "6m": 126 }[dashRange];
@@ -658,7 +659,11 @@ function renderDash() {
   dashItems = items;
   $("dash").innerHTML = items.map(d => {
     let v, sub;
-    if (d.kind === "pcr") {
+    if (d.kind === "macro") {
+      const L = { red: ["紅燈", "bad"], yellow: ["黃燈", "warn"], green: ["綠燈", "good"] }[d.light] || ["–", ""];
+      v = `<span style="color:var(--${L[1]})">●</span> ${d.value}`;
+      sub = `${L[0]}${d.chg ? `・${d.chg > 0 ? "+" : ""}${d.chg}` : ""}`;
+    } else if (d.kind === "pcr") {
       v = d.value.toFixed(0) + "%";
       sub = `${d.chg == null ? "" : (d.chg > 0 ? "+" : "") + d.chg.toFixed(0) + "・"}${d.value >= 120 ? "偏多" : d.value <= 80 ? "偏空" : "中性"}`;
     } else if (d.kind === "fi_net") {
@@ -716,6 +721,14 @@ function fundHtml(tk) {
       <div><span>外資 5 日</span>${z(ins[0])}<span>20 日 ${ins[1] > 0 ? "+" : ""}${ins[1].toLocaleString()}</span></div>
       <div><span>投信 5 日</span>${z(ins[2])}<span>20 日 ${ins[3] > 0 ? "+" : ""}${ins[3].toLocaleString()}</span></div></div>
       <div class="note">只有上市股票；外資不含外資自營商。${ins[0] > 0 && ins[2] > 0 ? "外資、投信同步買超。" : ins[0] < 0 && ins[2] < 0 ? "外資、投信同步賣超，留意。" : ""}</div>`);
+  }
+  if (f.debt) {
+    const D = f.debt, big = v => v == null ? "–" : (v < 0 ? "−$" : "$") + fmtBig(Math.abs(v));
+    out.push(`<h3>負債與利率敏感度${D.flag ? `<span class="tag earn" style="margin-left:6px">高槓桿・利率敏感</span>` : ""}</h3><div class="kv">
+      <div><span>總負債</span><b>${big(D.debt)}</b><span>負債 ÷ EBITDA ${D.lev == null ? "–" : D.lev + " 倍"}</span></div>
+      <div><span>自由現金流</span><b style="${D.fcf < 0 ? "color:var(--bad)" : ""}">${big(D.fcf)}</b><span>近一年</span></div>
+      <div><span>利息費用（近 4 季）</span><b>${big(D.int_exp)}</b><span>營業利益 ${big(D.op_inc)}</span></div></div>
+      <div class="note">自由現金流為負且負債超過 EBITDA 3 倍，或利息費用大於營業利益，就標「高槓桿・利率敏感」：利率越高越吃力。只顯示、還沒放進評分。</div>`);
   }
   if (f.own) {
     const o = f.own;
@@ -956,10 +969,11 @@ function rowHtml(i) {
   const earn = earningsOf(i.ticker);
   const earnTag = earn ? ` <span class="tag earn">財報 ${earn.date.slice(5).replace("-", "/")}</span>` : "";
   const fr = fundOf(i.ticker)?.rev;
+  const debtTag = fundOf(i.ticker)?.debt?.flag ? ` <span class="tag earn" title="自由現金流為負且負債 ÷ EBITDA 大於 3，或利息費用大於營業利益">高槓桿・利率敏感</span>` : "";
   const revTag = fr?.yoy != null ? ` <span class="tag rev" title="${data.market === "tw" ? "月營收" : "季營收"}年增">營收 ${fmtP1(fr.yoy)}</span>` : "";
   const lim = i.limit === "up" ? ` <span class="tag lim">漲停</span>` : i.limit === "down" ? ` <span class="tag lim">跌停</span>` : "";
   const px = i.price != null
-    ? `<div class="px">${fmtPx(i.price)}<span class="${clsOf(chg)}">${fmtPct(chg)}</span>${lim}${earnTag}${revTag}</div>`
+    ? `<div class="px">${fmtPx(i.price)}<span class="${clsOf(chg)}">${fmtPct(chg)}</span>${lim}${earnTag}${revTag}${debtTag}</div>`
     : `<div class="px ${clsOf(chg)}">${fmtPct(chg)}</div>`;
   const pl = isMine ? pnlOf(i.ticker) : null;
   const stp = isMine ? stopOf(i) : null;

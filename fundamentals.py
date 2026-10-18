@@ -20,6 +20,8 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 
+import macro
+
 NY, TPE = ZoneInfo("America/New_York"), ZoneInfo("Asia/Taipei")
 
 HERE = Path(__file__).resolve().parent
@@ -127,7 +129,7 @@ DASH = [
 
 
 def dashboard(yf_download, now_utc):
-    syms = [s for s, _, _ in DASH] + ["TSM", "2330.TW"]
+    syms = list(dict.fromkeys([s for s, _, _ in DASH] + ["TSM", "2330.TW"] + macro.SYMS))
     data = yf_download(syms, period="5y", interval="1d")
     items = []
 
@@ -155,6 +157,12 @@ def dashboard(yf_download, now_utc):
                       "chg_pct": _r((last / prev - 1) * 100),
                       "vs_sma200_pct": _r((last / sma200 - 1) * 100, 1) if sma200 else None,
                       "spark": [_r(float(x), 3) for x in c.iloc[-60:]], "hist": hist(c)})
+    try:  # 總經風險燈放第一格
+        m = macro.latest(data)
+        if m:
+            items.insert(0, m)
+    except Exception:
+        _probe["macro"] = {"ok": False, "error": traceback.format_exc()[-300:]}
     # 台積電 ADR 溢價：1 股 ADR = 5 股台股
     try:
         adr, tw, fx = data.get("TSM"), data.get("2330.TW"), data.get("TWD=X")
@@ -395,7 +403,7 @@ def us_fundamentals(tickers, now_utc, budget=20):
     items = {}
     for t in tickers:
         c = cache.get(t)
-        if c and c.get("day") == today and c.get("v") == 3:
+        if c and c.get("day") == today and c.get("v") == 4:
             items[t] = c["data"]
             continue
         if budget <= 0:
@@ -422,6 +430,7 @@ def us_fundamentals(tickers, now_utc, budget=20):
                              "short": _r((info.get("shortPercentOfFloat") or 0) * 100) if info.get("shortPercentOfFloat") is not None else None}
             it["val"] = {"pe": _r(info.get("trailingPE")), "fpe": _r(info.get("forwardPE")),
                          "pb": _r(info.get("priceToBook")), "dy": _r(dy * 100) if dy else None}
+            q = None
             try:
                 q = tk.quarterly_income_stmt
                 if q is not None and "Total Revenue" in q.index:
@@ -433,6 +442,25 @@ def us_fundamentals(tickers, now_utc, budget=20):
                     elif len(rv) >= 2:
                         it["rev"] = {"q": str(rv.index[-1].date()), "rev": float(rv.iloc[-1]),
                                      "qoq": _r((rv.iloc[-1] / rv.iloc[-2] - 1) * 100)}
+            except Exception:
+                pass
+            try:  # 負債與利率敏感度：自由現金流為負且負債 ÷ EBITDA > 3，或利息費用 > 營業利益
+                debt, ebitda, fcf = _num(info.get("totalDebt")), _num(info.get("ebitda")), _num(info.get("freeCashflow"))
+                ie = oi = None
+                if q is not None:
+                    for name in ("Interest Expense", "Interest Expense Non Operating"):
+                        if name in q.index:
+                            ie = float(q.loc[name].dropna().sort_index().iloc[-4:].abs().sum())
+                            break
+                    if "Operating Income" in q.index:
+                        oi = float(q.loc["Operating Income"].dropna().sort_index().iloc[-4:].sum())
+                lev = debt / ebitda if debt is not None and ebitda and ebitda > 0 else None
+                neg_fcf = fcf is not None and fcf < 0
+                high_lev = (lev is not None and lev > 3) or bool(debt and ebitda is not None and ebitda <= 0)
+                flag = bool((neg_fcf and high_lev) or (ie and oi is not None and ie > oi))
+                if debt is not None or fcf is not None:
+                    it["debt"] = {"debt": debt, "ebitda": ebitda, "fcf": fcf, "lev": _r(lev, 1), "int_exp": ie, "op_inc": oi,
+                                  "flag": flag}
             except Exception:
                 pass
             # 分析師預估：下一季 EPS、營收，以及目標價
@@ -486,7 +514,7 @@ def us_fundamentals(tickers, now_utc, budget=20):
             if c:
                 items[t] = c["data"]
             continue
-        cache[t] = {"day": today, "v": 3, "data": it}
+        cache[t] = {"day": today, "v": 4, "data": it}
         items[t] = it
         _time.sleep(0.3)
     _save(path, cache, compact=True)
