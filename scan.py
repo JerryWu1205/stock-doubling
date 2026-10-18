@@ -31,6 +31,7 @@ import pandas as pd
 
 import backtest as bt
 import sim
+import twrt
 import charts
 import indicators as ind
 
@@ -1156,7 +1157,8 @@ def run_market(cfg, args, now_utc):
                 and "exits" in read_json(DATA_DIR / "perf" / f"{key}.json", {})
                 and charts_have_weekly(key))
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
-            and upgraded and nothing_to_do(cfg, now, hist):
+            and upgraded and nothing_to_do(cfg, now, hist) \
+            and (DATA_DIR / "sim" / f"{key}.json").exists():  # 模擬倉還沒建：休市也跑一次，用最近收盤建倉
         print(f"{tag} 休市中，最近一次收盤已確認，這次不更新。")
         return 0
 
@@ -1169,6 +1171,14 @@ def run_market(cfg, args, now_utc):
     else:
         by_sym = fetch_daily(list(symmap.values()))
         raw_data = {t: by_sym[s] for t, s in symmap.items() if s in by_sym}
+        if key == "tw" and session == "open":
+            try:  # 永豐金即時報價（有填金鑰才會用），蓋掉 Yahoo 延遲 20 分鐘的今天這根
+                n = twrt.patch(raw_data, now.date().isoformat())
+                if n:
+                    cfg["quote_delay_minutes"] = 0
+                    print(f"{tag} 永豐金即時報價：更新 {n} 檔")
+            except Exception:
+                traceback.print_exc()
     if cfg["benchmark"] not in raw_data:
         print(f"{tag} 錯誤：抓不到 {cfg['benchmark']}，可能是網路問題，這次不更新。", file=sys.stderr)
         return 1
