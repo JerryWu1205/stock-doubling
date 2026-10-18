@@ -533,6 +533,17 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
     h = len(bs) // 2
     out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct"),
                     "years": years(bs)}
+    if "16" in eq:  # 核心＋衛星：一半放大盤、一半放強勢 16 檔，每 5 天調回各半
+        s16 = pd.Series(eq["16"], dates)
+        bd = bench.reindex(dates).ffill()
+        v, cs = 1.0, [1.0]
+        for i in range(1, len(dates)):
+            v *= 1 + 0.5 * (s16.iloc[i] / s16.iloc[i - 1] - 1) + 0.5 * (bd.iloc[i] / bd.iloc[i - 1] - 1)
+            cs.append(v)
+        sc = pd.Series(cs, dates).reindex(idx).ffill().loc[dates[0]:]
+        h = len(sc) // 2
+        out["16_core"] = {**_stats(sc), "h1": _stats(sc.iloc[: h + 1]).get("cagr_pct"),
+                          "h2": _stats(sc.iloc[h:]).get("cagr_pct"), "years": years(sc)}
     out["period"] = [str(dates[0].date()), str(dates[-1].date())]
     out["rule"] = (f"全市場每 {step} 個交易日換一次：站上 50 日線的股票裡，近 3 月漲幅 45%＋近 1 月 30%＋資金流 25% 排名最高的前 N 檔，"
                    "等權重、含交易成本；h1／h2 是前半段／後半段的年化。16_r63＝只看 3 個月漲幅；16_grp＝加族群強度 20%；"
@@ -540,7 +551,7 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
                    "16_rev＝加月營收年增率 20%；16_val＝加本益比便宜程度 20%；16_pe＝排除本益比最高 10% 或虧損的；"
                    "16_iv＝同 16 檔但波動小的放多一點（依 20 天波動反比配重）；16_rate＝10 年債殖利率 20 天升 0.25 個百分點以上時半倉；"
                    "16_cap4＝同族群最多 4 檔；16_mkt50＝大盤指數跌破 50 日線時半倉（16_mkt50_0＝全部空手）；"
-                   "16_avgdown＝攤平：已持有的跌破 50 日線不賣、放兩倍資金")
+                   "16_avgdown＝攤平：已持有的跌破 50 日線不賣、放兩倍資金；16_core＝一半大盤、一半強勢 16 檔，每 5 天調回各半")
     return out
 
 
@@ -650,7 +661,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         except Exception:
             _probe["tw_hist_error"] = traceback.format_exc()[-300:]
     oc = (old.get("bt") or {}).get("counts") or {}
-    need_bt = "16_avgdown" not in oc or not (old.get("bt") or {}).get("pit") or (pending5 == 0 and "counts5" not in (old.get("bt") or {})) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
+    need_bt = "16_core" not in oc or not (old.get("bt") or {}).get("pit") or (pending5 == 0 and not {"16_core", "error"} & set((old.get("bt") or {}).get("counts5") or {})) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
         (key == "tw" and hist_ready and rev is not None and "16_rev" not in oc)
     if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
