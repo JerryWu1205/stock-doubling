@@ -164,6 +164,12 @@ button.stat { font: inherit; color: inherit; text-align: left; cursor: pointer; 
 .ptable th:first-child, .ptable td:first-child { text-align: left; }
 .ptable .sw { display: inline-block; width: 10px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
 .cperf { height: 230px; }
+.simtop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+.simtop > div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; min-width: 0; }
+.simtop .k { font-size: 12px; color: var(--muted); }
+.simtop .v { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.simscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.simscroll .ptable td, .simscroll .ptable th { white-space: nowrap; }
 .todo { display: flex; align-items: baseline; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .todo:first-child { border-top: 0; }
 .todo .pill { flex: none; }
@@ -280,6 +286,7 @@ details p { margin: 6px 0; }
     <button class="tab" role="tab" id="tabM" aria-selected="false">我的 ★</button>
     <button class="tab" role="tab" id="tabR" aria-selected="false">類股</button>
     <button class="tab" role="tab" id="tabP" aria-selected="false">績效</button>
+    <button class="tab" role="tab" id="tabS" aria-selected="false" title="照程式選股真的買賣的模擬帳戶：美股 5 萬美元、台股 100 萬台幣起始，每筆交易都記錄">模擬倉</button>
   </div>
   <div id="listTools">
     <div class="toolbar">
@@ -295,6 +302,7 @@ details p { margin: 6px 0; }
   </div>
   <div id="list"></div>
   <div id="perf" hidden></div>
+  <div id="sim" hidden></div>
   <div id="rot" hidden></div>
 
   <details>
@@ -468,7 +476,7 @@ function render() {
   renderSummary();
   renderTodo();
   renderSwaps();
-  if (tab === "p") renderPerf(); else if (tab === "r") renderRot(); else renderList();
+  if (tab === "p") renderPerf(); else if (tab === "r") renderRot(); else if (tab === "s") renderSim(); else renderList();
 }
 
 function renderBooks() {
@@ -1372,6 +1380,76 @@ async function renderPerf() {
   for (const k of keys) add(bt[k].curve, k, k === mine ? 3 : 2);
   chart.timeScale().fitContent();
 }
+// ───────── 模擬倉 ─────────
+let simData = null, simTradesOpen = false;
+const SIM_EXIT = { none: "不設停損（被換出名單才賣）", sma50: "跌破 50 日線就賣", atr3: "跌破吊燈停損就賣", pct8: "跌破成本 −8% 就賣" };
+async function renderSim() {
+  destroyPerf();
+  const box = $("sim");
+  try {
+    if (!simData || simData.market !== data.market || simData._v !== data.generated_at) {
+      box.innerHTML = `<div class="empty">載入中…</div>`;
+      simData = await getJson(`data/sim/${data.market}.json?t=` + Date.now());
+      simData._v = data.generated_at;
+    }
+  } catch {
+    box.innerHTML = `<div class="empty">模擬倉還沒開始，電腦下一次更新後就會用 10/16 收盤價建倉。</div>`;
+    return;
+  }
+  if (tab !== "s") return;
+  const S = simData, cur = S.currency === "TWD" ? "NT$" : "US$";
+  const dp = S.currency === "TWD" ? 0 : 2;
+  const money = (v, d = dp) => v == null ? "–" : cur + Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const p2 = v => v == null ? "–" : (v > 0 ? "+" : "") + v.toFixed(2) + "%";
+  const signed = (v, d = dp) => v == null ? "–" : (v > 0 ? "+" : v < 0 ? "−" : "") + money(Math.abs(v), d);
+  const px = v => Number(v).toLocaleString("en-US", { maximumFractionDigits: S.currency === "TWD" ? 2 : 2, minimumFractionDigits: 2 });
+  const nm = (t, n) => `${esc(t)}${n && n !== t ? " " + esc(n) : ""}`;
+  const R = S.ret || {}, B = S.bench || {}, G = S.goal || {}, Z = S.realized || {};
+  const bname = data.benchmark_name || data.benchmark || "大盤";
+  const ahead = S.ret && G.total != null ? R.total - G.total : null;
+  const posRows = (S.positions || []).map(p => `<tr><td>${nm(p.t, p.name)}</td><td>${p.sh.toLocaleString()}</td>
+      <td>${px(p.cost)}</td><td>${px(p.px)}</td><td>${money(p.value)}</td><td>${p.weight}%</td>
+      <td class="${clsOf(p.pnl)}">${signed(p.pnl)}<div class="small">${fmtP1(p.pnl_pct)}</div></td><td>${esc(p.date.slice(5))}</td></tr>`).join("");
+  const trades = S.trades || [];
+  const shown = simTradesOpen ? trades : trades.slice(0, 20);
+  const trRows = shown.map(x => `<tr><td>${esc(x.date.slice(5))}</td><td class="${x.side === "買" ? "up" : "down"}">${x.side}</td>
+      <td>${nm(x.t, x.name)}</td><td>${x.sh.toLocaleString()}</td><td>${px(x.px)}</td><td>${money(x.amount)}</td><td>${money(x.fee)}</td>
+      <td class="${clsOf(x.pnl)}">${x.pnl != null ? signed(x.pnl) + `<div class="small">${fmtP1(x.pnl_pct)}・持有 ${x.days} 天</div>` : "–"}</td>
+      <td class="small" style="text-align:left">${esc(x.reason || "")}</td></tr>`).join("");
+  box.innerHTML = `<section class="card"><h2>模擬倉：照程式選股自動買賣（${S.start_date ? esc(S.start_date) + " 起" : "等待建倉"}）</h2>
+      <div class="simtop">
+        <div><div class="k">目前淨值</div><div class="v">${money(S.live_nav ?? S.nav, 0)}</div><div class="small">起始 ${money(S.start_cash, 0)}</div></div>
+        <div><div class="k">總報酬</div><div class="v ${clsOf(R.total)}">${p2(R.total)}</div><div class="small">${signed((S.nav ?? 0) - S.start_cash, 0)}</div></div>
+        <div><div class="k">今日／本週／本月</div><div class="v" style="font-size:15px"><span class="${clsOf(R.day)}">${p2(R.day)}</span>／<span class="${clsOf(R.week)}">${p2(R.week)}</span>／<span class="${clsOf(R.month)}">${p2(R.month)}</span></div></div>
+        <div><div class="k">同樣的錢買 ${esc(bname)}</div><div class="v ${clsOf(B.total)}">${p2(B.total)}</div><div class="small">${money(B.nav, 0)}</div></div>
+        <div><div class="k">翻倍目標進度（${G.days ?? 0} 個交易日）</div><div class="v">${p2(G.total)}</div><div class="small ${clsOf(ahead)}">${ahead == null ? "" : ahead >= 0 ? `超前 ${ahead.toFixed(1)} 個百分點` : `落後 ${(-ahead).toFixed(1)} 個百分點`}</div></div>
+        <div><div class="k">現金／持股</div><div class="v" style="font-size:15px">${money(S.cash, 0)}</div><div class="small">${(S.positions || []).length} 檔・${esc(SIM_EXIT[S.exit_rule] || S.exit_rule)}</div></div>
+      </div>
+      <div class="cwrap"><div class="cperf"></div></div>
+      <p class="note">實線＝模擬倉淨值，灰線＝同樣的錢買 ${esc(bname)}，紅色虛線＝年化翻倍目標。淨值以收盤確認日計，盤中「目前淨值」用最新價估算。</p></section>
+    <section class="card"><h2>持倉（${(S.positions || []).length} 檔）</h2>
+      ${posRows ? `<div class="simscroll"><table class="ptable"><tr><th>股票</th><th>股數</th><th>成本</th><th>現價</th><th>市值</th><th>占比</th><th>損益</th><th>買入</th></tr>${posRows}</table></div>` : `<div class="empty">還沒建倉</div>`}</section>
+    <section class="card"><h2>交易紀錄（${trades.length} 筆）</h2>
+      <div class="small">已實現：${Z.n || 0} 筆賣出・損益 <b class="${clsOf(Z.pnl)}">${signed(Z.pnl)}</b>${Z.win_pct != null ? `・勝率 ${Z.win_pct}%・平均 ${fmtP1(Z.avg_pct)}` : ""}・累計手續費與稅 ${money(Z.fees)}</div>
+      ${trRows ? `<div class="simscroll"><table class="ptable"><tr><th>日期</th><th>買賣</th><th>股票</th><th>股數</th><th>成交價</th><th>金額</th><th>費用</th><th>損益</th><th style="text-align:left">原因</th></tr>${trRows}</table></div>` : ""}
+      ${trades.length > 20 ? `<button class="more" id="simMore">${simTradesOpen ? "收起" : `看全部 ${trades.length} 筆`}</button>` : ""}
+      <p class="note">${esc(S.note || "")}</p></section>`;
+  if (!window.LightweightCharts || !(S.curve || []).length) return;
+  const chart = LightweightCharts.createChart(box.querySelector(".cperf"), baseOpts({ handleScroll: false, handleScale: false }));
+  perfChart = chart;
+  const fmt = { type: "custom", formatter: v => cur + Math.round(v).toLocaleString("en-US") };
+  const c = S.curve;
+  line(chart, css(PERF_COLORS.bench), { lineWidth: 1, priceFormat: fmt, lastValueVisible: false })
+    .setData(c.filter(r => r[2] != null).map(r => ({ time: r[0], value: r[2] })));
+  line(chart, css(PERF_COLORS.goal), { lineWidth: 1, lineStyle: 2, priceFormat: fmt, lastValueVisible: false })
+    .setData(c.map((r, i) => ({ time: r[0], value: S.start_cash * Math.pow(2, i / 252) })));
+  line(chart, css(PERF_COLORS.momentum), { lineWidth: 3, priceFormat: fmt, lastValueVisible: true })
+    .setData(c.map(r => ({ time: r[0], value: r[1] })));
+  chart.timeScale().fitContent();
+}
+$("sim").addEventListener("click", e => {
+  if (e.target.id === "simMore") { simTradesOpen = !simTradesOpen; renderSim(); }
+});
 // ───────── 類股輪動 ─────────
 let rotData = null, rotKind = "themes", rotOpen = false, rotGroup = null, rotView = null;
 async function renderRot() {
@@ -1450,15 +1528,16 @@ function destroyPerf() {
 
 function showTab(t) {
   tab = t; theme = "全部"; openTicker = null;
-  for (const [id, k] of [["tabH", "h"], ["tabC", "c"], ["tabM", "m"], ["tabR", "r"], ["tabP", "p"]]) $(id).setAttribute("aria-selected", t === k);
-  const nl = t === "p" || t === "r";
+  for (const [id, k] of [["tabH", "h"], ["tabC", "c"], ["tabM", "m"], ["tabR", "r"], ["tabP", "p"], ["tabS", "s"]]) $(id).setAttribute("aria-selected", t === k);
+  const nl = t === "p" || t === "r" || t === "s";
   $("listTools").hidden = nl;
   $("list").hidden = nl;
   $("perf").hidden = t !== "p";
   $("rot").hidden = t !== "r";
+  $("sim").hidden = t !== "s";
   destroyPerf();
   if (!data) return;
-  if (t === "p") renderPerf(); else if (t === "r") renderRot(); else renderList();
+  if (t === "p") renderPerf(); else if (t === "r") renderRot(); else if (t === "s") renderSim(); else renderList();
 }
 
 // ───────── 事件 ─────────
@@ -1517,7 +1596,7 @@ $("swaps").addEventListener("click", e => {
 $("summary").addEventListener("click", e => {
   if (!e.target.closest("#statAlerts")) return;
   onlyAlert = true;
-  if (tab === "p" || tab === "r") showTab("h"); else renderList();
+  if (tab === "p" || tab === "r" || tab === "s") showTab("h"); else renderList();
   $("tabH").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 $("markets").addEventListener("click", e => {
@@ -1530,7 +1609,7 @@ $("markets").addEventListener("click", e => {
   $("meta").textContent = "載入中…";
   load();
 });
-for (const [id, t] of [["tabH", "h"], ["tabC", "c"], ["tabM", "m"], ["tabR", "r"], ["tabP", "p"]])
+for (const [id, t] of [["tabH", "h"], ["tabC", "c"], ["tabM", "m"], ["tabR", "r"], ["tabP", "p"], ["tabS", "s"]])
   $(id).addEventListener("click", () => showTab(t));
 window.addEventListener("hashchange", () => {
   const h = location.hash.slice(1);

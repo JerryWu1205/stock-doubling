@@ -30,6 +30,7 @@ import numpy as np
 import pandas as pd
 
 import backtest as bt
+import sim
 import charts
 import indicators as ind
 
@@ -1311,6 +1312,12 @@ def run_market(cfg, args, now_utc):
                 # 留一個空的績效檔，免得休市時每 15 分鐘重跑
                 write_json_atomic(perf_path, {"market": key, "data_date": date, "backtest": {}, "variants": [], "scorecard": [], "exits": [], "live": {},
                                               "note": "這次回測失敗，下一個收盤日會重算。"})
+    if not args.demo:
+        try:  # 模擬倉：照程式選股名單下單記帳
+            sim.update(cfg, raw_data, hist, DATA_DIR, cfg["history_path"].parent, out["generated_at"])
+        except Exception:
+            print(f"{tag} 模擬倉更新失敗（不影響評分）：", file=sys.stderr)
+            traceback.print_exc()
     update_markets_index(cfg, out)
     print(f"{tag} {out['mode_label']}｜資料日期 {date}｜強勢持股 {len(out['holdings'])} 檔、"
           f"跌深持股 {len(built['dip']['holdings'])} 檔｜換股訊號 {len(out['swaps'])}"
