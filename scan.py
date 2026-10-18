@@ -39,7 +39,7 @@ HERE = Path(__file__).resolve().parent
 DOCS = HERE / "docs"
 DATA_DIR = DOCS / "data"
 HISTORY_KEEP_DAYS = 60
-BT_V = 2  # 回測邏輯改了就加 1，下次收盤（或週末）會重算績效頁
+BT_V = 3  # 回測邏輯改了就加 1，下次收盤（或週末）會重算績效頁
 MIN_BARS = 130
 
 # 每個市場的時間規則。open~close 之間跑盤中暫定；close~settle_end 重跑幾次收盤確認，讓 Yahoo 資料定稿。
@@ -178,6 +178,22 @@ def theme_counts(cfg):
 
 def fill_portfolio(cfg, port, results, date, gate=False):
     """gate=True：只挑「可進場」的股票，沒有符合的就先空著（等回檔、等止跌），不硬補。"""
+    keep_n = max(cfg["target_count"] - len(cfg["fixed"]), 0)
+    if len(port["auto"]) > keep_n:  # 持股檔數調少了：留分數最高的（每個主題最多 max_per_theme 檔），其餘移出
+        cnt = {}
+        for t in cfg["fixed"]:
+            cnt[cfg["themes"].get(t, "")] = cnt.get(cfg["themes"].get(t, ""), 0) + 1
+        keep = []
+        for t in sorted(port["auto"], key=lambda t: -results.get(t, {}).get("score", -1)):
+            th = cfg["themes"].get(t, "")
+            if len(keep) < keep_n and cnt.get(th, 0) < cfg["max_per_theme"]:
+                keep.append(t)
+                cnt[th] = cnt.get(th, 0) + 1
+        dropped = [t for t in port["auto"] if t not in keep]
+        port["auto"] = keep
+        port["changes"].append({"date": date, "action": "trim", "tickers": dropped,
+                                "note": f"持股檔數改成 {cfg['target_count']} 檔"})
+        apply_portfolio(cfg, port)
     counts = theme_counts(cfg)
     ranked = sorted((t for t in cfg["candidates"] if t in results
                      and (not gate or results[t].get("entry_ok"))),

@@ -18,7 +18,7 @@ import backtest as bt
 START_CASH = {"us": 50000.0, "tw": 1000000.0}
 CURRENCY = {"us": "USD", "tw": "TWD"}
 START_DATE = "2026-10-16"  # 第一個成交日（這天收盤後確認的名單）
-VERSION = 1
+VERSION = 2  # 2：持股上限改 5 檔，從 10/16 收盤重建
 
 
 def _fee(key, amount, side):
@@ -56,6 +56,20 @@ def _exit_hit(rule, df, d, pos):
         atr = float(tr.iloc[-22:].mean())
         return c < float(s["Close"].iloc[-22:].max()) - 3 * atr
     return False
+
+
+def _top(day, slots, themes, cap):
+    """當天名單裡分數最高的 slots 檔（每個主題最多 cap 檔）。名單本來就不超過 slots 檔時照原樣。"""
+    hold = list(day["holdings"])
+    if len(hold) <= slots:
+        return hold
+    sc, cnt, out = day.get("scores") or {}, {}, []
+    for t in sorted(hold, key=lambda t: -sc.get(t, -1)):
+        th = themes.get(t, "")
+        if len(out) < slots and cnt.get(th, 0) < cap:
+            out.append(t)
+            cnt[th] = cnt.get(th, 0) + 1
+    return out
 
 
 def _px(df, d):
@@ -208,6 +222,8 @@ def update(cfg, raw_data, hist, data_dir, state_dir, now_iso):
         L = json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         L = _new_ledger(key)
+    if L.get("version") != VERSION:  # 規則改了：從頭重建
+        L = _new_ledger(key)
     rule = _exit_rule(cfg)
     slots = cfg["target_count"]
     names = cfg["names"]
@@ -218,7 +234,7 @@ def update(cfg, raw_data, hist, data_dir, state_dir, now_iso):
             continue
         if L["start_date"] is None:
             L["start_date"] = d
-        step(L, key, d, list(hist["confirmed"][d]["holdings"]), raw, bench, rule, slots, names)
+        step(L, key, d, _top(hist["confirmed"][d], slots, cfg["themes"], cfg["max_per_theme"]), raw, bench, rule, slots, names)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(L, ensure_ascii=False), encoding="utf-8")
     out = summarize(L, key, raw, names, rule, slots, now_iso)
@@ -317,6 +333,8 @@ def update_cs(cfg, raw_data, hist, data_dir, state_dir, now_iso, fetch):
     try:
         L = json.loads(path.read_text(encoding="utf-8"))
     except Exception:
+        L = {}
+    if L.get("version") != VERSION:  # 規則改了：從頭重建
         L = _new_ledger(key)
         L.update({"book": "cs", "lev": None, "lev_order": None, "trend_on": None, "red": None})
     todo = [d for d in sorted(hist["confirmed"]) if d >= START_DATE and not (L["last"] and d <= L["last"])]
@@ -335,14 +353,15 @@ def update_cs(cfg, raw_data, hist, data_dir, state_dir, now_iso, fetch):
     ms = macro.series(extra)
     red = ms["total"] >= macro.RED if ms is not None else None
     rule = _exit_rule(cfg)
-    slots = cfg["target_count"]
+    slots = max(cfg["target_count"] - 1, 1)  # 槓桿 ETF 占一個位子，選股那一半放其餘幾檔
     names = {**cfg["names"], **CS_NAMES}
     bench = raw_data.get(cfg["benchmark"])
     raw = {**{k: v for k, v in extra.items() if k in (lev_sym, ref_sym)}, **raw_data}
     for d in todo:
         if L["start_date"] is None:
             L["start_date"] = d
-        step_cs(L, key, d, list(hist["confirmed"][d]["holdings"]), raw, bench, rule, slots, names, red)
+        step_cs(L, key, d, _top(hist["confirmed"][d], slots, cfg["themes"], cfg["max_per_theme"]), raw, bench, rule, slots,
+                names, red)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(L, ensure_ascii=False), encoding="utf-8")
     view = dict(L, positions={**L["positions"], **({lev_sym: L["lev"]} if L.get("lev") else {})})
@@ -352,7 +371,7 @@ def update_cs(cfg, raw_data, hist, data_dir, state_dir, now_iso, fetch):
                         "red": L.get("red"), "order": L.get("lev_order"), "held": bool(L.get("lev"))},
                 "note": f"一半放 {lev_sym} {CS_NAMES[lev_sym]}：{ref_sym} 收盤站上 50 日線、50 日線在 200 日線上面，"
                         "而且總經風險燈不是紅燈才持有；收盤判斷、下一個交易日開盤買賣，不持有時放現金。"
-                        "另一半照程式選股名單，每檔＝淨值 × 一半 ÷ 持股檔數，出場規則和模擬倉一樣。"
+                        "另一半放程式選股名單分數最高的幾檔，每檔＝淨值 × 一半 ÷ 檔數，出場規則和模擬倉一樣。"
                         "手續費、稅照模擬倉，股利不計。模擬帳戶，不是實際下單，不是投資建議。"})
     (data_dir / "sim").mkdir(parents=True, exist_ok=True)
     tmp = data_dir / "sim" / f"{key}_cs.json.tmp"

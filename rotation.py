@@ -435,6 +435,9 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
     # 16_cap4＝同族群最多 4 檔；16_mkt50＝大盤跌破 50 日線時半倉；16_mkt50_0＝跌破時全部空手；
     # 16_avgdown＝攤平：已持有的股票跌破 50 日線不賣，還放兩倍資金，剩下的位子才補強勢股
     variants += (["16_cap4"] if gof else []) + ["16_mkt50", "16_mkt50_0", "16_avgdown"]
+    # 5_cap2＝5 檔、同族群最多 2 檔；5_sma50＝5 檔，持股收盤跌破 50 日線就先賣、下次選股再補
+    variants += (["5_cap2"] if gof else []) + ["5_sma50"]
+    below50 = (close < close.rolling(50).mean()).shift(1, fill_value=False)
     gates = {k: v for k, v in (gates or {}).items() if v is not None and len(v)}
     variants += list(gates)
     bx = bench.reindex(idx).ffill()
@@ -489,6 +492,16 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
                 if len(cap) == 16:
                     break
             picks["16_cap4"] = cap
+            cnt, cap = {}, []
+            for x in order:
+                g = gof.get(x, x)
+                if cnt.get(g, 0) < 2:
+                    cap.append(x)
+                    cnt[g] = cnt.get(g, 0) + 1
+                if len(cap) == 5:
+                    break
+            picks["5_cap2"] = cap
+        picks["5_sma50"] = picks["5"] if "5" in picks else order[:5]
         picks["16_mkt50"] = picks["16_mkt50_0"] = picks["16"]
         mkt_down = t >= 50 and bx.iloc[t] < bx.iloc[t - 49: t + 1].mean()
         keep = [x for x in prev["16_avgdown"] if not ok.get(x, False) and pd.notna(last.get(x))]
@@ -517,6 +530,10 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
             elif k == "16_avgdown" and pk:
                 w = wts[k] / wts[k].sum()
                 daily = (seg_r * w).sum(axis=1)
+            elif k == "5_sma50" and pk:
+                out_ = below50.iloc[t + 1: end + 1][pk].cummax()  # 跌破就出場，這一段不再買回
+                daily = (seg_r * ~out_).sum(axis=1) / len(pk)
+                daily.iloc[-1:] -= cost * float(out_.iloc[-1].sum()) / len(pk) if len(out_) else 0  # 提前賣出的成本
             else:
                 daily = seg_r.mean(axis=1)
             if k == "16_rate" and half:
@@ -563,7 +580,8 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
                    "16_iv＝同 16 檔但波動小的放多一點（依 20 天波動反比配重）；16_rate＝10 年債殖利率 20 天升 0.25 個百分點以上時半倉；"
                    "16_cap4＝同族群最多 4 檔；16_mkt50＝大盤指數跌破 50 日線時半倉（16_mkt50_0＝全部空手）；"
                    "16_avgdown＝攤平：已持有的跌破 50 日線不賣、放兩倍資金；16_core＝一半大盤、一半強勢 16 檔，每 5 天調回各半；"
-                   "16_credit＝高收益債對公債跌破 50 日線時半倉；16_macro＝總經風險燈紅燈（50 分以上）時半倉")
+                   "16_credit＝高收益債對公債跌破 50 日線時半倉；16_macro＝總經風險燈紅燈（50 分以上）時半倉；"
+                   "5_cap2＝5 檔、同族群最多 2 檔；5_sma50＝5 檔、收盤跌破 50 日線就先賣")
     return out
 
 
@@ -673,7 +691,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         except Exception:
             _probe["tw_hist_error"] = traceback.format_exc()[-300:]
     oc = (old.get("bt") or {}).get("counts") or {}
-    need_bt = (old.get("bt") or {}).get("bt_v") != 3 or not (old.get("bt") or {}).get("pit") or (pending5 == 0 and (old.get("bt") or {}).get("counts5_v") != 3) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
+    need_bt = (old.get("bt") or {}).get("bt_v") != 4 or not (old.get("bt") or {}).get("pit") or (pending5 == 0 and (old.get("bt") or {}).get("counts5_v") != 4) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
         (key == "tw" and hist_ready and rev is not None and "16_rev" not in oc)
     if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
@@ -764,7 +782,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
             out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"], inst=inst,
                                                  factors=factors, excl=excl, rate=rate, pit_liq=True, gates=gates)
             out["bt"]["pit"] = True  # 1 年回測也改用當時的流動性篩（舊結果會重算一次）
-            out["bt"]["bt_v"] = 3  # 回測邏輯改了就加 1（加 16_core、16_credit、16_macro），會重算一次
+            out["bt"]["bt_v"] = 4  # 回測邏輯改了就加 1（加 16_core、16_credit、16_macro），會重算一次
             if pending5 == 0 and c5 is not None and bench_sym in c5.columns:
                 try:  # 5 年回測：5 年快取接上最近的 1 年快取，全部股票都放進來，選股時才用當時的流動性篩
                     c5 = pd.concat([c5, raw_close.loc[raw_close.index > c5.index[-1], c5.columns.intersection(raw_close.columns)]])
@@ -777,11 +795,11 @@ def _run(key, cfg, yf_download, now_utc, in_session):
                         if t in uni:
                             g5.setdefault(uni[t]["ind"], []).append(t)
                     out["bt"]["counts5"] = count_backtest(c5, d5, b5, key, groups=g5, rate=rate, pit_liq=True, gates=gates)
-                    out["bt"]["counts5_v"] = 3
+                    out["bt"]["counts5_v"] = 4
                 except Exception:
                     _probe[f"{key}_bt5"] = traceback.format_exc()[-400:]
                     out["bt"]["counts5"] = {"error": "5 年回測失敗，明天再試"}  # 不讓每 15 分鐘重算
-                    out["bt"]["counts5_v"] = 3
+                    out["bt"]["counts5_v"] = 4
             elif (old.get("bt") or {}).get("counts5"):
                 out["bt"]["counts5"] = old["bt"]["counts5"]
                 out["bt"]["counts5_v"] = old["bt"].get("counts5_v")
