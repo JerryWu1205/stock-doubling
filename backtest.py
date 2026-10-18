@@ -206,6 +206,8 @@ def simulate(prep, cfg, rules, top_n=None, regime=False, costs=None, days=250, e
         okd = ok.loc[d]
         results = {t: {"score": float(sc[t]), "entry_ok": bool(okd[t])} for t in sc.index
                    if np.isfinite(sc[t]) and cool.get(t, -1) < k}
+        if exit_rule == "sma50":  # 已經在出場線下的不買進（不然買進隔天就被停損）
+            results = {t: r for t, r in results.items() if t in held_prev or not hit(t, d)}
         if not results:
             continue
         day = d.date().isoformat()

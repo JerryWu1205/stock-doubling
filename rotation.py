@@ -650,7 +650,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         except Exception:
             _probe["tw_hist_error"] = traceback.format_exc()[-300:]
     oc = (old.get("bt") or {}).get("counts") or {}
-    need_bt = "16_avgdown" not in oc or (pending5 == 0 and "counts5" not in (old.get("bt") or {})) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
+    need_bt = "16_avgdown" not in oc or not (old.get("bt") or {}).get("pit") or (pending5 == 0 and "counts5" not in (old.get("bt") or {})) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
         (key == "tw" and hist_ready and rev is not None and "16_rev" not in oc)
     if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
@@ -735,7 +735,8 @@ def _run(key, cfg, yf_download, now_utc, in_session):
             except Exception:
                 _probe[f"{key}_tnx"] = traceback.format_exc()[-300:]
             out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"], inst=inst,
-                                                 factors=factors, excl=excl, rate=rate)
+                                                 factors=factors, excl=excl, rate=rate, pit_liq=True)
+            out["bt"]["pit"] = True  # 1 年回測也改用當時的流動性篩（舊結果會重算一次）
             if pending5 == 0 and c5 is not None and bench_sym in c5.columns:
                 try:  # 5 年回測：5 年快取接上最近的 1 年快取，全部股票都放進來，選股時才用當時的流動性篩
                     c5 = pd.concat([c5, raw_close.loc[raw_close.index > c5.index[-1], c5.columns.intersection(raw_close.columns)]])
@@ -754,7 +755,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
             elif (old.get("bt") or {}).get("counts5"):
                 out["bt"]["counts5"] = old["bt"]["counts5"]
             out["bt_date"] = out["data_date"]
-            out["bt_note"] = "名單是現在的股票，沒有包含過去下市或掉出門檻的股票（倖存者偏差），實際會比回測差一些。"
+            out["bt_note"] = "股票清單只有現在還在交易的（已下市的不在裡面，倖存者偏差），選股時用當時的成交金額和股價篩；實際會比回測差一些。"
         except Exception:
             _probe[f"{key}_bt"] = traceback.format_exc()[-400:]
         try:

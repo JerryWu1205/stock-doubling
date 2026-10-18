@@ -1,7 +1,7 @@
 """模擬倉：照「程式選股」名單真的下單，記錄每筆買賣的時間、股數、價格、金額、手續費，算每天的淨值。
 
 美股起始 50,000 美元、台股 1,000,000 台幣。每個收盤確認日用當天收盤價成交：
-- 名單裡沒有了（被換掉）就賣；績效頁回測最好的出場規則觸發了（例如跌破 50 日線）也賣。
+- 名單裡沒有了（被換掉）就賣；固定出場規則觸發了（美股跌破 50 日線）也賣。
 - 名單裡有、手上沒有、也沒觸發出場的就買，每檔目標金額＝淨值 ÷ 持股檔數，現金不夠就買到現金用完。
 - 手上已有的不會為了等權重去加減碼（少換手、少成本）。
 手續費、稅照 backtest.COSTS，台股手續費最低 20 元；股利不計。這是模擬，不是實際下單。
@@ -27,12 +27,13 @@ def _fee(key, amount, side):
     return max(f, 20.0) if key == "tw" else f
 
 
-def _best_exit(perf):
-    """績效頁出場比較裡年化最高的規則（網頁標「建議」的那個）。"""
-    rows = [r for r in (perf or {}).get("exits") or [] if r.get("cagr_pct") is not None]
-    if not rows:
-        return "none"
-    return max(rows, key=lambda r: r["cagr_pct"])["rule"]
+EXIT_RULE = {"us": "sma50", "tw": "none"}  # 固定的出場規則；要改就在 config.toml 的 [us]/[tw] 加 exit_rule
+
+
+def _exit_rule(cfg):
+    """固定規則，不跟著績效頁每天的最佳結果跳來跳去（每天換規則會讓模擬倉來回買賣）。"""
+    r = cfg.get("exit_rule") or EXIT_RULE.get(cfg["key"], "none")
+    return r if r in ("none", "sma50", "pct8", "atr3") else "none"
 
 
 def _exit_hit(rule, df, d, pos):
@@ -191,7 +192,7 @@ def summarize(L, key, raw, names, rule, slots, now_iso):
         "curve": nav,
         "trades": list(reversed(L["trades"][-200:])),
         "note": "照程式選股名單在收盤確認日用收盤價成交，每檔目標＝淨值 ÷ 持股檔數；手續費、稅、滑價照績效頁回測，"
-                "台股手續費最低 20 元，股利不計。出場規則跟績效頁回測最好的那個。模擬帳戶，不是實際下單，不是投資建議。",
+                "台股手續費最低 20 元，股利不計。出場規則固定（美股跌破 50 日線、台股只在換出名單時賣）。模擬帳戶，不是實際下單，不是投資建議。",
     }
 
 
@@ -202,11 +203,7 @@ def update(cfg, raw_data, hist, data_dir, state_dir, now_iso):
         L = json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         L = _new_ledger(key)
-    try:
-        perf = json.loads((data_dir / "perf" / f"{key}.json").read_text(encoding="utf-8"))
-    except Exception:
-        perf = {}
-    rule = _best_exit(perf)
+    rule = _exit_rule(cfg)
     slots = cfg["target_count"]
     names = cfg["names"]
     bench = raw_data.get(cfg["benchmark"])

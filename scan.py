@@ -39,6 +39,7 @@ HERE = Path(__file__).resolve().parent
 DOCS = HERE / "docs"
 DATA_DIR = DOCS / "data"
 HISTORY_KEEP_DAYS = 60
+BT_V = 2  # 回測邏輯改了就加 1，下次收盤（或週末）會重算績效頁
 MIN_BARS = 130
 
 # 每個市場的時間規則。open~close 之間跑盤中暫定；close~settle_end 重跑幾次收盤確認，讓 Yahoo 資料定稿。
@@ -123,6 +124,7 @@ def market_config(key, cfg):
             "rebound": w.get("rebound", 15),
             "risk": w.get("risk", 10),
         },
+        "exit_rule": str(cfg.get("exit_rule", "")) or None,  # 模擬倉出場規則（沒設就用 sim.EXIT_RULE）
         "fixed": holdings,  # 你自己指定的持股，程式不會自動換掉
         "pool": pool,
         "target_count": int(hold_cfg.get("target_count", 16)),
@@ -1162,7 +1164,7 @@ def run_market(cfg, args, now_utc):
             traceback.print_exc()
     # 剛升級到兩套名單時，跌深紀錄或績效檔還不存在，就算休市也先跑一次收盤確認把它們產生出來
     upgraded = (cfg["history_path"].with_name(cfg["history_path"].stem + "_dip.json").exists()
-                and "exits" in read_json(DATA_DIR / "perf" / f"{key}.json", {})
+                and read_json(DATA_DIR / "perf" / f"{key}.json", {}).get("bt_v") == BT_V
                 and charts_have_weekly(key))
     if args.mode == "auto" and not args.demo and not args.backfill and hist["confirmed"] \
             and upgraded and nothing_to_do(cfg, now, hist) \
@@ -1322,7 +1324,7 @@ def run_market(cfg, args, now_utc):
     perf_path = DATA_DIR / "perf" / f"{key}.json"
     if mode == "close" or not perf_path.exists():
         old = read_json(perf_path, {})
-        if old.get("data_date") != date or "exits" not in old or args.demo:
+        if old.get("data_date") != date or "exits" not in old or old.get("bt_v") != BT_V or args.demo:
             try:
                 write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, args.demo)
             except Exception:
@@ -1401,6 +1403,7 @@ def write_perf(cfg, dcfg, raw_data, results, hist, dhist, date, now_utc, demo):
         "goal": bt.goal_curve(dates),
         "scorecard": bt.scorecard(preps),
         "exits": exits,
+        "bt_v": BT_V,
         "live": {"strong": bt.live_curve(hist, frames, bench, cfg["target_count"]),
                  "dip": bt.live_curve(dhist, frames, bench, dcfg["target_count"])},
         "note": f"回測假設每個收盤確認日依規則換股、持股等權重、空位放現金；每次買賣扣 {costs['buy'] * 100:.2f}%"
