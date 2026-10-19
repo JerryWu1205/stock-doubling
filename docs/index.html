@@ -98,9 +98,13 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .qstar:focus-visible { outline: 2px solid var(--info); }
 .pos { font-size: 13px; margin-top: 3px; font-variant-numeric: tabular-nums; }
 .pos b { font-weight: 700; }
-.posedit { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; margin: 8px 0; align-items: end; }
+.posedit { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 6px; margin: 8px 0; align-items: end; }
 .posedit label { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
 .posedit input { font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; width: 100%; box-sizing: border-box; }
+.posedit .premove { border-color: var(--bad); color: var(--bad); background: var(--bad-bg); }
+.maddrow { display: flex; gap: 8px; margin: 6px 0; }
+.maddrow input { flex: 1; min-width: 0; font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+.maddrow button { font: inherit; font-size: 14px; border: 1px solid var(--info); color: var(--info); background: var(--info-bg); border-radius: 8px; padding: 7px 14px; cursor: pointer; }
 .posedit button, .pfrm { font: inherit; font-size: 14px; border: 1px solid var(--info); color: var(--info); background: var(--info-bg); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
 .pfrm { border-color: var(--line); color: var(--muted); background: var(--card); }
 .pfsum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -372,7 +376,7 @@ function setPos(t, p) {
 }
 // 損益：成本、市值、未實現損益、今日損益（只算有填股數和均價、而且有報價的）
 function pnlOf(t) {
-  const p = positions()[t], i = allItems().find(x => x.ticker === t);
+  const p = positions()[t], i = myItems().find(x => x.ticker === t);
   if (!p || !(p.sh > 0) || !(p.avg > 0) || i?.price == null) return null;
   const cost = p.sh * p.avg, val = p.sh * i.price;
   const prev = i.chg_1d_pct != null ? i.price / (1 + i.chg_1d_pct / 100) : null;
@@ -392,6 +396,50 @@ function B() {
   return meta;
 }
 const allItems = () => [...B().holdings, ...B().candidates];
+// 全部股票的收盤價（「我的」手動新增用）。檔案列出全部代號，看不出你持有哪幾檔；你的清單和股數只存在這台裝置
+let allData = null, allLoading = null;
+function loadAll() {
+  const mk = data?.market || market;
+  if (allData?.market === mk || allLoading) return;
+  allLoading = getJson(`data/all/${mk}.json`)
+    .then(j => { allData = { ...j, market: mk, map: new Map((j.rows || []).map(r => [r[0], r])) }; })
+    .catch(() => { allData = { market: mk, rows: [], map: new Map(), missing: true }; })
+    .finally(() => { allLoading = null; if (tab === "m") renderList(); });
+}
+function manualItem(t) {
+  const r = allData?.market === data.market ? allData.map.get(t) : null;
+  return { ticker: t, name: r?.[1] || "", price: r?.[2] ?? null, chg_1d_pct: r?.[3] ?? null, theme: "自行加入", source: "",
+    signal: "none", signal_label: r ? `${allData.date} 收盤價` : "沒有報價", components: {}, reasons: [], alerts: [], exit: null, manual: true };
+}
+// 我的持股：在名單裡的用即時資料，不在名單裡的用全部股票的收盤價
+function myItems() {
+  const pool = allItems(), have = new Set(pool.map(i => i.ticker));
+  return [...pool, ...[...mine()].filter(t => !have.has(t)).map(manualItem)];
+}
+function addManual() {
+  const inp = $("maddq"), q = (inp?.value || "").trim();
+  if (!q) return;
+  const mk = data.market, up = q.toUpperCase(), lo = q.toLowerCase(), pool = allItems();
+  let t = (pool.find(i => i.ticker === up) || pool.find(i => (i.name || "").toLowerCase().includes(lo)))?.ticker;
+  if (!t && allData?.market === mk && allData.rows.length) {
+    const r = allData.map.get(up) || allData.map.get(up.replace(".", "-")) || allData.rows.find(r => (r[1] || "").toLowerCase().includes(lo));
+    if (r) t = r[0];
+  }
+  if (!t && (mk === "tw" ? /^\d{4,6}[A-Z]?$/ : /^[A-Z][A-Z.\-]{0,6}$/).test(up)) t = up.replace(".", "-");
+  if (!t) { $("maddmsg").textContent = `找不到「${q}」，請改輸入代號。`; return; }
+  if (!mine().has(t)) toggleMine(t);
+  openTicker = t;
+  renderSummary(); renderTodo(); renderList();
+}
+function addBoxHtml() {
+  const ok = allData?.market === data.market && allData.rows.length;
+  const opts = ok ? allData.rows.map(r => `<option value="${esc(r[0])}">${esc(r[1])}</option>`).join("") : "";
+  const msg = ok ? `可以加全部 ${allData.rows.length} 檔${data.market === "tw" ? "上市櫃股票" : "美股"}；不在程式選股或候選名單的，顯示 ${esc(allData.date)} 的收盤價。`
+    : allData?.missing ? "全部股票清單還沒產生（收盤後會更新），先直接輸入代號也可以加。" : "載入全部股票清單中…";
+  return `<section class="card"><h2>新增股票</h2><div class="maddrow"><input id="maddq" list="maddlist" autocomplete="off" enterkeyhint="done"
+    placeholder="${data.market === "tw" ? "代號或名稱，例如 2330 或 台積電" : "代號或名稱，例如 NVDA"}"><button class="maddbtn">加入</button></div>
+    <datalist id="maddlist">${opts}</datalist><div class="small" id="maddmsg">${msg}</div></section>`;
+}
 
 async function getJson(url) {
   const r = await fetch(url, { cache: "no-store" });
@@ -848,7 +896,8 @@ function renderList() {
   const bk = B();
   const my = mine();
   // 搜尋時找全部股票，不只目前分頁
-  const items = tab === "m" ? allItems().filter(i => my.has(i.ticker))
+  if (tab === "m") loadAll();
+  const items = tab === "m" ? myItems().filter(i => my.has(i.ticker))
     : query.trim() ? allItems() : tab === "h" ? bk.holdings : bk.candidates;
   const themes = ["全部", ...new Set(items.map(i => i.theme).filter(Boolean))];
   if (!themes.includes(theme)) theme = "全部";
@@ -869,12 +918,18 @@ function renderList() {
   }[sortBy] || (i => -i.score);
   shown.sort((a, b) => key(a) - key(b));
   destroyChart();
-  const hint = tab === "m" && !items.length ? "還沒有加入任何股票。在程式選股或候選按每檔左邊的 ☆ 就會加進來（也可以用上面的搜尋找全部股票）。"
+  const hint = tab === "m" && !items.length ? "還沒有加入任何股票。用上面的「新增股票」輸入代號或名稱，或在程式選股、候選按每檔左邊的 ☆。"
     : book === "dip" && tab === "h" && !items.length ? "跌深名單目前沒有選股：沒有夠格的跌深股。" : "沒有符合的股票。";
   const gone = tab === "m" ? [...my].filter(t => !items.some(i => i.ticker === t)) : [];
   const goneHtml = gone.map(t => `<div class="row" data-t="${esc(t)}"><button class="qstar" aria-pressed="true" aria-label="從我的持股移除" title="從我的持股移除">★</button>
       <div style="padding:11px 12px;flex:1"><div class="tkr">${esc(t)}</div><div class="small">這檔已經不在程式選股或候選名單，暫時沒有報價。按 ★ 可以移除。</div></div></div>`).join("");
-  $("list").innerHTML = (tab === "m" ? portfolioHtml(items) : "") + (shown.map(rowHtml).join("") + goneHtml || `<div class="empty">${hint}</div>`);
+  // 核心部位（台股 0050）：一半資金一直持有，不參加評分和換股
+  const core = data.core && tab === "h" && book === "strong" && !q && theme === "全部" ? data.core : null;
+  const coreHtml = core ? `<div class="row core"><div style="padding:11px 12px;flex:1"><div class="tkr">${esc(core.t)}<span class="nm">${esc(core.name)}</span>
+      <span class="pill p-info" style="margin-left:6px">核心 ${core.weight}%</span></div>
+      ${core.quote ? `<div class="px">${fmtPx(core.quote.price)}<span class="${clsOf(core.quote.chg_1d_pct)}">${fmtPct(core.quote.chg_1d_pct)}</span></div>` : ""}
+      <div class="small">一半資金一直放 ${esc(core.t)}，不看分數、不換股；另一半平均分給下面 ${bk.target_count} 檔，每檔 ${Math.round((100 - core.weight) / Math.max(bk.target_count, 1) * 10) / 10}%。</div></div></div>` : "";
+  $("list").innerHTML = (tab === "m" ? addBoxHtml() + portfolioHtml(items) : coreHtml) + (shown.map(rowHtml).join("") + goneHtml || `<div class="empty">${hint}</div>`);
   if (openTicker) {
     const row = [...$("list").querySelectorAll(".row")].find(r => r.dataset.t === openTicker);
     if (row) openRow(row); else openTicker = null;
@@ -984,7 +1039,7 @@ function rowHtml(i) {
   const posEdit = isMine ? `<div class="posedit" data-t="${esc(i.ticker)}">
       <label>股數${data.market === "tw" ? "（1 張＝1000 股）" : ""}<input class="psh" type="number" inputmode="decimal" min="0" step="any" value="${p0.sh ?? ""}" placeholder="例如 ${data.market === "tw" ? "1000" : "10"}"></label>
       <label>均價<input class="pavg" type="number" inputmode="decimal" min="0" step="any" value="${p0.avg ?? ""}" placeholder="買進平均成本"></label>
-      <button class="psave">儲存</button></div>` : "";
+      <button class="psave">儲存</button><button class="premove">移除</button></div>` : "";
   return `<div class="row" data-t="${esc(i.ticker)}"><button class="qstar" aria-pressed="${isMine}" aria-label="${isMine ? "從我的持股移除" : "加入我的持股"}" title="${isMine ? "從我的持股移除" : "加入我的持股"}">${isMine ? "★" : "☆"}</button><button class="rb" aria-expanded="false">
       <div style="min-width:0"><div class="tkr">${esc(i.ticker)}${i.name ? `<span class="nm">${esc(i.name)}</span>` : ""}${isMine ? `<span class="star">★</span>` : ""}</div>
         ${px.replace(/<\/div>$/, brokeTag + "</div>")}${extTag}${posLine}<div class="subline"><span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span><span class="sub">${esc(sub)}</span></div></div>
@@ -1610,7 +1665,21 @@ function showTab(t) {
 }
 
 // ───────── 事件 ─────────
+$("list").addEventListener("keydown", e => {
+  if (e.target.id === "maddq" && e.key === "Enter") { e.preventDefault(); addManual(); }
+});
 $("list").addEventListener("click", e => {
+  if (e.target.closest(".maddbtn")) { addManual(); return; }
+  const rm = e.target.closest(".premove");
+  if (rm) {
+    const t = rm.closest(".posedit").dataset.t;
+    if (!confirm(`把 ${t} 從我的持股移除？填過的股數和均價也會刪掉。`)) return;
+    if (mine().has(t)) toggleMine(t);
+    setPos(t, null);
+    openTicker = null;
+    renderSummary(); renderTodo(); renderList();
+    return;
+  }
   const star = e.target.closest(".starbtn, .qstar");
   if (star) {
     const row = star.closest(".row"), t = row.dataset.t;

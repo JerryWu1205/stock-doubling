@@ -129,6 +129,8 @@ def market_config(key, cfg):
         "pool": pool,
         "target_count": int(hold_cfg.get("target_count", 16)),
         "max_per_theme": int(hold_cfg.get("max_per_theme", 4)),
+        "core": norm(str(hold_cfg["core"])) if hold_cfg.get("core") else None,  # 核心部位（台股 0050），一直持有、不換股
+        "core_weight": float(hold_cfg.get("core_weight", 0.5)),
         "holdings": list(holdings),
         "candidates": list(pool),
         "themes": themes,
@@ -996,6 +998,8 @@ def build_output(cfg, books, results, errors, mode, session, now_utc, demo, pric
         "benchmark": cfg["benchmark"],
         "benchmark_name": cfg["names"].get(cfg["benchmark"], cfg["benchmark"]),
         "benchmark_quote": bench_quote,
+        "core": ({"t": cfg["core"], "name": cfg["names"].get(cfg["core"], cfg["core"]), "weight": round(cfg["core_weight"] * 100),
+                  "quote": bench_quote if cfg["core"] == cfg["benchmark"] else None} if cfg.get("core") else None),
         "weights": cfg["weights"],
         "swap_rule": {"gap": cfg["swap_gap"], "days": need},
         # 舊版網頁讀的欄位 = 強勢名單

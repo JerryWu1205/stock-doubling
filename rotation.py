@@ -412,7 +412,7 @@ def rotation_backtest(close, dv, bench, members, key, k_groups=3, k_each=3, step
             "rule": f"每 {step} 個交易日換一次：最強 {k_groups} 個族群、每族群最強 {k_each} 檔，等權重；含交易成本"}
 
 
-def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, groups=None, inst=None,
+def count_backtest(close, dv, bench, key, ns=(4, 5, 8, 16), step=5, start=70, groups=None, inst=None,
                    factors=None, excl=None, rate=None, pit_liq=False, gates=None):
     """factors：{名稱: DataFrame(日期 × 代號)} 數值越大越好，排名後占 20% 加進分數；
     excl：{名稱: DataFrame(日期 × 代號) 布林}，True 的那天不能選；
@@ -561,17 +561,20 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
     h = len(bs) // 2
     out["bench"] = {**_stats(bs), "h1": _stats(bs.iloc[: h + 1]).get("cagr_pct"), "h2": _stats(bs.iloc[h:]).get("cagr_pct"),
                     "years": years(bs)}
-    if "16" in eq:  # 核心＋衛星：一半放大盤、一半放強勢 16 檔，每 5 天調回各半
-        s16 = pd.Series(eq["16"], dates)
-        bd = bench.reindex(dates).ffill()
+    # 核心＋衛星：一半放大盤、一半放選股，每 5 天調回各半。16_core＝16 檔；core50_4＝4 檔（每檔 12.5%，台股 0050 加 4 檔）
+    bd = bench.reindex(dates).ffill()
+    for base, name in (("16", "16_core"), ("4", "core50_4")):
+        if base not in eq:
+            continue
+        sb = pd.Series(eq[base], dates)
         v, cs = 1.0, [1.0]
         for i in range(1, len(dates)):
-            v *= 1 + 0.5 * (s16.iloc[i] / s16.iloc[i - 1] - 1) + 0.5 * (bd.iloc[i] / bd.iloc[i - 1] - 1)
+            v *= 1 + 0.5 * (sb.iloc[i] / sb.iloc[i - 1] - 1) + 0.5 * (bd.iloc[i] / bd.iloc[i - 1] - 1)
             cs.append(v)
         sc = pd.Series(cs, dates).reindex(idx).ffill().loc[dates[0]:]
         h = len(sc) // 2
-        out["16_core"] = {**_stats(sc), "h1": _stats(sc.iloc[: h + 1]).get("cagr_pct"),
-                          "h2": _stats(sc.iloc[h:]).get("cagr_pct"), "years": years(sc)}
+        out[name] = {**_stats(sc), "h1": _stats(sc.iloc[: h + 1]).get("cagr_pct"),
+                     "h2": _stats(sc.iloc[h:]).get("cagr_pct"), "years": years(sc)}
     out["period"] = [str(dates[0].date()), str(dates[-1].date())]
     out["rule"] = (f"全市場每 {step} 個交易日換一次：站上 50 日線的股票裡，近 3 月漲幅 45%＋近 1 月 30%＋資金流 25% 排名最高的前 N 檔，"
                    "等權重、含交易成本；h1／h2 是前半段／後半段的年化。16_r63＝只看 3 個月漲幅；16_grp＝加族群強度 20%；"
@@ -581,7 +584,8 @@ def count_backtest(close, dv, bench, key, ns=(5, 8, 16), step=5, start=70, group
                    "16_cap4＝同族群最多 4 檔；16_mkt50＝大盤指數跌破 50 日線時半倉（16_mkt50_0＝全部空手）；"
                    "16_avgdown＝攤平：已持有的跌破 50 日線不賣、放兩倍資金；16_core＝一半大盤、一半強勢 16 檔，每 5 天調回各半；"
                    "16_credit＝高收益債對公債跌破 50 日線時半倉；16_macro＝總經風險燈紅燈（50 分以上）時半倉；"
-                   "5_cap2＝5 檔、同族群最多 2 檔；5_sma50＝5 檔、收盤跌破 50 日線就先賣")
+                   "5_cap2＝5 檔、同族群最多 2 檔；5_sma50＝5 檔、收盤跌破 50 日線就先賣；"
+                   "core50_4＝一半大盤（台股 0050）、一半 4 檔（每檔 12.5%），每 5 天調回各半")
     return out
 
 
@@ -624,6 +628,20 @@ def lev_backtest(key, yf_download):
 
 
 # ───────── 主程式 ─────────
+
+def write_all(key, close, names, now_utc):
+    """docs/data/all/<市場>.json：每檔 [代號, 名稱, 收盤價, 1 天漲跌 %, 50 日線, 近 22 天最高收盤]，收盤確認後更新。"""
+    c = close.ffill(limit=5)
+    if len(c) < 2:
+        return
+    last, prev = c.iloc[-1], c.iloc[-2]
+    s50, h22 = c.iloc[-50:].mean(), c.iloc[-22:].max()
+    r = lambda v, n=2: None if pd.isna(v) else round(float(v), n)
+    rows = [[t, str(names.get(t, ""))[:28], r(last[t]), r((last[t] / prev[t] - 1) * 100) if prev[t] else None, r(s50[t]), r(h22[t])]
+            for t in sorted(c.columns) if pd.notna(last[t])]
+    fu._save(DATA_DIR / "all" / f"{key}.json", {"market": key, "at": _now_iso(now_utc), "date": str(c.index[-1].date()),
+                                                "cols": ["t", "name", "px", "chg_pct", "sma50", "hi22"], "rows": rows})
+
 
 def run(key, cfg, yf_download, now_utc, in_session):
     """scan.py 每次都會呼叫；這裡自己決定要不要做事。"""
@@ -691,7 +709,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
         except Exception:
             _probe["tw_hist_error"] = traceback.format_exc()[-300:]
     oc = (old.get("bt") or {}).get("counts") or {}
-    need_bt = (old.get("bt") or {}).get("bt_v") != 4 or not (old.get("bt") or {}).get("pit") or (pending5 == 0 and (old.get("bt") or {}).get("counts5_v") != 4) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
+    need_bt = (old.get("bt") or {}).get("bt_v") != 5 or not (old.get("bt") or {}).get("pit") or (pending5 == 0 and (old.get("bt") or {}).get("counts5_v") != 5) or (key == "tw" and inst_ready and "16_inst" not in oc) or \
         (key == "tw" and hist_ready and rev is not None and "16_rev" not in oc)
     if not changed and old.get("generated_at") and old.get("pending") == pending and "dates" in old and not need_bt:
         return
@@ -702,6 +720,10 @@ def _run(key, cfg, yf_download, now_utc, in_session):
     bench = close[bench_sym]
     close = close.drop(columns=[bench_sym]).rename(columns=back)
     dv = dv.drop(columns=[bench_sym], errors="ignore").rename(columns=back)
+    try:  # 網頁「我的」手動新增股票用：全部股票的收盤價（列出全部代號，看不出使用者持有哪幾檔）
+        write_all(key, close, {**{c: u["name"] for c, u in uni.items()}, **cfg.get("names", {})}, now_utc)
+    except Exception:
+        _probe[f"{key}_all_error"] = traceback.format_exc()[-300:]
     # 流動性：20 日平均成交金額、股價門檻
     liq = (dv.iloc[-20:].mean() >= MIN_DV[key]) & (close.iloc[-1] >= MIN_PX[key])
     tks = [t for t in close.columns if liq.get(t, False)]
@@ -782,7 +804,7 @@ def _run(key, cfg, yf_download, now_utc, in_session):
             out["bt"]["counts"] = count_backtest(close, dv, bench, key, groups=members["ind"], inst=inst,
                                                  factors=factors, excl=excl, rate=rate, pit_liq=True, gates=gates)
             out["bt"]["pit"] = True  # 1 年回測也改用當時的流動性篩（舊結果會重算一次）
-            out["bt"]["bt_v"] = 4  # 回測邏輯改了就加 1（加 16_core、16_credit、16_macro），會重算一次
+            out["bt"]["bt_v"] = 5  # 回測邏輯改了就加 1（5：加 4 檔和 core50_4），會重算一次
             if pending5 == 0 and c5 is not None and bench_sym in c5.columns:
                 try:  # 5 年回測：5 年快取接上最近的 1 年快取，全部股票都放進來，選股時才用當時的流動性篩
                     c5 = pd.concat([c5, raw_close.loc[raw_close.index > c5.index[-1], c5.columns.intersection(raw_close.columns)]])
@@ -795,11 +817,11 @@ def _run(key, cfg, yf_download, now_utc, in_session):
                         if t in uni:
                             g5.setdefault(uni[t]["ind"], []).append(t)
                     out["bt"]["counts5"] = count_backtest(c5, d5, b5, key, groups=g5, rate=rate, pit_liq=True, gates=gates)
-                    out["bt"]["counts5_v"] = 4
+                    out["bt"]["counts5_v"] = 5
                 except Exception:
                     _probe[f"{key}_bt5"] = traceback.format_exc()[-400:]
                     out["bt"]["counts5"] = {"error": "5 年回測失敗，明天再試"}  # 不讓每 15 分鐘重算
-                    out["bt"]["counts5_v"] = 4
+                    out["bt"]["counts5_v"] = 5
             elif (old.get("bt") or {}).get("counts5"):
                 out["bt"]["counts5"] = old["bt"]["counts5"]
                 out["bt"]["counts5_v"] = old["bt"].get("counts5_v")
