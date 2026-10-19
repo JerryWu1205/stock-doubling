@@ -18,7 +18,7 @@ import backtest as bt
 START_CASH = {"us": 50000.0, "tw": 1000000.0}
 CURRENCY = {"us": "USD", "tw": "TWD"}
 START_DATE = "2026-10-16"  # 第一個成交日（這天收盤後確認的名單）
-VERSION = 2  # 2：持股上限改 5 檔，從 10/16 收盤重建
+VERSION = 3  # 2：持股上限改 5 檔；3：台股改成一半 0050 核心＋4 檔選股。版本變了就從 10/16 收盤重建
 
 
 def _fee(key, amount, side):
@@ -215,6 +215,33 @@ def summarize(L, key, raw, names, rule, slots, now_iso):
     }
 
 
+def core_step(L, key, d, raw, sym, weight, names):
+    """核心部位（台股 0050）：第一個收盤日用收盤價買到淨值的 weight，之後一直持有、不看任何濾網、不調整。
+    回傳核心部位的收盤市值，給 step() 當 extra。"""
+    ts = pd.Timestamp(d)
+    px = _px(raw.get(sym), ts)
+    c = L.get("core")
+    if c is None and px:
+        nav = L["cash"] + sum(p["sh"] * (_px(raw.get(t), ts) or p["last"]) for t, p in L["positions"].items())
+        budget = min(nav * weight, L["cash"])
+        sh = math.floor(budget / (px * (1 + bt.COSTS.get(key, bt.COSTS["us"])["buy"])))
+        while sh > 0 and sh * px + _fee(key, sh * px, "buy") > L["cash"]:
+            sh -= 1
+        if sh > 0:
+            gross = sh * px
+            fee = _fee(key, gross, "buy")
+            L["cash"] -= gross + fee
+            c = L["core"] = {"sh": sh, "cost": round((gross + fee) / sh, 4), "cost_total": round(gross + fee, 2),
+                             "date": d, "last": px}
+            L["trades"].append({"date": d, "side": "買", "t": sym, "name": names.get(sym, ""), "sh": sh,
+                                "px": round(px, 4), "amount": round(gross, 2), "fee": round(fee, 2),
+                                "reason": f"核心 {round(weight * 100)}%（固定持有，不換股）"})
+    if c is None:
+        return 0.0
+    c["last"] = px or c["last"]
+    return c["sh"] * c["last"]
+
+
 def update(cfg, raw_data, hist, data_dir, state_dir, now_iso):
     key = cfg["key"]
     path = state_dir / "sim.json"
@@ -229,15 +256,27 @@ def update(cfg, raw_data, hist, data_dir, state_dir, now_iso):
     names = cfg["names"]
     bench = raw_data.get(cfg["benchmark"])
     raw = {t: df for t, df in raw_data.items()}
+    core, cw = cfg.get("core"), cfg.get("core_weight", 0.5)  # 台股：一半 0050 核心（config.toml 的 core）
     for d in sorted(hist["confirmed"]):
         if d < START_DATE or (L["last"] and d <= L["last"]):
             continue
         if L["start_date"] is None:
             L["start_date"] = d
-        step(L, key, d, _top(hist["confirmed"][d], slots, cfg["themes"], cfg["max_per_theme"]), raw, bench, rule, slots, names)
+        picks = _top(hist["confirmed"][d], slots, cfg["themes"], cfg["max_per_theme"])
+        if core:
+            cv = core_step(L, key, d, raw, core, cw, names)
+            step(L, key, d, [t for t in picks if t != core], raw, bench, rule, slots, names, extra=cv, frac=1 - cw)
+        else:
+            step(L, key, d, picks, raw, bench, rule, slots, names)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(L, ensure_ascii=False), encoding="utf-8")
-    out = summarize(L, key, raw, names, rule, slots, now_iso)
+    view = dict(L, positions={**L["positions"], **({core: L["core"]} if core and L.get("core") else {})})
+    out = summarize(view, key, raw, names, rule, slots, now_iso)
+    if core:
+        out["core"] = {"t": core, "name": names.get(core, ""), "weight": round(cw * 100), "held": bool(L.get("core"))}
+        out["note"] = (f"一半放 {core} {names.get(core, '')}（核心，一直持有、不換股、不看濾網）；另一半照程式選股名單分數最高的 "
+                       f"{slots} 檔，每檔＝淨值 × {round((1 - cw) * 100)}% ÷ {slots}，在收盤確認日用收盤價成交，只在換出名單時賣。"
+                       "手續費、稅、滑價照績效頁回測，台股手續費最低 20 元，股利不計。模擬帳戶，不是實際下單，不是投資建議。")
     (data_dir / "sim").mkdir(parents=True, exist_ok=True)
     tmp = data_dir / "sim" / f"{key}.json.tmp"
     tmp.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
@@ -353,7 +392,8 @@ def update_cs(cfg, raw_data, hist, data_dir, state_dir, now_iso, fetch):
     ms = macro.series(extra)
     red = ms["total"] >= macro.RED if ms is not None else None
     rule = _exit_rule(cfg)
-    slots = max(cfg["target_count"] - 1, 1)  # 槓桿 ETF 占一個位子，選股那一半放其餘幾檔
+    # 槓桿 ETF 占一個位子，選股那一半放其餘幾檔；有核心設定的市場（台股）程式選股本來就是 4 檔＋核心，直接用 4 檔
+    slots = cfg["target_count"] if cfg.get("core") else max(cfg["target_count"] - 1, 1)
     names = {**cfg["names"], **CS_NAMES}
     bench = raw_data.get(cfg["benchmark"])
     raw = {**{k: v for k, v in extra.items() if k in (lev_sym, ref_sym)}, **raw_data}

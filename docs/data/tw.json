@@ -11,12 +11,12 @@
  "mode": "close",
  "mode_label": "收盤確認",
  "market_session": "closed",
- "generated_at": "2026-10-18T13:15:07Z",
- "generated_at_local": "2026-10-18 21:15 台北",
- "generated_at_et": "2026-10-18 09:15 ET",
+ "generated_at": "2026-10-19T00:15:02Z",
+ "generated_at_local": "2026-10-19 08:15 台北",
+ "generated_at_et": "2026-10-18 20:15 ET",
  "price_time": "收盤",
  "data_date": "2026-10-16",
- "stale_after_minutes": 749,
+ "stale_after_minutes": 89,
  "benchmark": "0050",
  "benchmark_name": "元大台灣50",
  "benchmark_quote": {
@@ -26,6 +26,19 @@
   "vs_sma50_pct": 0.5,
   "sma200": 92.27,
   "vs_sma200_pct": 18.1
+ },
+ "core": {
+  "t": "0050",
+  "name": "元大台灣50",
+  "weight": 50,
+  "quote": {
+   "price": 109.0,
+   "chg_1d_pct": 0.09,
+   "sma50": 108.51,
+   "vs_sma50_pct": 0.5,
+   "sma200": 92.27,
+   "vs_sma200_pct": 18.1
+  }
  },
  "weights": {
   "relative_strength": 30,
@@ -38,9 +51,17 @@
   "gap": 15.0,
   "days": 3
  },
- "weakest_holding": "2603",
+ "weakest_holding": "2884",
  "swaps": [],
  "portfolio_changes": [
+  {
+   "date": "2026-10-16",
+   "action": "trim",
+   "tickers": [
+    "2603"
+   ],
+   "note": "持股檔數改成 4 檔"
+  },
   {
    "date": "2026-10-16",
    "action": "trim",
@@ -490,9 +511,11 @@
    ],
    "signal": "strong",
    "signal_label": "強勢續抱",
-   "weakest": false,
+   "weakest": true,
    "source": "auto"
-  },
+  }
+ ],
+ "candidates": [
   {
    "ticker": "2603",
    "name": "長榮",
@@ -574,13 +597,10 @@
     "創 52 週新高",
     "量價背離"
    ],
-   "signal": "strong",
-   "signal_label": "強勢續抱",
-   "weakest": true,
-   "source": "auto"
-  }
- ],
- "candidates": [
+   "signal": "buy",
+   "signal_label": "可進場",
+   "swap": null
+  },
   {
    "ticker": "2615",
    "name": "萬海",
@@ -6467,9 +6487,9 @@
      "風險"
     ]
    ],
-   "target_count": 5,
+   "target_count": 4,
    "open_slots": 0,
-   "weakest_holding": "2603"
+   "weakest_holding": "2884"
   },
   "dip": {
    "key": "dip",
@@ -6496,11 +6516,19 @@
      "風險"
     ]
    ],
-   "target_count": 5,
+   "target_count": 4,
    "open_slots": 0,
    "weakest_holding": "2376",
    "swaps": [],
    "portfolio_changes": [
+    {
+     "date": "2026-10-16",
+     "action": "trim",
+     "tickers": [
+      "4743"
+     ],
+     "note": "持股檔數改成 4 檔"
+    },
     {
      "date": "2026-10-16",
      "action": "trim",
@@ -6899,91 +6927,6 @@
      "signal_label": "反彈中",
      "weakest": true,
      "source": "auto"
-    },
-    {
-     "ticker": "4743",
-     "name": "合一",
-     "yahoo": "4743.TWO",
-     "theme": "生技醫療",
-     "price": 49.5,
-     "prev_close": 48.1,
-     "chg_1d_pct": 2.91,
-     "above_sma20": true,
-     "above_sma50": true,
-     "limit": null,
-     "data_date": "2026-10-16",
-     "spark": [
-      46.65,
-      44.75,
-      44.65,
-      45.6,
-      46.95,
-      45.8,
-      45.55,
-      43.9,
-      43.45,
-      43.5,
-      44.2,
-      44.6,
-      44.0,
-      44.75,
-      44.4,
-      45.15,
-      44.75,
-      45.7,
-      47.15,
-      45.85,
-      47.15,
-      47.1,
-      48.1,
-      47.1,
-      48.1,
-      49.25,
-      47.55,
-      48.1,
-      48.1,
-      49.5
-     ],
-     "exit": {
-      "atr": 1.76,
-      "trail": 44.22,
-      "hi22": 49.5,
-      "sma50": 46.43
-     },
-     "bar": {
-      "t": "2026-10-16",
-      "o": 48.8,
-      "h": 50.3,
-      "l": 48.65,
-      "c": 49.5,
-      "v": 2121453
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 62.3,
-     "components": {
-      "depth": 100.0,
-      "oversold": 0.0,
-      "reversal": 100.0,
-      "mfturn": 0.0,
-      "risk": 17.2
-     },
-     "dd126": 0.171,
-     "new_low": false,
-     "entry_ok": true,
-     "score_prev": null,
-     "score_chg": null,
-     "reasons": [
-      "距半年高點 −17%",
-      "止跌訊號"
-     ],
-     "alerts": [
-      "突破壓力區"
-     ],
-     "signal": "rebound",
-     "signal_label": "反彈中",
-     "weakest": false,
-     "source": "auto"
     }
    ],
    "candidates": [
@@ -7147,6 +7090,90 @@
      "alerts": [],
      "signal": "watch",
      "signal_label": "觀察",
+     "swap": null
+    },
+    {
+     "ticker": "4743",
+     "name": "合一",
+     "yahoo": "4743.TWO",
+     "theme": "生技醫療",
+     "price": 49.5,
+     "prev_close": 48.1,
+     "chg_1d_pct": 2.91,
+     "above_sma20": true,
+     "above_sma50": true,
+     "limit": null,
+     "data_date": "2026-10-16",
+     "spark": [
+      46.65,
+      44.75,
+      44.65,
+      45.6,
+      46.95,
+      45.8,
+      45.55,
+      43.9,
+      43.45,
+      43.5,
+      44.2,
+      44.6,
+      44.0,
+      44.75,
+      44.4,
+      45.15,
+      44.75,
+      45.7,
+      47.15,
+      45.85,
+      47.15,
+      47.1,
+      48.1,
+      47.1,
+      48.1,
+      49.25,
+      47.55,
+      48.1,
+      48.1,
+      49.5
+     ],
+     "exit": {
+      "atr": 1.76,
+      "trail": 44.22,
+      "hi22": 49.5,
+      "sma50": 46.43
+     },
+     "bar": {
+      "t": "2026-10-16",
+      "o": 48.8,
+      "h": 50.3,
+      "l": 48.65,
+      "c": 49.5,
+      "v": 2121453
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 62.3,
+     "components": {
+      "depth": 100.0,
+      "oversold": 0.0,
+      "reversal": 100.0,
+      "mfturn": 0.0,
+      "risk": 17.2
+     },
+     "dd126": 0.171,
+     "new_low": false,
+     "entry_ok": true,
+     "score_prev": null,
+     "score_chg": null,
+     "reasons": [
+      "距半年高點 −17%",
+      "止跌訊號"
+     ],
+     "alerts": [
+      "突破壓力區"
+     ],
+     "signal": "buy",
+     "signal_label": "可進場",
      "swap": null
     },
     {
