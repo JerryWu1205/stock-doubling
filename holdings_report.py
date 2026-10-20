@@ -28,7 +28,7 @@ import notify
 HERE = notify.HERE
 DATA = notify.DATA_DIR
 LABEL = {"us": "美股", "tw": "台股"}
-STOP_PCT = 0.08   # 成本 −8% 停損
+STOP_PCT = 0.08   # 成本 −8% 停損（實際用 docs/data/<市場>.json 的 exit_policy，和網頁、模擬倉同一套）
 EARN_DAYS = 5     # 財報前幾天提醒
 
 
@@ -133,12 +133,13 @@ def context(i, data, news, vix):
     return kind, lines
 
 
-def advise(i, pos, cur, earn, today, ctx, days):
+def advise(i, pos, cur, earn, today, ctx, days, stop_pct=STOP_PCT, halved=None):
     """回傳 (圖示, 動作, 細節行)。價格規則再加上盤勢判斷：
-    個股利空或獨弱 → 照規則執行；大盤一起跌 → 先賣一半／先觀察，隔天收盤還在線下才做完。"""
+    個股利空或獨弱、或看不出原因 → 照規則執行；只有判斷為大盤一起跌 → 先賣一半／先觀察，隔天收盤還在線下才做完。
+    halved：之前已經建議過「跌破吊燈停損賣一半」（同一筆持股只賣一次一半，和網頁、模擬倉一樣）。"""
     px, ex = i.get("price"), i.get("exit") or {}
     sh, avgp = float(pos["shares"]), float(pos["avg"])
-    stop, trail, sma50 = avgp * (1 - STOP_PCT), ex.get("trail"), ex.get("sma50")
+    stop, trail, sma50 = avgp * (1 - stop_pct), ex.get("trail"), ex.get("sma50")
     lines = []
     if px is None:
         return "⚪", "沒有報價", lines
@@ -148,7 +149,7 @@ def advise(i, pos, cur, earn, today, ctx, days):
     lv = [f"50日線 {fmt(sma50, cur)}"] if sma50 else []
     if trail:
         lv.append(f"吊燈停損 {fmt(trail, cur)}")
-    lv.append(f"成本−8% {fmt(stop, cur)}")
+    lv.append(f"成本−{stop_pct * 100:g}% {fmt(stop, cur)}")
     lines.append("退場線：" + "、".join(lv))
     if i.get("score") is not None:
         chg = i.get("score_chg")
@@ -157,13 +158,16 @@ def advise(i, pos, cur, earn, today, ctx, days):
     lines += cl
     half = f"{int(sh // 2):,} 股"
     why = {"news": "，有個股利空", "alone": "，個股比族群弱", "sector": "，族群資金在撤出"}.get(kind, "")
-    systemic = kind in ("market", "none")
+    systemic = kind == "market"  # 看不出原因（none）不算大盤一起跌，照停損執行
     if px < stop:
         if not systemic or days >= 2:
-            icon, act = "🔴", ("跌破成本 −8%" + (why if not systemic else f"，已連續 {days} 天沒站回")
+            icon, act = "🔴", (f"跌破成本 −{stop_pct * 100:g}%" + (why if not systemic else f"，已連續 {days} 天沒站回")
                               + "，建議全部賣出")
         else:
-            icon, act = "🟠", f"跌破成本 −8%，但看起來是大盤一起跌：先賣一半（{half}），明天收盤還沒站回 {fmt(stop, cur)} 再賣剩下的"
+            icon, act = "🟠", f"跌破成本 −{stop_pct * 100:g}%，但看起來是大盤一起跌：先賣一半（{half}），明天收盤還沒站回 {fmt(stop, cur)} 再賣剩下的"
+    elif trail and px < trail and halved:
+        icon, act = "🟡", (f"還在吊燈停損 {fmt(trail, cur)} 下面；{halved.get('date', '')} 已建議賣一半，"
+                          f"剩下的續抱、不加碼，跌破成本 −{stop_pct * 100:g}% {fmt(stop, cur)} 再全賣")
     elif trail and px < trail:
         if not systemic or days >= 2:
             icon, act = "🟠", "跌破吊燈停損" + (why if not systemic else f"，已連續 {days} 天") + f"，建議先賣一半（{half}）"
@@ -190,17 +194,19 @@ def advise(i, pos, cur, earn, today, ctx, days):
     return icon, act, lines
 
 
-def build(key, holds, breach):
+def build(key, holds, breach, halved=None):
     data = load_json(DATA / f"{key}.json")
     if not data or data.get("mode") != "close" or not holds:
-        return None, None, None
+        return None, None, None, None
+    stop_pct = float((data.get("exit_policy") or {}).get("stop_pct", STOP_PCT * 100)) / 100
+    halved = halved or {}
     cur, today = data.get("currency", "USD"), date.fromisoformat(data["data_date"])
     allm = load_json(DATA / "all" / f"{key}.json")
     fund = (load_json(DATA / "fund" / f"{key}.json") or {}).get("items") or {}
     news = (load_json(DATA / "news.json") or {}).get("news") or []
     dash = (load_json(DATA / "dash.json") or {}).get("items", [])
     vix = next((x.get("value") for x in dash if x.get("sym") == "^VIX"), None)
-    blocks, total, cost, newb = [], 0.0, 0.0, {}
+    blocks, total, cost, newb, newh = [], 0.0, 0.0, {}, {}
     for t, pos in holds.items():
         i, src = lookup(t, data, allm)
         nm = f"{t} {i['name']}" if i and i.get("name") and i["name"] != t else t
@@ -209,12 +215,19 @@ def build(key, holds, breach):
             continue
         earn = (fund.get(t) or {}).get("earnings")
         ex, px = i.get("exit") or {}, i.get("price")
-        under = px is not None and (px < float(pos["avg"]) * (1 - STOP_PCT) or (ex.get("trail") and px < ex["trail"]))
+        under = px is not None and (px < float(pos["avg"]) * (1 - stop_pct) or (ex.get("trail") and px < ex["trail"]))
         last = breach.get(t) or {}
         n = (last.get("n", 0) + (last.get("date") != data["data_date"])) if under else 0
         if under:
             newb[t] = {"date": data["data_date"], "n": max(n, 1)}
-        icon, act, lines = advise(i, pos, cur, earn, today, context(i, data, news, vix), max(n, 1) if under else 0)
+        h = halved.get(t)
+        h = h if h and h.get("avg") == float(pos["avg"]) else None  # 均價改了＝新的一筆持股
+        icon, act, lines = advise(i, pos, cur, earn, today, context(i, data, news, vix), max(n, 1) if under else 0,
+                                  stop_pct, h)
+        if h:
+            newh[t] = h
+        elif "建議先賣一半" in act:  # 跌破吊燈停損賣一半：同一筆持股只建議一次
+            newh[t] = {"date": data["data_date"], "avg": float(pos["avg"])}
         blocks.append(f"{icon} {nm}（{src}）\n👉 {act}\n" + "\n".join("    " + x for x in lines))
         if i.get("price") is not None:
             total += i["price"] * float(pos["shares"])
@@ -227,7 +240,7 @@ def build(key, holds, breach):
         light = {"red": "🔴 紅燈", "yellow": "🟡 黃燈", "green": "🟢 綠燈"}.get(macro.get("light"), macro.get("light"))
         head += f"\n總經風險燈 {light}（{macro.get('value')} 分）" + ("：先不要加碼" if macro.get("light") == "red" else "")
     msg = head + "\n\n" + "\n\n".join(blocks) + "\n（依程式退場規則產生，不是投資建議）"
-    return msg, data["data_date"], newb
+    return msg, data["data_date"], newb, newh
 
 
 def main():
@@ -248,7 +261,7 @@ def main():
         try:
             st = load_json(spath) or {}
             last = st.get("date")
-            msg, d, newb = build(key, hold.get(key) or {}, st.get("breach") or {})
+            msg, d, newb, newh = build(key, hold.get(key) or {}, st.get("breach") or {}, st.get("halved") or {})
             if not msg:
                 continue
             if args.dry_run:
@@ -263,7 +276,7 @@ def main():
             notify.send(msg, token, chat_id)  # 發送失敗就不寫狀態，下次重發
             spath.parent.mkdir(parents=True, exist_ok=True)
             tmp = spath.with_suffix(".tmp")
-            tmp.write_text(json.dumps({"date": d, "breach": newb}), encoding="utf-8")
+            tmp.write_text(json.dumps({"date": d, "breach": newb, "halved": newh}), encoding="utf-8")
             tmp.replace(spath)
             print(f"[{key}] {datetime.now(timezone.utc):%Y-%m-%d %H:%M UTC} 持股報告已發送（{d}）")
         except Exception as e:

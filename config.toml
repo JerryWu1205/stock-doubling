@@ -8,6 +8,13 @@
 swap_gap = 15
 swap_days = 3
 
+# 出場規則（2026-10-20 統一）：網頁「我的」、Telegram 持股報告、模擬倉都照這一套，不再每天換。
+#   收盤跌破成本 −stop_pct%：全部賣出
+#   收盤跌破吊燈停損（近 22 天最高收盤 − 3 倍 ATR）：賣一半（同一筆持股只賣一次一半）
+#   收盤在 50 日線下：續抱，但不買進、不加碼
+[exit]
+stop_pct = 8
+
 # Telegram 通知：透過 AI情報官 的 Bot 發送（Token 直接讀 AI情報官 的 .env）。
 # 不想收通知就把 enabled 改成 false。
 [notify]

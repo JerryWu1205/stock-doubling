@@ -594,7 +594,8 @@ function renderTodo() {
     else if (bad.length) add("p-warn", "我的", `${nm(i.ticker)} ${bad.map(esc).join("、")}`);
     if (i.signal === "take") add("p-warn", "我的", `${nm(i.ticker)} 反彈接近半年高點，可以考慮分批獲利`);
     const st = stopOf(i);
-    if (st && i.price != null && i.price < st.px) urgent("p-bad", "出場", `${nm(i.ticker)} 收盤 ${fmtPx(i.price)} 跌破${st.how} ${fmtPx(st.px)}，依規則該出場`);
+    if (st && st.lvl !== "noadd") urgent("p-bad", st.lvl === "all" ? "出場" : "減碼", `${nm(i.ticker)} 收盤 ${fmtPx(i.price)} 跌破${st.how} ${fmtPx(st.px)}，依規則${st.act}`);
+    else if (st) add("p-warn", "我的", `${nm(i.ticker)} 在 50 日線 ${fmtPx(st.px)} 下，續抱但不加碼`);
   }
   for (const s of (bk.swaps || []).filter(s => s.status === "confirmed"))
     add("p-info", "換股", `${nm(s.out)} → ${nm(s.in)}（高 ${s.gap} 分、連續 ${s.streak} 天）`);
@@ -954,46 +955,40 @@ function scoreChg(v) {
 }
 
 // ───────── 退場價 ─────────
-const EXIT_LBL = { none: "不設停損（只靠分數換股）", sma50: "跌破 50 日線", atr3: "吊燈停損（最高收盤 − 3 倍 ATR）", pct8: "比買進價跌 8%" };
-// 回測裡年化最好的停損規則；還沒有回測就先用吊燈停損
-function bestExit() {
-  const rows = (exitsBt || []).filter(r => r.cagr_pct != null);
-  if (!rows.length) return { rule: "atr3", row: null, base: null };
-  const top = rows.reduce((a, b) => (b.cagr_pct > a.cagr_pct || (b.cagr_pct === a.cagr_pct && b.max_drawdown_pct < a.max_drawdown_pct)) ? b : a);
-  return { rule: top.rule, row: top, base: rows.find(r => r.rule === "none") };
-}
-// 建議退場價：依回測最好的規則；「不設停損」最好時，仍給吊燈停損當保命線
+// 出場規則（和 Telegram 持股報告、模擬倉同一套，設定在 config.toml 的 [exit]，不跟著回測每天換）：
+// 跌破成本 −8% 全賣；跌破吊燈停損賣一半；在 50 日線下續抱但不加碼
+const stopPct = () => data?.exit_policy?.stop_pct ?? 8;
 function stopOf(i) {
-  const x = i.exit || {}, p = positions()[i.ticker], { rule } = bestExit();
-  if (rule === "sma50" && x.sma50) return { px: x.sma50, how: "50 日線" };
-  if (rule === "pct8" && p?.avg > 0) return { px: p.avg * 0.92, how: "成本 −8%" };
-  return x.trail ? { px: x.trail, how: "吊燈停損" } : null;
+  const x = i.exit || {}, p = positions()[i.ticker], px = i.price;
+  if (px == null) return null;
+  const stop = p?.avg > 0 ? p.avg * (1 - stopPct() / 100) : null;
+  if (stop && px < stop) return { lvl: "all", px: stop, how: `成本 −${stopPct()}%`, act: "全部賣出" };
+  if (x.trail && px < x.trail) return { lvl: "half", px: x.trail, how: "吊燈停損", act: "先賣一半" };
+  if (x.sma50 && px < x.sma50) return { lvl: "noadd", px: x.sma50, how: "50 日線", act: "續抱但不加碼" };
+  return null;
 }
 function exitHtml(i) {
   const x = i.exit;
   if (!x || i.price == null) return "";
   const p = positions()[i.ticker], px = i.price;
   const d = v => v == null ? "" : `<span class="${clsOf(v - px)}">${fmtP1((v / px - 1) * 100)}</span>`;
-  const st = stopOf(i), be = bestExit();
-  const broke = st && px < st.px;
+  const st = stopOf(i), stop = p?.avg > 0 ? p.avg * (1 - stopPct() / 100) : null;
   const cells = [
-    `<div${be.rule === "atr3" || be.rule === "none" ? ` style="outline:1px solid var(--info)"` : ""}><span>吊燈停損</span><b>${fmtPx(x.trail)}</b>${d(x.trail)}</div>`,
-    `<div${be.rule === "sma50" ? ` style="outline:1px solid var(--info)"` : ""}><span>50 日線</span><b>${fmtPx(x.sma50)}</b>${d(x.sma50)}</div>`,
-    p?.avg > 0 ? `<div${be.rule === "pct8" ? ` style="outline:1px solid var(--info)"` : ""}><span>成本 −8%</span><b>${fmtPx(p.avg * 0.92)}</b>${d(p.avg * 0.92)}</div>`
+    `<div><span>50 日線（不加碼）</span><b>${fmtPx(x.sma50)}</b>${d(x.sma50)}</div>`,
+    `<div><span>吊燈停損（賣一半）</span><b>${fmtPx(x.trail)}</b>${d(x.trail)}</div>`,
+    stop ? `<div><span>成本 −${stopPct()}%（全賣）</span><b>${fmtPx(stop)}</b>${d(stop)}</div>`
       : `<div><span>每天正常波動</span><b>${fmtPx(x.atr)}</b><span>${fmtP1(x.atr / px * 100).replace("+", "±")}</span></div>`,
   ].join("");
   let risk = "";
-  if (st && p?.sh > 0 && p?.avg > 0) {
-    const atStop = (st.px - p.avg) * p.sh;
-    risk = `<div class="note">若收盤跌到${st.how} ${fmtPx(st.px)} 出場，這筆${atStop >= 0 ? "還會賺" : "會虧"} <b class="${clsOf(atStop)}">${fmtMoney(Math.abs(atStop))}</b>（${fmtP1((st.px / p.avg - 1) * 100)}）。`
-      + (st.px > p.avg ? "停損線已經在成本之上，這筆最差也是保本出場。" : "") + `</div>`;
+  if (stop && p?.sh > 0) {
+    const atStop = (stop - p.avg) * p.sh;
+    risk = `<div class="note">若收盤跌到成本 −${stopPct()}% ${fmtPx(stop)} 全部賣出，這筆會虧 <b class="${clsOf(atStop)}">${fmtMoney(Math.abs(atStop))}</b>。</div>`;
   }
-  const btx = be.row ? `回測（過去一年、強勢名單）年化最好的是「${EXIT_LBL[be.rule]}」${fmtP1(be.row.cagr_pct)}、最大回檔 ${be.row.max_drawdown_pct}%`
-    + (be.base && be.rule !== "none" ? `；不設停損是 ${fmtP1(be.base.cagr_pct)}、回檔 ${be.base.max_drawdown_pct}%` : "") + "。" : "回測還在算，先用吊燈停損。";
-  return `<div class="fund"><h3>退場參考價（收盤跌破就出場，框起來的是建議）</h3>
-    ${broke ? `<div class="pill p-bad" style="display:inline-block;margin-bottom:6px">已跌破${st.how} ${fmtPx(st.px)}，依規則該出場</div>` : ""}
-    <div class="kv">${cells}</div>${risk}
-    <div class="note">${btx}停利不設固定價：停損線會跟著股價往上移，讓獲利繼續跑；漲多了可以先賣一半入袋。吊燈停損＝近 22 天最高收盤 − 3 倍 ATR（ATR＝每天平均波動）。</div></div>`;
+  const tag = st ? `<div class="pill ${st.lvl === "noadd" ? "p-warn" : "p-bad"}" style="display:inline-block;margin-bottom:6px">已跌破${st.how} ${fmtPx(st.px)}：${st.act}</div>` : "";
+  return `<div class="fund"><h3>退場參考價（收盤價判斷）</h3>
+    ${tag}<div class="kv">${cells}</div>${risk}
+    <div class="note">出場規則固定，和 Telegram 持股報告、模擬倉同一套：收盤跌破成本 −${stopPct()}% 全部賣出；跌破吊燈停損先賣一半；在 50 日線下續抱、不加碼。
+    Telegram 報告另外會看盤勢：大盤和族群一起跌時，先賣一半或等隔天收盤再確認。停利不設固定價，吊燈停損會跟著股價往上移。吊燈停損＝近 22 天最高收盤 − 3 倍 ATR（ATR＝每天平均波動）。</div></div>`;
 }
 
 function portfolioHtml(items) {
@@ -1032,7 +1027,7 @@ function rowHtml(i) {
     : `<div class="px ${clsOf(chg)}">${fmtPct(chg)}</div>`;
   const pl = isMine ? pnlOf(i.ticker) : null;
   const stp = isMine ? stopOf(i) : null;
-  const brokeTag = stp && i.price != null && i.price < stp.px ? ` <span class="tag lim">跌破退場線</span>` : "";
+  const brokeTag = stp ? ` <span class="tag lim">${stp.lvl === "all" ? "跌破停損・全賣" : stp.lvl === "half" ? "跌破吊燈・賣一半" : "50日線下・不加碼"}</span>` : "";
   const posLine = pl ? `<div class="pos">${pl.sh.toLocaleString()} 股・均價 ${fmtPx(pl.avg)}・損益 <b class="${clsOf(pl.pnl)}">${fmtSigned(pl.pnl)}（${fmtP1(pl.pct)}）</b></div>`
     : isMine && tab === "m" ? `<div class="pos small">展開後填股數和均價，就會算損益</div>` : "";
   const p0 = positions()[i.ticker] || {};
@@ -1488,7 +1483,7 @@ async function renderPerf() {
 // ───────── 模擬倉 ─────────
 let simData = null, simCs = null, simTradesOpen = false, simBook = "main";
 try { simBook = localStorage.getItem("simBook") || "main"; } catch {}
-const SIM_EXIT = { none: "不設停損（被換出名單才賣）", sma50: "跌破 50 日線就賣", atr3: "跌破吊燈停損就賣", pct8: "跌破成本 −8% 就賣" };
+const SIM_EXIT = { policy: "−8% 全賣・吊燈賣一半・50 日線下不買", none: "不設停損（被換出名單才賣）", sma50: "跌破 50 日線就賣", atr3: "跌破吊燈停損就賣", pct8: "跌破成本 −8% 就賣" };
 async function renderSim() {
   destroyPerf();
   const box = $("sim");
@@ -1817,8 +1812,10 @@ const GLOSS = {
   "轉弱留意": "分數掉到 50 以下，開始轉弱，留意是否要出場。",
   "出場訊號": "分數低於 40 而且跌破 50 日線，建議出場。",
   "反彈達標": "跌深策略：已經彈回半年高點 5% 以內，可以獲利了結。",
-  "跌破退場線": "收盤跌破建議的停損價，照紀律應該出場。",
-  "吊燈停損": "近 22 天最高收盤 − 3 倍 ATR。股價創高它就跟著往上移，跌破就出場，讓獲利奔跑又能守住。",
+  "跌破停損・全賣": "收盤跌破成本 −8%，依規則全部賣出。",
+  "跌破吊燈・賣一半": "收盤跌破吊燈停損，依規則先賣一半。",
+  "50日線下・不加碼": "收盤在 50 日線下，續抱但不加碼。",
+  "吊燈停損": "近 22 天最高收盤 − 3 倍 ATR。股價創高它就跟著往上移，跌破就先賣一半，讓獲利奔跑又能守住。",
   "50 日線": "近 50 個交易日的平均收盤價，中期趨勢的分界。",
   "成本 −8%": "從你的買進均價跌 8% 就停損的固定停損法。",
   "每天正常波動": "ATR：近 14 天平均每天的高低波動幅度。停損設得比這個還近，很容易被正常震盪洗掉。",

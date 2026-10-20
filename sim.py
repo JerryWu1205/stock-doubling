@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 import backtest as bt
+import indicators as ind
 
 START_CASH = {"us": 50000.0, "tw": 1000000.0}
 CURRENCY = {"us": "USD", "tw": "TWD"}
@@ -27,35 +28,36 @@ def _fee(key, amount, side):
     return max(f, 20.0) if key == "tw" else f
 
 
-EXIT_RULE = {"us": "sma50", "tw": "none"}  # 固定的出場規則；要改就在 config.toml 的 [us]/[tw] 加 exit_rule
-
-
 def _exit_rule(cfg):
-    """固定規則，不跟著績效頁每天的最佳結果跳來跳去（每天換規則會讓模擬倉來回買賣）。"""
-    r = cfg.get("exit_rule") or EXIT_RULE.get(cfg["key"], "none")
-    return r if r in ("none", "sma50", "pct8", "atr3") else "none"
+    """出場規則和網頁「我的」、Telegram 持股報告共用（config.toml 的 [exit]），固定不跟著回測每天換：
+    跌破成本 −stop_pct% 全賣；跌破吊燈停損賣一半（一筆持股只賣一次）；在 50 日線下不買進、不加碼。"""
+    return dict(cfg.get("exit_policy") or {"stop_pct": 8.0})
+
+
+def _levels(df, d):
+    """d 那天收盤的 (收盤價, 吊燈停損, 50 日線)，和網頁的退場參考價同一個算法（indicators.exit_levels）。"""
+    if df is None:
+        return None, None, None
+    s = df.loc[:d]
+    if len(s) < 2 or s.index[-1] != d:
+        return None, None, None
+    lv = ind.exit_levels(s)
+    return float(s["Close"].iloc[-1]), lv["trail"], lv["sma50"]
 
 
 def _exit_hit(rule, df, d, pos):
-    """d 那天收盤有沒有觸發出場。df 是未還原日線（Close/High/Low）。"""
-    if rule in (None, "none") or df is None:
-        return False
-    s = df.loc[:d]
-    if len(s) < 2:
-        return False
-    c = float(s["Close"].iloc[-1])
-    if rule == "sma50":
-        return len(s) >= 50 and c < float(s["Close"].iloc[-50:].mean())
-    if rule == "pct8":
-        return pos is not None and c < pos["cost"] * 0.92
-    if rule == "atr3":
-        if len(s) < 23:
-            return False
-        tr = pd.concat([s["High"] - s["Low"], (s["High"] - s["Close"].shift()).abs(),
-                        (s["Low"] - s["Close"].shift()).abs()], axis=1).max(axis=1)
-        atr = float(tr.iloc[-22:].mean())
-        return c < float(s["Close"].iloc[-22:].max()) - 3 * atr
-    return False
+    """d 那天收盤要不要賣：回傳 ("all"|"half"|None, 原因)。pos=None 時只看能不能買（50 日線下不買）。"""
+    c, trail, sma50 = _levels(df, d)
+    if c is None:
+        return None, None
+    if pos is None:
+        return ("nobuy", "在 50 日線下") if sma50 is not None and c < sma50 else (None, None)
+    stop = rule.get("stop_pct", 8.0)
+    if c < pos["cost"] * (1 - stop / 100):
+        return "all", f"跌破成本 −{stop:g}%"
+    if trail is not None and c < trail and not pos.get("halved"):
+        return "half", "跌破吊燈停損，賣一半"
+    return None, None
 
 
 def _top(day, slots, themes, cap):
@@ -97,24 +99,34 @@ def step(L, key, d, holdings, raw, bench, rule, slots, names, extra=0.0, frac=1.
         px = _px(df, ts)
         if px is None:
             continue
-        reason = None
+        part, reason = None, None
         if t not in holdings:
-            reason = "換出名單"
-        elif _exit_hit(rule, df, ts, p):
-            reason = {"sma50": "跌破 50 日線", "pct8": "跌破成本 −8%", "atr3": "跌破吊燈停損"}.get(rule, "出場")
-        if not reason:
+            part, reason = "all", "換出名單"
+        else:
+            part, reason = _exit_hit(rule, df, ts, p)
+        if not part:
             continue
-        gross = p["sh"] * px
+        sh = p["sh"] if part == "all" else p["sh"] // 2
+        if sh <= 0:  # 只剩 1 股，賣一半＝不賣
+            p["halved"] = True
+            continue
+        gross = sh * px
         fee = _fee(key, gross, "sell")
         net = gross - fee
         L["cash"] += net
-        pnl = net - p["cost_total"]
-        L["trades"].append({"date": d, "side": "賣", "t": t, "name": names.get(t, ""), "sh": p["sh"],
+        ct = p["cost_total"] * sh / p["sh"]
+        pnl = net - ct
+        L["trades"].append({"date": d, "side": "賣", "t": t, "name": names.get(t, ""), "sh": sh,
                             "px": round(px, 4), "amount": round(gross, 2), "fee": round(fee, 2), "reason": reason,
-                            "pnl": round(pnl, 2), "pnl_pct": round(pnl / p["cost_total"] * 100, 2),
+                            "pnl": round(pnl, 2), "pnl_pct": round(pnl / ct * 100, 2),
                             "buy_date": p["date"],
                             "days": int(np.busday_count(_date.fromisoformat(p["date"]), _date.fromisoformat(d)))})
-        del pos[t]
+        if part == "all":
+            del pos[t]
+        else:
+            p["sh"] -= sh
+            p["cost_total"] = round(p["cost_total"] - ct, 2)
+            p["halved"] = True
     # 2. 買：名單裡有、手上沒有、沒觸發出場
     nav = L["cash"] + sum(p["sh"] * (_px(raw.get(t), ts) or p["last"]) for t, p in pos.items())
     slot = (nav + extra) * frac / max(slots, 1)
@@ -123,7 +135,7 @@ def step(L, key, d, holdings, raw, bench, rule, slots, names, extra=0.0, frac=1.
             continue
         df = raw.get(t)
         px = _px(df, ts)
-        if px is None or _exit_hit(rule, df, ts, None):
+        if px is None or _exit_hit(rule, df, ts, None)[0]:
             continue
         budget = min(slot, L["cash"])
         sh = math.floor(budget / (px * (1 + bt.COSTS.get(key, bt.COSTS["us"])["buy"])))
@@ -139,8 +151,8 @@ def step(L, key, d, holdings, raw, bench, rule, slots, names, extra=0.0, frac=1.
         L["trades"].append({"date": d, "side": "買", "t": t, "name": names.get(t, ""), "sh": sh,
                             "px": round(px, 4), "amount": round(gross, 2), "fee": round(fee, 2),
                             "reason": "建倉" if L["start_date"] == d else
-                            "站回出場線後買回" if any(x["t"] == t and x["side"] == "賣" and x["reason"] != "換出名單"
-                                                    for x in L["trades"][-100:]) else "選入名單"})
+                            "停損後站回 50 日線買回" if any(x["t"] == t and x["side"] == "賣" and x["reason"] != "換出名單"
+                                                       for x in L["trades"][-100:]) else "選入名單"})
     # 3. 收盤淨值
     for t, p in pos.items():
         p["last"] = _px(raw.get(t), ts) or p["last"]
@@ -197,7 +209,7 @@ def summarize(L, key, raw, names, rule, slots, now_iso):
         mdd = max(mdd, 1 - v / peak)
     return {
         "market": key, "currency": L["currency"], "generated_at": now_iso, "start_date": L["start_date"],
-        "start_cash": start, "data_date": today, "exit_rule": rule, "slots": slots,
+        "start_cash": start, "data_date": today, "exit_rule": "policy", "exit_policy": rule, "slots": slots,
         "nav": last_nav, "live_nav": round(live, 2), "cash": round(L["cash"], 2), "max_dd": round(mdd * 100, 2),
         "ret": {"day": ret(prev_day), "week": ret(_since(nav, week_cut) or start) if today else None,
                 "month": ret(_since(nav, month_cut) or start) if today else None, "total": ret(start)},
@@ -211,7 +223,7 @@ def summarize(L, key, raw, names, rule, slots, now_iso):
         "curve": nav,
         "trades": list(reversed(L["trades"][-200:])),
         "note": "照程式選股名單在收盤確認日用收盤價成交，每檔目標＝淨值 ÷ 持股檔數；手續費、稅、滑價照績效頁回測，"
-                "台股手續費最低 20 元，股利不計。出場規則固定（美股跌破 50 日線、台股只在換出名單時賣）。模擬帳戶，不是實際下單，不是投資建議。",
+                "台股手續費最低 20 元，股利不計。出場規則和網頁「我的」、Telegram 持股報告同一套：跌破成本 −8% 全賣、跌破吊燈停損賣一半、50 日線下不買進。模擬帳戶，不是實際下單，不是投資建議。",
     }
 
 
@@ -275,7 +287,7 @@ def update(cfg, raw_data, hist, data_dir, state_dir, now_iso):
     if core:
         out["core"] = {"t": core, "name": names.get(core, ""), "weight": round(cw * 100), "held": bool(L.get("core"))}
         out["note"] = (f"一半放 {core} {names.get(core, '')}（核心，一直持有、不換股、不看濾網）；另一半照程式選股名單分數最高的 "
-                       f"{slots} 檔，每檔＝淨值 × {round((1 - cw) * 100)}% ÷ {slots}，在收盤確認日用收盤價成交，只在換出名單時賣。"
+                       f"{slots} 檔，每檔＝淨值 × {round((1 - cw) * 100)}% ÷ {slots}，在收盤確認日用收盤價成交；出場規則：跌破成本 −8% 全賣、跌破吊燈停損賣一半、50 日線下不買進，換出名單也賣。"
                        "手續費、稅、滑價照績效頁回測，台股手續費最低 20 元，股利不計。模擬帳戶，不是實際下單，不是投資建議。")
     (data_dir / "sim").mkdir(parents=True, exist_ok=True)
     tmp = data_dir / "sim" / f"{key}.json.tmp"

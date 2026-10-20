@@ -86,7 +86,7 @@ def load_config():
     """回傳 {市場代號: cfg}。舊格式（沒有 [us] 段落）當成只有美股。"""
     with open(HERE / "config.toml", "rb") as f:
         raw = tomllib.load(f)
-    shared = {k: raw[k] for k in ("swap_gap", "swap_days", "weights") if k in raw}
+    shared = {k: raw[k] for k in ("swap_gap", "swap_days", "weights", "exit") if k in raw}
     if not any(k in raw for k in MARKETS):
         sections = {"us": raw}
     else:
@@ -124,7 +124,8 @@ def market_config(key, cfg):
             "rebound": w.get("rebound", 15),
             "risk": w.get("risk", 10),
         },
-        "exit_rule": str(cfg.get("exit_rule", "")) or None,  # 模擬倉出場規則（沒設就用 sim.EXIT_RULE）
+        # 出場規則：網頁、Telegram 持股報告、模擬倉共用（config.toml 的 [exit]）
+        "exit_policy": {"stop_pct": float(cfg.get("exit", {}).get("stop_pct", 8))},
         "fixed": holdings,  # 你自己指定的持股，程式不會自動換掉
         "pool": pool,
         "target_count": int(hold_cfg.get("target_count", 16)),
@@ -1001,6 +1002,7 @@ def build_output(cfg, books, results, errors, mode, session, now_utc, demo, pric
         "core": ({"t": cfg["core"], "name": cfg["names"].get(cfg["core"], cfg["core"]), "weight": round(cfg["core_weight"] * 100),
                   "quote": bench_quote if cfg["core"] == cfg["benchmark"] else None} if cfg.get("core") else None),
         "weights": cfg["weights"],
+        "exit_policy": cfg["exit_policy"],
         "swap_rule": {"gap": cfg["swap_gap"], "days": need},
         # 舊版網頁讀的欄位 = 強勢名單
         "weakest_holding": strong["weakest_holding"],
