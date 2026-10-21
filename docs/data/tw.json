@@ -5,23 +5,23 @@
  "timezone": "Asia/Taipei",
  "tz_label": "台北",
  "currency": "TWD",
- "quote_delay_minutes": 0,
+ "quote_delay_minutes": 20,
  "trading_hours": "09:00–13:30",
  "demo": false,
- "mode": "intraday",
- "mode_label": "盤中暫定",
- "market_session": "open",
- "generated_at": "2026-10-21T06:15:03Z",
- "generated_at_local": "2026-10-21 14:15 台北",
- "generated_at_et": "2026-10-21 02:15 ET",
- "price_time": "13:30",
+ "mode": "close",
+ "mode_label": "收盤確認",
+ "market_session": "closed",
+ "generated_at": "2026-10-21T06:30:03Z",
+ "generated_at_local": "2026-10-21 14:30 台北",
+ "generated_at_et": "2026-10-21 02:30 ET",
+ "price_time": "收盤",
  "data_date": "2026-10-21",
- "stale_after_minutes": 40,
+ "stale_after_minutes": 1154,
  "benchmark": "0050",
  "benchmark_name": "元大台灣50",
  "benchmark_quote": {
   "price": 108.15,
-  "chg_1d_pct": -0.0,
+  "chg_1d_pct": 0.0,
   "sma50": 108.69,
   "vs_sma50_pct": -0.5,
   "sma200": 92.73,
@@ -33,7 +33,7 @@
   "weight": 50,
   "quote": {
    "price": 108.15,
-   "chg_1d_pct": -0.0,
+   "chg_1d_pct": 0.0,
    "sma50": 108.69,
    "vs_sma50_pct": -0.5,
    "sma200": 92.73,
@@ -245,7 +245,7 @@
     "h": 49.3,
     "l": 48.0,
     "c": 49.2,
-    "v": 25215000
+    "v": 25445956
    },
    "extended": false,
    "pullback_ok": false,
@@ -327,7 +327,7 @@
     "h": 159.0,
     "l": 154.0,
     "c": 158.5,
-    "v": 16685000
+    "v": 16836264
    },
    "extended": false,
    "pullback_ok": true,
@@ -412,7 +412,7 @@
     "h": 78.2,
     "l": 75.5,
     "c": 77.0,
-    "v": 46346000
+    "v": 46593443
    },
    "extended": false,
    "pullback_ok": false,
@@ -438,7 +438,7 @@
    "score": 76.0,
    "components": {
     "rs": 92.2,
-    "mf": 57.0,
+    "mf": 57.1,
     "trend": 100.0,
     "rebound": 31.8,
     "risk": 7.2
@@ -494,7 +494,7 @@
     "h": 1000.0,
     "l": 974.0,
     "c": 982.0,
-    "v": 1774000
+    "v": 1805819
    },
    "extended": false,
    "pullback_ok": true,
@@ -522,7 +522,7 @@
    "score": 78.5,
    "components": {
     "rs": 88.3,
-    "mf": 63.9,
+    "mf": 63.8,
     "trend": 100.0,
     "rebound": 55.0,
     "risk": 22.5
@@ -578,7 +578,7 @@
     "h": 118.5,
     "l": 115.0,
     "c": 116.5,
-    "v": 10116000
+    "v": 10182278
    },
    "extended": false,
    "pullback_ok": false,
@@ -602,7 +602,7 @@
    "score": 77.1,
    "components": {
     "rs": 79.2,
-    "mf": 87.6,
+    "mf": 87.9,
     "trend": 100.0,
     "rebound": 15.0,
     "risk": 8.4
@@ -658,7 +658,7 @@
     "h": 597.0,
     "l": 572.0,
     "c": 590.0,
-    "v": 4519000
+    "v": 4735938
    },
    "extended": false,
    "pullback_ok": false,
@@ -685,7 +685,7 @@
    "score": 73.4,
    "components": {
     "rs": 80.5,
-    "mf": 62.5,
+    "mf": 62.6,
     "trend": 100.0,
     "rebound": 36.1,
     "risk": 17.5
@@ -741,7 +741,7 @@
     "h": 199.5,
     "l": 192.0,
     "c": 195.0,
-    "v": 78924000
+    "v": 80059631
    },
    "extended": false,
    "pullback_ok": false,
@@ -767,7 +767,7 @@
    "score": 73.1,
    "components": {
     "rs": 74.0,
-    "mf": 75.9,
+    "mf": 76.0,
     "trend": 100.0,
     "rebound": 15.0,
     "risk": 3.5
@@ -823,7 +823,7 @@
     "h": 29.65,
     "l": 28.8,
     "c": 29.6,
-    "v": 18417000
+    "v": 18518137
    },
    "extended": false,
    "pullback_ok": false,
@@ -906,7 +906,7 @@
     "h": 71.5,
     "l": 70.3,
     "c": 71.3,
-    "v": 23347000
+    "v": 23441620
    },
    "extended": false,
    "pullback_ok": true,
@@ -990,7 +990,7 @@
     "h": 41.4,
     "l": 40.65,
     "c": 41.3,
-    "v": 17732000
+    "v": 17827878
    },
    "extended": false,
    "pullback_ok": false,
@@ -1015,7 +1015,7 @@
    "score": 71.9,
    "components": {
     "rs": 72.7,
-    "mf": 79.4,
+    "mf": 79.3,
     "trend": 100.0,
     "rebound": 12.1,
     "risk": 16.0
@@ -1071,7 +1071,7 @@
     "h": 261.5,
     "l": 255.5,
     "c": 257.5,
-    "v": 10176000
+    "v": 10272580
    },
    "extended": false,
    "pullback_ok": false,
@@ -1096,7 +1096,7 @@
    "score": 71.7,
    "components": {
     "rs": 57.1,
-    "mf": 89.3,
+    "mf": 89.4,
     "trend": 100.0,
     "rebound": 17.1,
     "risk": 3.6
@@ -1152,7 +1152,7 @@
     "h": 28.0,
     "l": 27.45,
     "c": 28.0,
-    "v": 11577000
+    "v": 11722666
    },
    "extended": false,
    "pullback_ok": false,
@@ -1176,7 +1176,7 @@
    "score": 71.6,
    "components": {
     "rs": 68.8,
-    "mf": 76.5,
+    "mf": 76.6,
     "trend": 100.0,
     "rebound": 15.0,
     "risk": 4.8
@@ -1232,7 +1232,7 @@
     "h": 74.9,
     "l": 71.8,
     "c": 74.8,
-    "v": 43838000
+    "v": 44210248
    },
    "extended": false,
    "pullback_ok": false,
@@ -1315,7 +1315,7 @@
     "h": 53.8,
     "l": 52.6,
     "c": 53.6,
-    "v": 13358000
+    "v": 13487228
    },
    "extended": false,
    "pullback_ok": false,
@@ -1339,7 +1339,7 @@
    "score": 70.3,
    "components": {
     "rs": 93.5,
-    "mf": 50.7,
+    "mf": 50.8,
     "trend": 80.0,
     "rebound": 55.0,
     "risk": 47.1
@@ -1395,7 +1395,7 @@
     "h": 1155.0,
     "l": 1085.0,
     "c": 1100.0,
-    "v": 18574000
+    "v": 19004375
    },
    "extended": false,
    "pullback_ok": true,
@@ -1420,7 +1420,7 @@
    "score": 69.4,
    "components": {
     "rs": 62.3,
-    "mf": 78.2,
+    "mf": 78.1,
     "trend": 100.0,
     "rebound": 17.8,
     "risk": 15.2
@@ -1476,7 +1476,7 @@
     "h": 62.8,
     "l": 61.2,
     "c": 62.1,
-    "v": 17729000
+    "v": 17861031
    },
    "extended": false,
    "pullback_ok": false,
@@ -1556,7 +1556,7 @@
     "h": 114.0,
     "l": 110.5,
     "c": 114.0,
-    "v": 32221000
+    "v": 32328100
    },
    "extended": false,
    "pullback_ok": false,
@@ -1582,7 +1582,7 @@
    "score": 68.5,
    "components": {
     "rs": 67.5,
-    "mf": 66.6,
+    "mf": 66.9,
     "trend": 100.0,
     "rebound": 15.0,
     "risk": 7.0
@@ -1638,7 +1638,7 @@
     "h": 804.0,
     "l": 780.0,
     "c": 792.0,
-    "v": 2834000
+    "v": 2971851
    },
    "extended": false,
    "pullback_ok": false,
@@ -1720,7 +1720,7 @@
     "h": 154.0,
     "l": 152.5,
     "c": 154.0,
-    "v": 8431000
+    "v": 8488400
    },
    "extended": true,
    "pullback_ok": false,
@@ -1742,10 +1742,10 @@
    "name": "華南金",
    "yahoo": "2880.TW",
    "theme": "金融",
-   "score": 67.9,
+   "score": 68.0,
    "components": {
     "rs": 75.3,
-    "mf": 56.6,
+    "mf": 56.7,
     "trend": 100.0,
     "rebound": 15.0,
     "risk": 10.5
@@ -1801,13 +1801,13 @@
     "h": 49.9,
     "l": 47.75,
     "c": 49.8,
-    "v": 16074000
+    "v": 16234953
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 64.8,
-   "score_chg": 3.1,
+   "score_chg": 3.2,
    "reasons": [
     "相對大盤強勢",
     "多頭排列"
@@ -1827,7 +1827,7 @@
    "score": 67.4,
    "components": {
     "rs": 85.7,
-    "mf": 43.0,
+    "mf": 43.1,
     "trend": 80.0,
     "rebound": 55.0,
     "risk": 33.3
@@ -1883,7 +1883,7 @@
     "h": 1515.0,
     "l": 1340.0,
     "c": 1375.0,
-    "v": 5837000
+    "v": 6015123
    },
    "extended": false,
    "pullback_ok": false,
@@ -1963,7 +1963,7 @@
     "h": 78.8,
     "l": 77.7,
     "c": 78.5,
-    "v": 10820000
+    "v": 10864429
    },
    "extended": false,
    "pullback_ok": false,
@@ -1984,10 +1984,10 @@
    "name": "創意",
    "yahoo": "3443.TW",
    "theme": "半導體",
-   "score": 66.0,
+   "score": 66.1,
    "components": {
     "rs": 100.0,
-    "mf": 35.1,
+    "mf": 35.4,
     "trend": 80.0,
     "rebound": 40.0,
     "risk": 47.5
@@ -2043,13 +2043,13 @@
     "h": 8490.0,
     "l": 7905.0,
     "c": 8000.0,
-    "v": 1900000
+    "v": 1994023
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 66.1,
-   "score_chg": -0.1,
+   "score_chg": 0.0,
    "reasons": [
     "相對大盤強勢",
     "多頭排列"
@@ -2064,7 +2064,7 @@
    "name": "凱基金",
    "yahoo": "2883.TW",
    "theme": "金融",
-   "score": 65.6,
+   "score": 65.7,
    "components": {
     "rs": 94.8,
     "mf": 32.4,
@@ -2123,13 +2123,13 @@
     "h": 38.25,
     "l": 37.35,
     "c": 38.25,
-    "v": 47287000
+    "v": 47406582
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 59.7,
-   "score_chg": 5.9,
+   "score_chg": 6.0,
    "reasons": [
     "相對大盤強勢",
     "資金流出"
@@ -2203,7 +2203,7 @@
     "h": 130.5,
     "l": 129.0,
     "c": 130.5,
-    "v": 10390000
+    "v": 10408581
    },
    "extended": true,
    "pullback_ok": false,
@@ -2228,7 +2228,7 @@
    "score": 64.8,
    "components": {
     "rs": 61.0,
-    "mf": 60.6,
+    "mf": 60.7,
     "trend": 100.0,
     "rebound": 40.0,
     "risk": 47.1
@@ -2284,7 +2284,7 @@
     "h": 1255.0,
     "l": 1180.0,
     "c": 1195.0,
-    "v": 8171000
+    "v": 8380399
    },
    "extended": false,
    "pullback_ok": false,
@@ -2363,7 +2363,7 @@
     "h": 45.55,
     "l": 44.15,
     "c": 45.4,
-    "v": 20253000
+    "v": 20372624
    },
    "extended": false,
    "pullback_ok": false,
@@ -2383,10 +2383,10 @@
    "name": "研華",
    "yahoo": "2395.TW",
    "theme": "電信與電腦",
-   "score": 63.0,
+   "score": 63.1,
    "components": {
     "rs": 90.9,
-    "mf": 24.4,
+    "mf": 24.5,
     "trend": 60.0,
     "rebound": 55.0,
     "risk": 5.9
@@ -2442,13 +2442,13 @@
     "h": 699.0,
     "l": 674.0,
     "c": 683.0,
-    "v": 2070000
+    "v": 2119555
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 66.8,
-   "score_chg": -3.8,
+   "score_chg": -3.7,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -2467,7 +2467,7 @@
    "score": 62.7,
    "components": {
     "rs": 32.5,
-    "mf": 70.4,
+    "mf": 70.2,
     "trend": 100.0,
     "rebound": 40.0,
     "risk": 5.9
@@ -2523,7 +2523,7 @@
     "h": 536.0,
     "l": 525.0,
     "c": 526.0,
-    "v": 187000
+    "v": 192005
    },
    "extended": false,
    "pullback_ok": false,
@@ -2546,10 +2546,10 @@
    "name": "日月光投控",
    "yahoo": "3711.TW",
    "theme": "半導體",
-   "score": 62.1,
+   "score": 62.2,
    "components": {
     "rs": 66.2,
-    "mf": 46.7,
+    "mf": 46.8,
     "trend": 80.0,
     "rebound": 55.0,
     "risk": 36.4
@@ -2605,13 +2605,13 @@
     "h": 687.0,
     "l": 668.0,
     "c": 684.0,
-    "v": 10408000
+    "v": 10778211
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 62.8,
-   "score_chg": -0.7,
+   "score_chg": -0.6,
    "reasons": [
     "多頭排列"
    ],
@@ -2625,10 +2625,10 @@
    "name": "奇鋐",
    "yahoo": "3017.TW",
    "theme": "AI伺服器",
-   "score": 61.5,
+   "score": 61.4,
    "components": {
     "rs": 77.9,
-    "mf": 43.2,
+    "mf": 42.9,
     "trend": 60.0,
     "rebound": 55.0,
     "risk": 29.1
@@ -2684,13 +2684,13 @@
     "h": 3450.0,
     "l": 3195.0,
     "c": 3235.0,
-    "v": 3800000
+    "v": 3941653
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 71.7,
-   "score_chg": -10.2,
+   "score_chg": -10.3,
    "reasons": [
     "相對大盤強勢",
     "跌破 50 日線"
@@ -2707,10 +2707,10 @@
    "name": "鴻海",
    "yahoo": "2317.TW",
    "theme": "AI伺服器",
-   "score": 60.7,
+   "score": 60.8,
    "components": {
     "rs": 41.6,
-    "mf": 48.7,
+    "mf": 48.9,
     "trend": 60.0,
     "rebound": 100.0,
     "risk": 9.4
@@ -2766,13 +2766,13 @@
     "h": 250.0,
     "l": 244.5,
     "c": 250.0,
-    "v": 53190000
+    "v": 54319165
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 54.6,
-   "score_chg": 6.1,
+   "score_chg": 6.2,
    "reasons": [
     "拉回止跌",
     "跌破 50 日線"
@@ -2792,7 +2792,7 @@
    "score": 59.9,
    "components": {
     "rs": 48.1,
-    "mf": 58.2,
+    "mf": 58.3,
     "trend": 80.0,
     "rebound": 55.0,
     "risk": 33.6
@@ -2848,7 +2848,7 @@
     "h": 170.0,
     "l": 164.5,
     "c": 166.5,
-    "v": 8886000
+    "v": 8984913
    },
    "extended": false,
    "pullback_ok": false,
@@ -2868,10 +2868,10 @@
    "name": "技嘉",
    "yahoo": "2376.TW",
    "theme": "AI伺服器",
-   "score": 59.4,
+   "score": 59.5,
    "components": {
     "rs": 54.5,
-    "mf": 33.2,
+    "mf": 33.3,
     "trend": 80.0,
     "rebound": 70.0,
     "risk": 17.2
@@ -2927,13 +2927,13 @@
     "h": 360.0,
     "l": 353.5,
     "c": 358.5,
-    "v": 4190000
+    "v": 4246441
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 54.8,
-   "score_chg": 4.6,
+   "score_chg": 4.7,
    "reasons": [
     "資金流出",
     "多頭排列",
@@ -2952,7 +2952,7 @@
    "score": 59.1,
    "components": {
     "rs": 42.9,
-    "mf": 73.1,
+    "mf": 73.0,
     "trend": 100.0,
     "rebound": 18.3,
     "risk": 47.3
@@ -3008,7 +3008,7 @@
     "h": 266.0,
     "l": 238.5,
     "c": 240.5,
-    "v": 61735000
+    "v": 62505022
    },
    "extended": false,
    "pullback_ok": false,
@@ -3034,7 +3034,7 @@
    "score": 58.7,
    "components": {
     "rs": 50.6,
-    "mf": 40.9,
+    "mf": 41.0,
     "trend": 60.0,
     "rebound": 85.0,
     "risk": 14.7
@@ -3090,7 +3090,7 @@
     "h": 62.8,
     "l": 60.4,
     "c": 61.3,
-    "v": 21781000
+    "v": 21929749
    },
    "extended": false,
    "pullback_ok": false,
@@ -3116,7 +3116,7 @@
    "score": 58.7,
    "components": {
     "rs": 33.8,
-    "mf": 89.0,
+    "mf": 88.9,
     "trend": 80.0,
     "rebound": 2.3,
     "risk": 0.0
@@ -3172,7 +3172,7 @@
     "h": 26.7,
     "l": 26.25,
     "c": 26.4,
-    "v": 14967000
+    "v": 15019526
    },
    "extended": false,
    "pullback_ok": false,
@@ -3193,7 +3193,7 @@
    "name": "啟碁",
    "yahoo": "6285.TW",
    "theme": "低軌衛星",
-   "score": 58.1,
+   "score": 58.0,
    "components": {
     "rs": 27.3,
     "mf": 59.4,
@@ -3252,13 +3252,13 @@
     "h": 266.0,
     "l": 243.5,
     "c": 246.5,
-    "v": 15880000
+    "v": 16134302
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 60.5,
-   "score_chg": -2.4,
+   "score_chg": -2.5,
    "reasons": [
     "相對大盤弱勢",
     "多頭排列"
@@ -3334,7 +3334,7 @@
     "h": 226.5,
     "l": 223.0,
     "c": 224.5,
-    "v": 1552000
+    "v": 1581157
    },
    "extended": false,
    "pullback_ok": false,
@@ -3415,7 +3415,7 @@
     "h": 444.0,
     "l": 433.0,
     "c": 436.5,
-    "v": 31155000
+    "v": 31780106
    },
    "extended": false,
    "pullback_ok": false,
@@ -3497,7 +3497,7 @@
     "h": 37.8,
     "l": 37.2,
     "c": 37.3,
-    "v": 10046000
+    "v": 10117096
    },
    "extended": false,
    "pullback_ok": false,
@@ -3520,7 +3520,7 @@
    "score": 56.5,
    "components": {
     "rs": 84.4,
-    "mf": 51.7,
+    "mf": 51.8,
     "trend": 40.0,
     "rebound": 24.4,
     "risk": 34.2
@@ -3576,7 +3576,7 @@
     "h": 1215.0,
     "l": 1170.0,
     "c": 1175.0,
-    "v": 1429000
+    "v": 1491414
    },
    "extended": false,
    "pullback_ok": false,
@@ -3656,7 +3656,7 @@
     "h": 183.0,
     "l": 174.5,
     "c": 180.5,
-    "v": 3981000
+    "v": 4039485
    },
    "extended": false,
    "pullback_ok": false,
@@ -3686,7 +3686,7 @@
    },
    "price": 19.6,
    "prev_close": 19.6,
-   "chg_1d_pct": -0.0,
+   "chg_1d_pct": 0.0,
    "above_sma20": true,
    "above_sma50": true,
    "limit": null,
@@ -3735,7 +3735,7 @@
     "h": 19.75,
     "l": 19.5,
     "c": 19.6,
-    "v": 40075000
+    "v": 40203403
    },
    "extended": false,
    "pullback_ok": false,
@@ -3756,10 +3756,10 @@
    "name": "聯亞",
    "yahoo": "3081.TWO",
    "theme": "光通訊",
-   "score": 54.4,
+   "score": 54.5,
    "components": {
     "rs": 81.8,
-    "mf": 46.7,
+    "mf": 46.9,
     "trend": 40.0,
     "rebound": 40.0,
     "risk": 57.7
@@ -3815,13 +3815,13 @@
     "h": 2640.0,
     "l": 2515.0,
     "c": 2625.0,
-    "v": 1686000
+    "v": 1761535
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 49.7,
-   "score_chg": 4.7,
+   "score_chg": 4.8,
    "reasons": [
     "相對大盤強勢",
     "跌破 50 日線"
@@ -3836,10 +3836,10 @@
    "name": "台積電",
    "yahoo": "2330.TW",
    "theme": "半導體",
-   "score": 52.8,
+   "score": 52.9,
    "components": {
     "rs": 37.7,
-    "mf": 19.7,
+    "mf": 20.0,
     "trend": 60.0,
     "rebound": 100.0,
     "risk": 3.9
@@ -3895,13 +3895,13 @@
     "h": 2435.0,
     "l": 2400.0,
     "c": 2420.0,
-    "v": 22224000
+    "v": 23935196
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 49.2,
-   "score_chg": 3.6,
+   "score_chg": 3.7,
    "reasons": [
     "資金流出",
     "拉回止跌",
@@ -3976,7 +3976,7 @@
     "h": 3835.0,
     "l": 3695.0,
     "c": 3710.0,
-    "v": 1194000
+    "v": 1277241
    },
    "extended": false,
    "pullback_ok": false,
@@ -4000,7 +4000,7 @@
    "score": 50.5,
    "components": {
     "rs": 24.7,
-    "mf": 42.3,
+    "mf": 42.4,
     "trend": 40.0,
     "rebound": 100.0,
     "risk": 5.0
@@ -4056,7 +4056,7 @@
     "h": 163.0,
     "l": 161.0,
     "c": 162.0,
-    "v": 1258000
+    "v": 1287691
    },
    "extended": false,
    "pullback_ok": false,
@@ -4076,95 +4076,14 @@
    "swap": null
   },
   {
-   "ticker": "2454",
-   "name": "聯發科",
-   "yahoo": "2454.TW",
-   "theme": "半導體",
-   "score": 49.2,
-   "components": {
-    "rs": 96.1,
-    "mf": 2.3,
-    "trend": 40.0,
-    "rebound": 35.6,
-    "risk": 35.4
-   },
-   "price": 4140.0,
-   "prev_close": 4150.0,
-   "chg_1d_pct": -0.24,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-10-21",
-   "spark": [
-    4760.0,
-    4710.0,
-    4625.0,
-    4720.0,
-    4585.0,
-    4560.0,
-    4430.0,
-    4530.0,
-    4500.0,
-    4710.0,
-    5010.0,
-    5180.0,
-    5185.0,
-    5285.0,
-    4910.0,
-    4920.0,
-    4980.0,
-    4950.0,
-    5165.0,
-    4920.0,
-    4835.0,
-    4690.0,
-    4625.0,
-    4525.0,
-    4475.0,
-    4165.0,
-    4250.0,
-    4205.0,
-    4150.0,
-    4140.0
-   ],
-   "exit": {
-    "atr": 170.36,
-    "trail": 4773.93,
-    "hi22": 5285.0,
-    "sma50": 4419.2
-   },
-   "bar": {
-    "t": "2026-10-21",
-    "o": 4215.0,
-    "h": 4295.0,
-    "l": 4095.0,
-    "c": 4140.0,
-    "v": 7988000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 50.5,
-   "score_chg": -1.3,
-   "reasons": [
-    "相對大盤強勢",
-    "資金流出",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "2383",
    "name": "台光電",
    "yahoo": "2383.TW",
    "theme": "AI伺服器",
-   "score": 49.2,
+   "score": 49.3,
    "components": {
     "rs": 53.2,
-    "mf": 41.2,
+    "mf": 41.5,
     "trend": 60.0,
     "rebound": 37.2,
     "risk": 46.3
@@ -4220,14 +4139,95 @@
     "h": 5205.0,
     "l": 4965.0,
     "c": 4990.0,
-    "v": 2535000
+    "v": 2719797
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 49.0,
-   "score_chg": 0.2,
+   "score_chg": 0.3,
    "reasons": [
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "2454",
+   "name": "聯發科",
+   "yahoo": "2454.TW",
+   "theme": "半導體",
+   "score": 49.2,
+   "components": {
+    "rs": 96.1,
+    "mf": 2.1,
+    "trend": 40.0,
+    "rebound": 35.6,
+    "risk": 35.4
+   },
+   "price": 4140.0,
+   "prev_close": 4150.0,
+   "chg_1d_pct": -0.24,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-10-21",
+   "spark": [
+    4760.0,
+    4710.0,
+    4625.0,
+    4720.0,
+    4585.0,
+    4560.0,
+    4430.0,
+    4530.0,
+    4500.0,
+    4710.0,
+    5010.0,
+    5180.0,
+    5185.0,
+    5285.0,
+    4910.0,
+    4920.0,
+    4980.0,
+    4950.0,
+    5165.0,
+    4920.0,
+    4835.0,
+    4690.0,
+    4625.0,
+    4525.0,
+    4475.0,
+    4165.0,
+    4250.0,
+    4205.0,
+    4150.0,
+    4140.0
+   ],
+   "exit": {
+    "atr": 170.36,
+    "trail": 4773.93,
+    "hi22": 5285.0,
+    "sma50": 4419.2
+   },
+   "bar": {
+    "t": "2026-10-21",
+    "o": 4215.0,
+    "h": 4295.0,
+    "l": 4095.0,
+    "c": 4140.0,
+    "v": 9026097
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 50.5,
+   "score_chg": -1.3,
+   "reasons": [
+    "相對大盤強勢",
+    "資金流出",
     "跌破 50 日線"
    ],
    "alerts": [],
@@ -4240,10 +4240,10 @@
    "name": "川湖",
    "yahoo": "2059.TW",
    "theme": "AI伺服器",
-   "score": 47.9,
+   "score": 48.0,
    "components": {
     "rs": 98.7,
-    "mf": 15.8,
+    "mf": 16.0,
     "trend": 40.0,
     "rebound": 12.6,
     "risk": 55.0
@@ -4299,13 +4299,13 @@
     "h": 10580.0,
     "l": 9985.0,
     "c": 10080.0,
-    "v": 591000
+    "v": 621865
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 52.3,
-   "score_chg": -4.4,
+   "score_chg": -4.3,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -4321,10 +4321,10 @@
    "name": "信驊",
    "yahoo": "5274.TWO",
    "theme": "半導體",
-   "score": 47.6,
+   "score": 47.7,
    "components": {
     "rs": 51.9,
-    "mf": 22.6,
+    "mf": 22.9,
     "trend": 40.0,
     "rebound": 82.3,
     "risk": 39.6
@@ -4380,13 +4380,13 @@
     "h": 16640.0,
     "l": 16000.0,
     "c": 16515.0,
-    "v": 256000
+    "v": 276775
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 38.7,
-   "score_chg": 8.9,
+   "score_chg": 9.0,
    "reasons": [
     "資金流出",
     "拉回止跌",
@@ -4407,7 +4407,7 @@
    "score": 47.2,
    "components": {
     "rs": 46.8,
-    "mf": 27.9,
+    "mf": 28.0,
     "trend": 60.0,
     "rebound": 40.0,
     "risk": 18.4
@@ -4463,7 +4463,7 @@
     "h": 63.4,
     "l": 61.8,
     "c": 62.5,
-    "v": 909000
+    "v": 918647
    },
    "extended": false,
    "pullback_ok": false,
@@ -4489,7 +4489,7 @@
    "score": 47.1,
    "components": {
     "rs": 28.6,
-    "mf": 45.4,
+    "mf": 45.7,
     "trend": 40.0,
     "rebound": 100.0,
     "risk": 58.6
@@ -4545,7 +4545,7 @@
     "h": 1460.0,
     "l": 1400.0,
     "c": 1430.0,
-    "v": 1287000
+    "v": 1371693
    },
    "extended": false,
    "pullback_ok": false,
@@ -4567,10 +4567,10 @@
    "name": "廣達",
    "yahoo": "2382.TW",
    "theme": "AI伺服器",
-   "score": 46.8,
+   "score": 46.9,
    "components": {
     "rs": 20.8,
-    "mf": 36.0,
+    "mf": 36.1,
     "trend": 40.0,
     "rebound": 100.0,
     "risk": 14.0
@@ -4626,13 +4626,13 @@
     "h": 328.5,
     "l": 325.0,
     "c": 328.5,
-    "v": 10155000
+    "v": 10332339
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 44.8,
-   "score_chg": 2.0,
+   "score_chg": 2.1,
    "reasons": [
     "相對大盤弱勢",
     "拉回止跌",
@@ -4651,7 +4651,7 @@
    "score": 44.6,
    "components": {
     "rs": 59.7,
-    "mf": 7.3,
+    "mf": 7.4,
     "trend": 40.0,
     "rebound": 68.0,
     "risk": 33.8
@@ -4707,7 +4707,7 @@
     "h": 131.0,
     "l": 127.0,
     "c": 128.0,
-    "v": 72609000
+    "v": 73759992
    },
    "extended": false,
    "pullback_ok": false,
@@ -4788,7 +4788,7 @@
     "h": 49.05,
     "l": 48.25,
     "c": 48.4,
-    "v": 768000
+    "v": 777039
    },
    "extended": false,
    "pullback_ok": false,
@@ -4811,7 +4811,7 @@
    "score": 38.9,
    "components": {
     "rs": 36.4,
-    "mf": 39.1,
+    "mf": 39.2,
     "trend": 40.0,
     "rebound": 45.9,
     "risk": 66.8
@@ -4867,7 +4867,7 @@
     "h": 903.0,
     "l": 859.0,
     "c": 880.0,
-    "v": 8470000
+    "v": 8859917
    },
    "extended": false,
    "pullback_ok": false,
@@ -4889,10 +4889,10 @@
    "name": "群聯",
    "yahoo": "8299.TWO",
    "theme": "半導體",
-   "score": 38.5,
+   "score": 38.6,
    "components": {
     "rs": 39.0,
-    "mf": 12.3,
+    "mf": 12.7,
     "trend": 20.0,
     "rebound": 85.0,
     "risk": 29.8
@@ -4948,13 +4948,13 @@
     "h": 1945.0,
     "l": 1890.0,
     "c": 1930.0,
-    "v": 1868000
+    "v": 2022991
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 31.7,
-   "score_chg": 6.8,
+   "score_chg": 6.9,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -4976,7 +4976,7 @@
    "score": 38.4,
    "components": {
     "rs": 29.9,
-    "mf": 31.6,
+    "mf": 31.7,
     "trend": 40.0,
     "rebound": 57.4,
     "risk": 50.6
@@ -5032,7 +5032,7 @@
     "h": 454.5,
     "l": 439.5,
     "c": 450.0,
-    "v": 3993000
+    "v": 4060024
    },
    "extended": false,
    "pullback_ok": false,
@@ -5054,10 +5054,10 @@
    "name": "緯穎",
    "yahoo": "6669.TW",
    "theme": "AI伺服器",
-   "score": 36.7,
+   "score": 36.8,
    "components": {
     "rs": 58.4,
-    "mf": 10.9,
+    "mf": 11.3,
     "trend": 40.0,
     "rebound": 18.4,
     "risk": 43.4
@@ -5113,13 +5113,13 @@
     "h": 2020.0,
     "l": 1860.0,
     "c": 1880.0,
-    "v": 5458000
+    "v": 6022146
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 47.2,
-   "score_chg": -10.5,
+   "score_chg": -10.4,
    "reasons": [
     "資金流出",
     "跌破 50 日線"
@@ -5193,7 +5193,7 @@
     "h": 490.0,
     "l": 470.0,
     "c": 488.0,
-    "v": 977000
+    "v": 1025366
    },
    "extended": false,
    "pullback_ok": false,
@@ -5219,7 +5219,7 @@
    "score": 33.3,
    "components": {
     "rs": 5.2,
-    "mf": 46.9,
+    "mf": 47.0,
     "trend": 20.0,
     "rebound": 70.2,
     "risk": 45.4
@@ -5275,7 +5275,7 @@
     "h": 588.0,
     "l": 566.0,
     "c": 583.0,
-    "v": 1346000
+    "v": 1406801
    },
    "extended": false,
    "pullback_ok": false,
@@ -5357,7 +5357,7 @@
     "h": 69.0,
     "l": 67.5,
     "c": 68.0,
-    "v": 1936000
+    "v": 1945966
    },
    "extended": false,
    "pullback_ok": false,
@@ -5380,10 +5380,10 @@
    "name": "智邦",
    "yahoo": "2345.TW",
    "theme": "光通訊",
-   "score": 32.5,
+   "score": 32.2,
    "components": {
     "rs": 10.4,
-    "mf": 46.2,
+    "mf": 45.3,
     "trend": 40.0,
     "rebound": 27.5,
     "risk": 43.4
@@ -5439,13 +5439,13 @@
     "h": 2050.0,
     "l": 1805.0,
     "c": 1815.0,
-    "v": 7131000
+    "v": 7762173
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 49.6,
-   "score_chg": -17.1,
+   "score_chg": -17.4,
    "reasons": [
     "相對大盤弱勢",
     "跌破 50 日線"
@@ -5460,10 +5460,10 @@
    "name": "保瑞",
    "yahoo": "6472.TW",
    "theme": "生技醫療",
-   "score": 31.5,
+   "score": 31.6,
    "components": {
     "rs": 26.0,
-    "mf": 38.0,
+    "mf": 38.2,
     "trend": 0.0,
     "rebound": 40.0,
     "risk": 17.6
@@ -5519,13 +5519,13 @@
     "h": 424.5,
     "l": 412.0,
     "c": 413.5,
-    "v": 318000
+    "v": 331053
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 37.4,
-   "score_chg": -5.9,
+   "score_chg": -5.8,
    "reasons": [
     "相對大盤弱勢",
     "空頭排列",
@@ -5544,7 +5544,7 @@
    "score": 30.5,
    "components": {
     "rs": 18.2,
-    "mf": 32.2,
+    "mf": 32.3,
     "trend": 0.0,
     "rebound": 55.0,
     "risk": 12.4
@@ -5600,7 +5600,7 @@
     "h": 194.5,
     "l": 192.0,
     "c": 192.0,
-    "v": 730000
+    "v": 748472
    },
    "extended": false,
    "pullback_ok": false,
@@ -5682,7 +5682,7 @@
     "h": 101.0,
     "l": 99.9,
     "c": 99.9,
-    "v": 577000
+    "v": 593111
    },
    "extended": false,
    "pullback_ok": false,
@@ -5706,10 +5706,10 @@
    "name": "台達電",
    "yahoo": "2308.TW",
    "theme": "重電",
-   "score": 28.7,
+   "score": 28.8,
    "components": {
     "rs": 7.8,
-    "mf": 24.3,
+    "mf": 24.8,
     "trend": 20.0,
     "rebound": 68.0,
     "risk": 39.2
@@ -5765,13 +5765,13 @@
     "h": 1660.0,
     "l": 1600.0,
     "c": 1625.0,
-    "v": 10505000
+    "v": 11289452
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 24.8,
-   "score_chg": 3.9,
+   "score_chg": 4.0,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -5789,10 +5789,10 @@
    "name": "美時",
    "yahoo": "1795.TW",
    "theme": "生技醫療",
-   "score": 28.2,
+   "score": 28.3,
    "components": {
     "rs": 13.0,
-    "mf": 36.5,
+    "mf": 36.7,
     "trend": 0.0,
     "rebound": 40.0,
     "risk": 7.9
@@ -5848,13 +5848,13 @@
     "h": 178.5,
     "l": 176.0,
     "c": 176.0,
-    "v": 562000
+    "v": 583396
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 30.1,
-   "score_chg": -1.9,
+   "score_chg": -1.8,
    "reasons": [
     "相對大盤弱勢",
     "空頭排列",
@@ -5870,7 +5870,7 @@
    "name": "光聖",
    "yahoo": "6442.TW",
    "theme": "光通訊",
-   "score": 27.6,
+   "score": 27.7,
    "components": {
     "rs": 15.6,
     "mf": 46.2,
@@ -5929,13 +5929,13 @@
     "h": 1550.0,
     "l": 1490.0,
     "c": 1500.0,
-    "v": 1003000
+    "v": 1039867
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 26.8,
-   "score_chg": 0.8,
+   "score_chg": 0.9,
    "reasons": [
     "相對大盤弱勢",
     "空頭排列",
@@ -5953,10 +5953,10 @@
    "name": "華城",
    "yahoo": "1519.TW",
    "theme": "重電",
-   "score": 25.7,
+   "score": 25.6,
    "components": {
     "rs": 11.7,
-    "mf": 35.8,
+    "mf": 35.5,
     "trend": 0.0,
     "rebound": 40.0,
     "risk": 27.9
@@ -6012,13 +6012,13 @@
     "h": 645.0,
     "l": 625.0,
     "c": 626.0,
-    "v": 938000
+    "v": 1043028
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 25.0,
-   "score_chg": 0.7,
+   "score_chg": 0.6,
    "reasons": [
     "相對大盤弱勢",
     "空頭排列",
@@ -6037,7 +6037,7 @@
    "score": 23.6,
    "components": {
     "rs": 3.9,
-    "mf": 21.2,
+    "mf": 21.3,
     "trend": 20.0,
     "rebound": 57.9,
     "risk": 55.9
@@ -6093,7 +6093,7 @@
     "h": 549.0,
     "l": 523.0,
     "c": 549.0,
-    "v": 1388000
+    "v": 1439211
    },
    "extended": false,
    "pullback_ok": false,
@@ -6175,7 +6175,7 @@
     "h": 53.0,
     "l": 52.5,
     "c": 52.5,
-    "v": 60000
+    "v": 61565
    },
    "extended": false,
    "pullback_ok": false,
@@ -6198,10 +6198,10 @@
    "name": "力旺",
    "yahoo": "3529.TWO",
    "theme": "半導體",
-   "score": 15.8,
+   "score": 15.7,
    "components": {
     "rs": 9.1,
-    "mf": 7.2,
+    "mf": 7.1,
     "trend": 0.0,
     "rebound": 35.6,
     "risk": 41.2
@@ -6257,13 +6257,13 @@
     "h": 2760.0,
     "l": 2580.0,
     "c": 2590.0,
-    "v": 835000
+    "v": 882513
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 27.1,
-   "score_chg": -11.3,
+   "score_chg": -11.4,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -6339,7 +6339,7 @@
     "h": 5090.0,
     "l": 4960.0,
     "c": 4970.0,
-    "v": 399000
+    "v": 430025
    },
    "extended": false,
    "pullback_ok": false,
@@ -6421,7 +6421,7 @@
     "h": 9.31,
     "l": 9.15,
     "c": 9.2,
-    "v": 194000
+    "v": 204391
    },
    "extended": false,
    "pullback_ok": false,
@@ -6497,26 +6497,26 @@
    ],
    "target_count": 4,
    "open_slots": 0,
-   "weakest_holding": "9910",
+   "weakest_holding": "2379",
    "swaps": [
     {
-     "in": "2356",
-     "out": "9910",
-     "gap": 44.9,
-     "streak": 3,
-     "need": 3,
-     "status": "provisional"
-    },
-    {
      "in": "2059",
-     "out": "9910",
-     "gap": 32.7,
+     "out": "2379",
+     "gap": 31.1,
      "streak": 3,
      "need": 3,
-     "status": "provisional"
+     "status": "confirmed"
     }
    ],
    "portfolio_changes": [
+    {
+     "date": "2026-10-21",
+     "action": "swap",
+     "out": "9910",
+     "in": "2356",
+     "gap": 44.9,
+     "streak": 3
+    },
     {
      "date": "2026-10-16",
      "action": "trim",
@@ -6586,6 +6586,92 @@
    ],
    "holdings": [
     {
+     "ticker": "2356",
+     "name": "英業達",
+     "yahoo": "2356.TW",
+     "theme": "AI伺服器",
+     "price": 61.3,
+     "prev_close": 60.0,
+     "chg_1d_pct": 2.17,
+     "above_sma20": true,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-10-21",
+     "spark": [
+      66.1,
+      64.0,
+      64.3,
+      62.6,
+      62.0,
+      61.7,
+      60.5,
+      61.7,
+      61.5,
+      61.7,
+      61.8,
+      61.2,
+      61.0,
+      59.9,
+      59.2,
+      59.5,
+      59.7,
+      59.0,
+      58.3,
+      58.6,
+      58.1,
+      57.5,
+      58.1,
+      57.3,
+      58.3,
+      57.6,
+      59.0,
+      59.1,
+      60.0,
+      61.3
+     ],
+     "exit": {
+      "atr": 1.47,
+      "trail": 57.39,
+      "hi22": 61.8,
+      "sma50": 62.75
+     },
+     "bar": {
+      "t": "2026-10-21",
+      "o": 61.5,
+      "h": 62.8,
+      "l": 60.4,
+      "c": 61.3,
+      "v": 21929749
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 88.9,
+     "components": {
+      "depth": 100.0,
+      "oversold": 57.2,
+      "reversal": 100.0,
+      "mfturn": 100.0,
+      "risk": 14.7
+     },
+     "dd126": 0.259,
+     "new_low": false,
+     "entry_ok": true,
+     "score_prev": 88.9,
+     "score_chg": 0.0,
+     "reasons": [
+      "距半年高點 −26%",
+      "止跌訊號",
+      "資金回流"
+     ],
+     "alerts": [
+      "突破下降趨勢線"
+     ],
+     "signal": "rebound",
+     "signal_label": "反彈中",
+     "weakest": false,
+     "source": "auto"
+    },
+    {
      "ticker": "4147",
      "name": "中裕",
      "yahoo": "4147.TWO",
@@ -6641,23 +6727,23 @@
       "h": 63.4,
       "l": 61.8,
       "c": 62.5,
-      "v": 909000
+      "v": 918647
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 64.4,
+     "score": 64.5,
      "components": {
       "depth": 100.0,
       "oversold": 8.4,
       "reversal": 100.0,
-      "mfturn": 2.7,
+      "mfturn": 3.0,
       "risk": 18.4
      },
      "dd126": 0.139,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 64.1,
-     "score_chg": 0.3,
+     "score_chg": 0.4,
      "reasons": [
       "距半年高點 −14%",
       "止跌訊號"
@@ -6726,7 +6812,7 @@
       "h": 360.0,
       "l": 353.5,
       "c": 358.5,
-      "v": 4190000
+      "v": 4246441
      },
      "extended": false,
      "pullback_ok": false,
@@ -6735,7 +6821,7 @@
       "depth": 49.1,
       "oversold": 0.0,
       "reversal": 100.0,
-      "mfturn": 2.1,
+      "mfturn": 2.3,
       "risk": 17.2
      },
      "dd126": 0.098,
@@ -6809,7 +6895,7 @@
       "h": 804.0,
       "l": 780.0,
       "c": 792.0,
-      "v": 2834000
+      "v": 2971851
      },
      "extended": false,
      "pullback_ok": false,
@@ -6833,186 +6919,13 @@
      "alerts": [
       "突破壓力區"
      ],
-     "signal": "rebound",
-     "signal_label": "反彈中",
-     "weakest": false,
-     "source": "auto"
-    },
-    {
-     "ticker": "9910",
-     "name": "豐泰",
-     "yahoo": "9910.TW",
-     "theme": "民生消費",
-     "price": 68.0,
-     "prev_close": 68.7,
-     "chg_1d_pct": -1.02,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-10-21",
-     "spark": [
-      69.8,
-      71.8,
-      68.6,
-      68.5,
-      67.8,
-      67.8,
-      68.4,
-      67.5,
-      69.1,
-      68.4,
-      68.4,
-      68.6,
-      70.0,
-      69.4,
-      69.1,
-      68.8,
-      68.8,
-      67.8,
-      66.7,
-      66.3,
-      66.3,
-      66.3,
-      67.4,
-      67.4,
-      67.5,
-      68.1,
-      69.8,
-      68.3,
-      68.7,
-      68.0
-     ],
-     "exit": {
-      "atr": 1.25,
-      "trail": 66.25,
-      "hi22": 70.0,
-      "sma50": 68.72
-     },
-     "bar": {
-      "t": "2026-10-21",
-      "o": 69.0,
-      "h": 69.0,
-      "l": 67.5,
-      "c": 68.0,
-      "v": 1936000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 44.0,
-     "components": {
-      "depth": 100.0,
-      "oversold": 12.6,
-      "reversal": 0.0,
-      "mfturn": 0.0,
-      "risk": 3.0
-     },
-     "dd126": 0.266,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 60.7,
-     "score_chg": -16.7,
-     "reasons": [
-      "距半年高點 −27%"
-     ],
-     "alerts": [],
-     "signal": "hold",
-     "signal_label": "續抱",
+     "signal": "swap_out",
+     "signal_label": "汰換對象",
      "weakest": true,
      "source": "auto"
     }
    ],
    "candidates": [
-    {
-     "ticker": "2356",
-     "name": "英業達",
-     "yahoo": "2356.TW",
-     "theme": "AI伺服器",
-     "price": 61.3,
-     "prev_close": 60.0,
-     "chg_1d_pct": 2.17,
-     "above_sma20": true,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-10-21",
-     "spark": [
-      66.1,
-      64.0,
-      64.3,
-      62.6,
-      62.0,
-      61.7,
-      60.5,
-      61.7,
-      61.5,
-      61.7,
-      61.8,
-      61.2,
-      61.0,
-      59.9,
-      59.2,
-      59.5,
-      59.7,
-      59.0,
-      58.3,
-      58.6,
-      58.1,
-      57.5,
-      58.1,
-      57.3,
-      58.3,
-      57.6,
-      59.0,
-      59.1,
-      60.0,
-      61.3
-     ],
-     "exit": {
-      "atr": 1.47,
-      "trail": 57.39,
-      "hi22": 61.8,
-      "sma50": 62.75
-     },
-     "bar": {
-      "t": "2026-10-21",
-      "o": 61.5,
-      "h": 62.8,
-      "l": 60.4,
-      "c": 61.3,
-      "v": 21781000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 88.9,
-     "components": {
-      "depth": 100.0,
-      "oversold": 57.2,
-      "reversal": 100.0,
-      "mfturn": 100.0,
-      "risk": 14.7
-     },
-     "dd126": 0.259,
-     "new_low": false,
-     "entry_ok": true,
-     "score_prev": 88.9,
-     "score_chg": 0.0,
-     "reasons": [
-      "距半年高點 −26%",
-      "止跌訊號",
-      "資金回流"
-     ],
-     "alerts": [
-      "突破下降趨勢線"
-     ],
-     "signal": "swap_in",
-     "signal_label": "換股候選",
-     "swap": {
-      "status": "provisional",
-      "streak": 3,
-      "need": 3,
-      "gap": 44.9,
-      "out": "9910"
-     }
-    },
     {
      "ticker": "2059",
      "name": "川湖",
@@ -7069,23 +6982,23 @@
       "h": 10580.0,
       "l": 9985.0,
       "c": 10080.0,
-      "v": 591000
+      "v": 621865
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 76.7,
+     "score": 76.9,
      "components": {
       "depth": 100.0,
       "oversold": 61.5,
       "reversal": 100.0,
-      "mfturn": 32.7,
+      "mfturn": 33.7,
       "risk": 55.0
      },
      "dd126": 0.303,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 72.3,
-     "score_chg": 4.4,
+     "score_chg": 4.6,
      "reasons": [
       "距半年高點 −30%",
       "超賣",
@@ -7095,11 +7008,11 @@
      "signal": "swap_in",
      "signal_label": "換股候選",
      "swap": {
-      "status": "provisional",
+      "status": "confirmed",
       "streak": 3,
       "need": 3,
-      "gap": 32.7,
-      "out": "9910"
+      "gap": 31.1,
+      "out": "2379"
      }
     },
     {
@@ -7158,7 +7071,7 @@
       "h": 1945.0,
       "l": 1890.0,
       "c": 1930.0,
-      "v": 1868000
+      "v": 2022991
      },
      "extended": false,
      "pullback_ok": false,
@@ -7189,8 +7102,8 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 31.3,
-      "out": "9910"
+      "gap": 29.5,
+      "out": "2379"
      }
     },
     {
@@ -7249,23 +7162,23 @@
       "h": 328.5,
       "l": 325.0,
       "c": 328.5,
-      "v": 10155000
+      "v": 10332339
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 74.3,
+     "score": 74.4,
      "components": {
       "depth": 100.0,
       "oversold": 39.0,
       "reversal": 100.0,
-      "mfturn": 21.9,
+      "mfturn": 22.2,
       "risk": 14.0
      },
      "dd126": 0.179,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 65.3,
-     "score_chg": 9.0,
+     "score_chg": 9.1,
      "reasons": [
       "距半年高點 −18%",
       "止跌訊號"
@@ -7277,8 +7190,8 @@
       "status": "building",
       "streak": 2,
       "need": 3,
-      "gap": 30.3,
-      "out": "9910"
+      "gap": 28.6,
+      "out": "2379"
      }
     },
     {
@@ -7337,7 +7250,7 @@
       "h": 444.0,
       "l": 433.0,
       "c": 436.5,
-      "v": 31155000
+      "v": 31780106
      },
      "extended": false,
      "pullback_ok": false,
@@ -7365,8 +7278,8 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 26.6,
-      "out": "9910"
+      "gap": 24.8,
+      "out": "2379"
      }
     },
     {
@@ -7425,23 +7338,23 @@
       "h": 16640.0,
       "l": 16000.0,
       "c": 16515.0,
-      "v": 256000
+      "v": 276775
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 69.4,
+     "score": 69.6,
      "components": {
       "depth": 100.0,
       "oversold": 27.6,
       "reversal": 100.0,
-      "mfturn": 23.5,
+      "mfturn": 25.0,
       "risk": 39.6
      },
      "dd126": 0.21,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 52.4,
-     "score_chg": 17.0,
+     "score_chg": 17.2,
      "reasons": [
       "距半年高點 −21%",
       "止跌訊號"
@@ -7455,8 +7368,8 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 25.4,
-      "out": "9910"
+      "gap": 23.8,
+      "out": "2379"
      }
     },
     {
@@ -7515,23 +7428,23 @@
       "h": 250.0,
       "l": 244.5,
       "c": 250.0,
-      "v": 53190000
+      "v": 54319165
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 68.6,
+     "score": 68.7,
      "components": {
       "depth": 100.0,
       "oversold": 21.2,
       "reversal": 100.0,
-      "mfturn": 5.7,
+      "mfturn": 6.1,
       "risk": 9.4
      },
      "dd126": 0.167,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 54.6,
-     "score_chg": 14.0,
+     "score_chg": 14.1,
      "reasons": [
       "距半年高點 −17%",
       "止跌訊號"
@@ -7545,8 +7458,8 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 24.6,
-      "out": "9910"
+      "gap": 22.9,
+      "out": "2379"
      }
     },
     {
@@ -7605,7 +7518,7 @@
       "h": 454.5,
       "l": 439.5,
       "c": 450.0,
-      "v": 3993000
+      "v": 4060024
      },
      "extended": false,
      "pullback_ok": false,
@@ -7633,8 +7546,8 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 24.5,
-      "out": "9910"
+      "gap": 22.7,
+      "out": "2379"
      }
     },
     {
@@ -7693,7 +7606,7 @@
       "h": 1550.0,
       "l": 1490.0,
       "c": 1500.0,
-      "v": 1003000
+      "v": 1039867
      },
      "extended": false,
      "pullback_ok": false,
@@ -7702,7 +7615,7 @@
       "depth": 98.3,
       "oversold": 0.0,
       "reversal": 100.0,
-      "mfturn": 20.8,
+      "mfturn": 21.0,
       "risk": 45.8
      },
      "dd126": 0.353,
@@ -7723,8 +7636,8 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 17.7,
-      "out": "9910"
+      "gap": 15.9,
+      "out": "2379"
      }
     },
     {
@@ -7783,7 +7696,7 @@
       "h": 170.0,
       "l": 164.5,
       "c": 166.5,
-      "v": 8886000
+      "v": 8984913
      },
      "extended": false,
      "pullback_ok": false,
@@ -7807,13 +7720,7 @@
      "alerts": [],
      "signal": "buy",
      "signal_label": "可進場",
-     "swap": {
-      "status": "building",
-      "streak": 1,
-      "need": 3,
-      "gap": 16.6,
-      "out": "9910"
-     }
+     "swap": null
     },
     {
      "ticker": "3711",
@@ -7871,7 +7778,7 @@
       "h": 687.0,
       "l": 668.0,
       "c": 684.0,
-      "v": 10408000
+      "v": 10778211
      },
      "extended": false,
      "pullback_ok": false,
@@ -7895,13 +7802,7 @@
      "alerts": [],
      "signal": "buy",
      "signal_label": "可進場",
-     "swap": {
-      "status": "building",
-      "streak": 1,
-      "need": 3,
-      "gap": 16.4,
-      "out": "9910"
-     }
+     "swap": null
     },
     {
      "ticker": "3363",
@@ -7959,7 +7860,7 @@
       "h": 549.0,
       "l": 523.0,
       "c": 549.0,
-      "v": 1388000
+      "v": 1439211
      },
      "extended": false,
      "pullback_ok": false,
@@ -7968,7 +7869,7 @@
       "depth": 52.3,
       "oversold": 57.0,
       "reversal": 100.0,
-      "mfturn": 27.0,
+      "mfturn": 27.4,
       "risk": 55.9
      },
      "dd126": 0.445,
@@ -7983,101 +7884,7 @@
      "alerts": [],
      "signal": "watch",
      "signal_label": "觀察",
-     "swap": {
-      "status": "building",
-      "streak": 1,
-      "need": 3,
-      "gap": 15.9,
-      "out": "9910"
-     }
-    },
-    {
-     "ticker": "3037",
-     "name": "欣興",
-     "yahoo": "3037.TW",
-     "theme": "AI伺服器",
-     "price": 1100.0,
-     "prev_close": 1055.0,
-     "chg_1d_pct": 4.27,
-     "above_sma20": false,
-     "above_sma50": true,
-     "limit": null,
-     "data_date": "2026-10-21",
-     "spark": [
-      949.0,
-      954.0,
-      993.0,
-      994.0,
-      977.0,
-      970.0,
-      951.0,
-      961.0,
-      940.0,
-      981.0,
-      1020.0,
-      1120.0,
-      1160.0,
-      1185.0,
-      1165.0,
-      1175.0,
-      1215.0,
-      1305.0,
-      1325.0,
-      1310.0,
-      1305.0,
-      1270.0,
-      1255.0,
-      1180.0,
-      1185.0,
-      1075.0,
-      1090.0,
-      1120.0,
-      1055.0,
-      1100.0
-     ],
-     "exit": {
-      "atr": 73.93,
-      "trail": 1103.21,
-      "hi22": 1325.0,
-      "sma50": 1085.94
-     },
-     "bar": {
-      "t": "2026-10-21",
-      "o": 1125.0,
-      "h": 1155.0,
-      "l": 1085.0,
-      "c": 1100.0,
-      "v": 18574000
-     },
-     "extended": false,
-     "pullback_ok": true,
-     "score": 59.3,
-     "components": {
-      "depth": 100.0,
-      "oversold": 0.0,
-      "reversal": 100.0,
-      "mfturn": 0.0,
-      "risk": 47.1
-     },
-     "dd126": 0.17,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 36.8,
-     "score_chg": 22.5,
-     "reasons": [
-      "距半年高點 −17%",
-      "止跌訊號"
-     ],
-     "alerts": [],
-     "signal": "watch",
-     "signal_label": "觀察",
-     "swap": {
-      "status": "building",
-      "streak": 1,
-      "need": 3,
-      "gap": 15.3,
-      "out": "9910"
-     }
+     "swap": null
     },
     {
      "ticker": "6669",
@@ -8135,36 +7942,112 @@
       "h": 2020.0,
       "l": 1860.0,
       "c": 1880.0,
-      "v": 5458000
+      "v": 6022146
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 59.0,
+     "score": 59.4,
      "components": {
       "depth": 100.0,
       "oversold": 58.7,
       "reversal": 30.0,
-      "mfturn": 13.7,
+      "mfturn": 16.5,
       "risk": 43.4
      },
      "dd126": 0.281,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 66.1,
-     "score_chg": -7.1,
+     "score_chg": -6.7,
      "reasons": [
       "距半年高點 −28%"
      ],
      "alerts": [],
      "signal": "watch",
      "signal_label": "觀察",
-     "swap": {
-      "status": "building",
-      "streak": 2,
-      "need": 3,
-      "gap": 15.0,
-      "out": "9910"
-     }
+     "swap": null
+    },
+    {
+     "ticker": "3037",
+     "name": "欣興",
+     "yahoo": "3037.TW",
+     "theme": "AI伺服器",
+     "price": 1100.0,
+     "prev_close": 1055.0,
+     "chg_1d_pct": 4.27,
+     "above_sma20": false,
+     "above_sma50": true,
+     "limit": null,
+     "data_date": "2026-10-21",
+     "spark": [
+      949.0,
+      954.0,
+      993.0,
+      994.0,
+      977.0,
+      970.0,
+      951.0,
+      961.0,
+      940.0,
+      981.0,
+      1020.0,
+      1120.0,
+      1160.0,
+      1185.0,
+      1165.0,
+      1175.0,
+      1215.0,
+      1305.0,
+      1325.0,
+      1310.0,
+      1305.0,
+      1270.0,
+      1255.0,
+      1180.0,
+      1185.0,
+      1075.0,
+      1090.0,
+      1120.0,
+      1055.0,
+      1100.0
+     ],
+     "exit": {
+      "atr": 73.93,
+      "trail": 1103.21,
+      "hi22": 1325.0,
+      "sma50": 1085.94
+     },
+     "bar": {
+      "t": "2026-10-21",
+      "o": 1125.0,
+      "h": 1155.0,
+      "l": 1085.0,
+      "c": 1100.0,
+      "v": 19004375
+     },
+     "extended": false,
+     "pullback_ok": true,
+     "score": 59.3,
+     "components": {
+      "depth": 100.0,
+      "oversold": 0.0,
+      "reversal": 100.0,
+      "mfturn": 0.0,
+      "risk": 47.1
+     },
+     "dd126": 0.17,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 36.8,
+     "score_chg": 22.5,
+     "reasons": [
+      "距半年高點 −17%",
+      "止跌訊號"
+     ],
+     "alerts": [],
+     "signal": "watch",
+     "signal_label": "觀察",
+     "swap": null
     },
     {
      "ticker": "3081",
@@ -8222,7 +8105,7 @@
       "h": 2640.0,
       "l": 2515.0,
       "c": 2625.0,
-      "v": 1686000
+      "v": 1761535
      },
      "extended": false,
      "pullback_ok": false,
@@ -8304,7 +8187,7 @@
       "h": 588.0,
       "l": 566.0,
       "c": 583.0,
-      "v": 1346000
+      "v": 1406801
      },
      "extended": false,
      "pullback_ok": false,
@@ -8387,7 +8270,7 @@
       "h": 183.0,
       "l": 174.5,
       "c": 180.5,
-      "v": 3981000
+      "v": 4039485
      },
      "extended": false,
      "pullback_ok": false,
@@ -8469,7 +8352,7 @@
       "h": 1460.0,
       "l": 1400.0,
       "c": 1430.0,
-      "v": 1287000
+      "v": 1371693
      },
      "extended": false,
      "pullback_ok": false,
@@ -8551,7 +8434,7 @@
       "h": 490.0,
       "l": 470.0,
       "c": 488.0,
-      "v": 977000
+      "v": 1025366
      },
      "extended": false,
      "pullback_ok": false,
@@ -8560,7 +8443,7 @@
       "depth": 100.0,
       "oversold": 16.2,
       "reversal": 40.0,
-      "mfturn": 22.8,
+      "mfturn": 23.0,
       "risk": 49.4
      },
      "dd126": 0.317,
@@ -8632,7 +8515,7 @@
       "h": 3835.0,
       "l": 3695.0,
       "c": 3710.0,
-      "v": 1194000
+      "v": 1277241
      },
      "extended": false,
      "pullback_ok": false,
@@ -8713,7 +8596,7 @@
       "h": 1660.0,
       "l": 1600.0,
       "c": 1625.0,
-      "v": 10505000
+      "v": 11289452
      },
      "extended": false,
      "pullback_ok": false,
@@ -8794,7 +8677,7 @@
       "h": 53.0,
       "l": 52.5,
       "c": 52.5,
-      "v": 60000
+      "v": 61565
      },
      "extended": false,
      "pullback_ok": false,
@@ -8876,7 +8759,7 @@
       "h": 131.0,
       "l": 127.0,
       "c": 128.0,
-      "v": 72609000
+      "v": 73759992
      },
      "extended": false,
      "pullback_ok": false,
@@ -8957,7 +8840,7 @@
       "h": 903.0,
       "l": 859.0,
       "c": 880.0,
-      "v": 8470000
+      "v": 8859917
      },
      "extended": false,
      "pullback_ok": false,
@@ -9041,7 +8924,7 @@
       "h": 3450.0,
       "l": 3195.0,
       "c": 3235.0,
-      "v": 3800000
+      "v": 3941653
      },
      "extended": false,
      "pullback_ok": false,
@@ -9124,7 +9007,7 @@
       "h": 266.0,
       "l": 238.5,
       "c": 240.5,
-      "v": 61735000
+      "v": 62505022
      },
      "extended": false,
      "pullback_ok": false,
@@ -9207,7 +9090,7 @@
       "h": 645.0,
       "l": 625.0,
       "c": 626.0,
-      "v": 938000
+      "v": 1043028
      },
      "extended": false,
      "pullback_ok": false,
@@ -9289,7 +9172,7 @@
       "h": 424.5,
       "l": 412.0,
       "c": 413.5,
-      "v": 318000
+      "v": 331053
      },
      "extended": false,
      "pullback_ok": false,
@@ -9298,7 +9181,7 @@
       "depth": 100.0,
       "oversold": 0.0,
       "reversal": 0.0,
-      "mfturn": 39.5,
+      "mfturn": 40.0,
       "risk": 17.6
      },
      "dd126": 0.12,
@@ -9370,23 +9253,23 @@
       "h": 2050.0,
       "l": 1805.0,
       "c": 1815.0,
-      "v": 7131000
+      "v": 7762173
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 44.7,
+     "score": 44.4,
      "components": {
       "depth": 100.0,
       "oversold": 4.4,
       "reversal": 0.0,
-      "mfturn": 48.7,
+      "mfturn": 46.2,
       "risk": 43.4
      },
      "dd126": 0.335,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 52.2,
-     "score_chg": -7.5,
+     "score_chg": -7.8,
      "reasons": [
       "距半年高點 −34%"
      ],
@@ -9451,7 +9334,7 @@
       "h": 9.31,
       "l": 9.15,
       "c": 9.2,
-      "v": 194000
+      "v": 204391
      },
      "extended": false,
      "pullback_ok": false,
@@ -9472,6 +9355,87 @@
       "距半年高點 −45%",
       "超賣",
       "創 20 日新低"
+     ],
+     "alerts": [],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
+     "ticker": "9910",
+     "name": "豐泰",
+     "yahoo": "9910.TW",
+     "theme": "民生消費",
+     "price": 68.0,
+     "prev_close": 68.7,
+     "chg_1d_pct": -1.02,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-10-21",
+     "spark": [
+      69.8,
+      71.8,
+      68.6,
+      68.5,
+      67.8,
+      67.8,
+      68.4,
+      67.5,
+      69.1,
+      68.4,
+      68.4,
+      68.6,
+      70.0,
+      69.4,
+      69.1,
+      68.8,
+      68.8,
+      67.8,
+      66.7,
+      66.3,
+      66.3,
+      66.3,
+      67.4,
+      67.4,
+      67.5,
+      68.1,
+      69.8,
+      68.3,
+      68.7,
+      68.0
+     ],
+     "exit": {
+      "atr": 1.25,
+      "trail": 66.25,
+      "hi22": 70.0,
+      "sma50": 68.72
+     },
+     "bar": {
+      "t": "2026-10-21",
+      "o": 69.0,
+      "h": 69.0,
+      "l": 67.5,
+      "c": 68.0,
+      "v": 1945966
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 44.0,
+     "components": {
+      "depth": 100.0,
+      "oversold": 12.6,
+      "reversal": 0.0,
+      "mfturn": 0.0,
+      "risk": 3.0
+     },
+     "dd126": 0.266,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 60.7,
+     "score_chg": -16.7,
+     "reasons": [
+      "距半年高點 −27%"
      ],
      "alerts": [],
      "signal": "none",
@@ -9534,7 +9498,7 @@
       "h": 4295.0,
       "l": 4095.0,
       "c": 4140.0,
-      "v": 7988000
+      "v": 9026097
      },
      "extended": false,
      "pullback_ok": false,
@@ -9615,23 +9579,23 @@
       "h": 178.5,
       "l": 176.0,
       "c": 176.0,
-      "v": 562000
+      "v": 583396
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 43.0,
+     "score": 43.1,
      "components": {
       "depth": 100.0,
       "oversold": 0.0,
       "reversal": 0.0,
-      "mfturn": 17.2,
+      "mfturn": 17.7,
       "risk": 7.9
      },
      "dd126": 0.236,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 43.0,
-     "score_chg": 0.0,
+     "score_chg": 0.1,
      "reasons": [
       "距半年高點 −24%"
      ],
@@ -9696,7 +9660,7 @@
       "h": 163.0,
       "l": 161.0,
       "c": 162.0,
-      "v": 1258000
+      "v": 1287691
      },
      "extended": false,
      "pullback_ok": false,
@@ -9779,7 +9743,7 @@
       "h": 101.0,
       "l": 99.9,
       "c": 99.9,
-      "v": 577000
+      "v": 593111
      },
      "extended": false,
      "pullback_ok": false,
@@ -9862,7 +9826,7 @@
       "h": 194.5,
       "l": 192.0,
       "c": 192.0,
-      "v": 730000
+      "v": 748472
      },
      "extended": false,
      "pullback_ok": false,
@@ -9943,7 +9907,7 @@
       "h": 49.05,
       "l": 48.25,
       "c": 48.4,
-      "v": 768000
+      "v": 777039
      },
      "extended": false,
      "pullback_ok": false,
@@ -10024,7 +9988,7 @@
       "h": 37.8,
       "l": 37.2,
       "c": 37.3,
-      "v": 10046000
+      "v": 10117096
      },
      "extended": false,
      "pullback_ok": false,
@@ -10105,7 +10069,7 @@
       "h": 8490.0,
       "l": 7905.0,
       "c": 8000.0,
-      "v": 1900000
+      "v": 1994023
      },
      "extended": false,
      "pullback_ok": false,
@@ -10187,7 +10151,7 @@
       "h": 266.0,
       "l": 243.5,
       "c": 246.5,
-      "v": 15880000
+      "v": 16134302
      },
      "extended": false,
      "pullback_ok": false,
@@ -10270,7 +10234,7 @@
       "h": 1515.0,
       "l": 1340.0,
       "c": 1375.0,
-      "v": 5837000
+      "v": 6015123
      },
      "extended": false,
      "pullback_ok": false,
@@ -10351,7 +10315,7 @@
       "h": 1215.0,
       "l": 1170.0,
       "c": 1175.0,
-      "v": 1429000
+      "v": 1491414
      },
      "extended": false,
      "pullback_ok": false,
@@ -10432,7 +10396,7 @@
       "h": 78.2,
       "l": 75.5,
       "c": 77.0,
-      "v": 46346000
+      "v": 46593443
      },
      "extended": false,
      "pullback_ok": false,
@@ -10513,7 +10477,7 @@
       "h": 5205.0,
       "l": 4965.0,
       "c": 4990.0,
-      "v": 2535000
+      "v": 2719797
      },
      "extended": false,
      "pullback_ok": false,
@@ -10594,7 +10558,7 @@
       "h": 1255.0,
       "l": 1180.0,
       "c": 1195.0,
-      "v": 8171000
+      "v": 8380399
      },
      "extended": false,
      "pullback_ok": false,
@@ -10675,7 +10639,7 @@
       "h": 199.5,
       "l": 192.0,
       "c": 195.0,
-      "v": 78924000
+      "v": 80059631
      },
      "extended": false,
      "pullback_ok": false,
@@ -10759,7 +10723,7 @@
       "h": 45.55,
       "l": 44.15,
       "c": 45.4,
-      "v": 20253000
+      "v": 20372624
      },
      "extended": false,
      "pullback_ok": false,
@@ -10841,7 +10805,7 @@
       "h": 49.9,
       "l": 47.75,
       "c": 49.8,
-      "v": 16074000
+      "v": 16234953
      },
      "extended": false,
      "pullback_ok": false,
@@ -10925,23 +10889,23 @@
       "h": 114.0,
       "l": 110.5,
       "c": 114.0,
-      "v": 32221000
+      "v": 32328100
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 28.9,
+     "score": 29.0,
      "components": {
       "depth": 8.6,
       "oversold": 0.0,
       "reversal": 70.0,
-      "mfturn": 6.8,
+      "mfturn": 6.9,
       "risk": 4.4
      },
      "dd126": 0.017,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 17.8,
-     "score_chg": 11.1,
+     "score_chg": 11.2,
      "reasons": [
       "距半年高點 −2%",
       "止跌訊號"
@@ -11009,7 +10973,7 @@
       "h": 38.25,
       "l": 37.35,
       "c": 38.25,
-      "v": 47287000
+      "v": 47406582
      },
      "extended": false,
      "pullback_ok": false,
@@ -11018,7 +10982,7 @@
       "depth": 27.2,
       "oversold": 0.0,
       "reversal": 30.0,
-      "mfturn": 31.0,
+      "mfturn": 31.1,
       "risk": 11.5
      },
      "dd126": 0.054,
@@ -11090,7 +11054,7 @@
       "h": 159.0,
       "l": 154.0,
       "c": 158.5,
-      "v": 16685000
+      "v": 16836264
      },
      "extended": false,
      "pullback_ok": true,
@@ -11174,7 +11138,7 @@
       "h": 2435.0,
       "l": 2400.0,
       "c": 2420.0,
-      "v": 22224000
+      "v": 23935196
      },
      "extended": false,
      "pullback_ok": false,
@@ -11255,7 +11219,7 @@
       "h": 74.9,
       "l": 71.8,
       "c": 74.8,
-      "v": 43838000
+      "v": 44210248
      },
      "extended": false,
      "pullback_ok": false,
@@ -11291,7 +11255,7 @@
      "theme": "航運原物料",
      "price": 19.6,
      "prev_close": 19.6,
-     "chg_1d_pct": -0.0,
+     "chg_1d_pct": 0.0,
      "above_sma20": true,
      "above_sma50": true,
      "limit": null,
@@ -11340,11 +11304,11 @@
       "h": 19.75,
       "l": 19.5,
       "c": 19.6,
-      "v": 40075000
+      "v": 40203403
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 25.2,
+     "score": 25.3,
      "components": {
       "depth": 4.9,
       "oversold": 0.0,
@@ -11356,7 +11320,7 @@
      "new_low": false,
      "entry_ok": false,
      "score_prev": 25.0,
-     "score_chg": 0.2,
+     "score_chg": 0.3,
      "reasons": [
       "距半年高點 −1%"
      ],
@@ -11421,7 +11385,7 @@
       "h": 597.0,
       "l": 572.0,
       "c": 590.0,
-      "v": 4519000
+      "v": 4735938
      },
      "extended": false,
      "pullback_ok": false,
@@ -11505,7 +11469,7 @@
       "h": 2760.0,
       "l": 2580.0,
       "c": 2590.0,
-      "v": 835000
+      "v": 882513
      },
      "extended": false,
      "pullback_ok": false,
@@ -11587,7 +11551,7 @@
       "h": 1000.0,
       "l": 974.0,
       "c": 982.0,
-      "v": 1774000
+      "v": 1805819
      },
      "extended": false,
      "pullback_ok": true,
@@ -11668,7 +11632,7 @@
       "h": 699.0,
       "l": 674.0,
       "c": 683.0,
-      "v": 2070000
+      "v": 2119555
      },
      "extended": false,
      "pullback_ok": false,
@@ -11749,7 +11713,7 @@
       "h": 118.5,
       "l": 115.0,
       "c": 116.5,
-      "v": 10116000
+      "v": 10182278
      },
      "extended": false,
      "pullback_ok": false,
@@ -11830,7 +11794,7 @@
       "h": 536.0,
       "l": 525.0,
       "c": 526.0,
-      "v": 187000
+      "v": 192005
      },
      "extended": false,
      "pullback_ok": false,
@@ -11913,7 +11877,7 @@
       "h": 226.5,
       "l": 223.0,
       "c": 224.5,
-      "v": 1552000
+      "v": 1581157
      },
      "extended": false,
      "pullback_ok": false,
@@ -11994,7 +11958,7 @@
       "h": 41.4,
       "l": 40.65,
       "c": 41.3,
-      "v": 17732000
+      "v": 17827878
      },
      "extended": false,
      "pullback_ok": false,
@@ -12075,7 +12039,7 @@
       "h": 154.0,
       "l": 152.5,
       "c": 154.0,
-      "v": 8431000
+      "v": 8488400
      },
      "extended": true,
      "pullback_ok": false,
@@ -12156,7 +12120,7 @@
       "h": 28.0,
       "l": 27.45,
       "c": 28.0,
-      "v": 11577000
+      "v": 11722666
      },
      "extended": false,
      "pullback_ok": false,
@@ -12237,7 +12201,7 @@
       "h": 49.3,
       "l": 48.0,
       "c": 49.2,
-      "v": 25215000
+      "v": 25445956
      },
      "extended": false,
      "pullback_ok": false,
@@ -12318,7 +12282,7 @@
       "h": 53.8,
       "l": 52.6,
       "c": 53.6,
-      "v": 13358000
+      "v": 13487228
      },
      "extended": false,
      "pullback_ok": false,
@@ -12399,7 +12363,7 @@
       "h": 29.65,
       "l": 28.8,
       "c": 29.6,
-      "v": 18417000
+      "v": 18518137
      },
      "extended": false,
      "pullback_ok": false,
@@ -12482,7 +12446,7 @@
       "h": 62.8,
       "l": 61.2,
       "c": 62.1,
-      "v": 17729000
+      "v": 17861031
      },
      "extended": false,
      "pullback_ok": false,
@@ -12563,7 +12527,7 @@
       "h": 5090.0,
       "l": 4960.0,
       "c": 4970.0,
-      "v": 399000
+      "v": 430025
      },
      "extended": false,
      "pullback_ok": false,
@@ -12644,7 +12608,7 @@
       "h": 261.5,
       "l": 255.5,
       "c": 257.5,
-      "v": 10176000
+      "v": 10272580
      },
      "extended": false,
      "pullback_ok": false,
@@ -12725,7 +12689,7 @@
       "h": 71.5,
       "l": 70.3,
       "c": 71.3,
-      "v": 23347000
+      "v": 23441620
      },
      "extended": false,
      "pullback_ok": true,
@@ -12808,7 +12772,7 @@
       "h": 78.8,
       "l": 77.7,
       "c": 78.5,
-      "v": 10820000
+      "v": 10864429
      },
      "extended": false,
      "pullback_ok": false,
@@ -12889,7 +12853,7 @@
       "h": 26.7,
       "l": 26.25,
       "c": 26.4,
-      "v": 14967000
+      "v": 15019526
      },
      "extended": false,
      "pullback_ok": false,
@@ -12970,7 +12934,7 @@
       "h": 130.5,
       "l": 129.0,
       "c": 130.5,
-      "v": 10390000
+      "v": 10408581
      },
      "extended": true,
      "pullback_ok": false,
