@@ -98,7 +98,28 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .qstar:focus-visible { outline: 2px solid var(--info); }
 .pos { font-size: 13px; margin-top: 3px; font-variant-numeric: tabular-nums; }
 .pos b { font-weight: 700; }
-.posedit { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 6px; margin: 8px 0; align-items: end; }
+.posedit { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; align-items: end; }
+.posedit .pbtns { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+.posedit .psell { border-color: var(--good); color: var(--good); background: var(--good-bg); }
+.sellbox { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; padding: 8px; border: 1px solid var(--good); border-radius: 10px; align-items: end; }
+.sellbox h3 { grid-column: 1 / -1; margin: 0; font-size: 14px; }
+.sellbox label { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+.sellbox input { font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; width: 100%; box-sizing: border-box; }
+.sellbox .sprev { grid-column: 1 / -1; font-size: 13px; font-variant-numeric: tabular-nums; }
+.sellbox .pbtns { grid-column: 1 / -1; display: flex; gap: 6px; }
+.sellbox button, .rlz button { font: inherit; font-size: 14px; border: 1px solid var(--info); color: var(--info); background: var(--info-bg); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+.sellbox .sok { border-color: var(--good); color: var(--good); background: var(--good-bg); }
+.rlz table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.rlz td, .rlz th { padding: 5px 4px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
+.rlz th { font-size: 11px; color: var(--muted); font-weight: 400; }
+.rlz td:first-child, .rlz th:first-child { text-align: left; white-space: normal; }
+.rlz .tdel { all: unset; cursor: pointer; color: var(--muted); padding: 0 4px; font-size: 14px; }
+.rlz .tdel:focus-visible { outline: 2px solid var(--info); }
+.rlz details { margin-top: 8px; font-size: 13px; }
+.rlz .fcfg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 6px; }
+.rlz .fcfg label { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+.rlz .fcfg input { font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; width: 100%; box-sizing: border-box; }
+.rlzwrap { overflow-x: auto; }
 .posedit label { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
 .posedit input { font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; width: 100%; box-sizing: border-box; }
 .posedit .premove { border-color: var(--bad); color: var(--bad); background: var(--bad-bg); }
@@ -110,7 +131,7 @@ h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
 .pfsum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .pfsum div { background: var(--bg); border-radius: 8px; padding: 6px 8px; min-width: 0; }
 .pfsum span { display: block; font-size: 11px; color: var(--muted); }
-.pfsum b { font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pfsum b { font-size: clamp(13px, 3.9vw, 16px); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .row > button.rb { all: unset; display: grid; grid-template-columns: minmax(0, 1fr) 64px 50px; align-items: center; gap: 10px;
   flex: 1; min-width: 0; padding: 11px 12px 11px 2px; cursor: pointer; box-sizing: border-box; }
 .tkr { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -382,6 +403,22 @@ function pnlOf(t) {
   const prev = i.chg_1d_pct != null ? i.price / (1 + i.chg_1d_pct / 100) : null;
   return { sh: p.sh, avg: p.avg, cost, val, pnl: val - cost, pct: (val / cost - 1) * 100, day: prev ? p.sh * (i.price - prev) : null };
 }
+// 賣出紀錄（已實現損益）：也只存在這台裝置的瀏覽器，不會上傳
+const tradeKey = () => "trades_" + (data?.market || market);
+const trades = () => { try { return JSON.parse(store.get(tradeKey()) || "[]") || []; } catch { return []; } };
+const setTrades = a => store.set(tradeKey(), JSON.stringify(a));
+// 手續費設定：台股 0.1425% × 折數、最低收費（預設都是 0，等你填）；證交稅股票 0.3%、ETF（00 開頭）0.1%；美股每筆固定費用
+const feeCfg = () => { let c = {}; try { c = JSON.parse(store.get("feecfg") || "{}") || {}; } catch {}
+  return { twDisc: c.twDisc >= 0 ? c.twDisc : 0, twMin: c.twMin >= 0 ? c.twMin : 0, usFee: c.usFee >= 0 ? c.usFee : 0 }; };
+function sellCost(t, sh, px) {
+  const amt = sh * px;
+  if (!(amt > 0)) return { fee: 0, tax: 0 };
+  const c = feeCfg();
+  if (data.market !== "tw") return { fee: c.usFee, tax: 0 };
+  return { fee: Math.max(c.twMin, Math.floor(amt * 0.001425 * c.twDisc)), tax: Math.floor(amt * (/^00/.test(t) ? 0.001 : 0.003)) };
+}
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+let sellOpen = null, sellDraft = null, rlzAll = false;
 const cur = () => data?.market === "tw" ? "NT$" : "US$";
 const fmtMoney = v => v == null ? "–" : (v < 0 ? "-" : "") + cur() + Math.abs(v).toLocaleString("en-US", { maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 });
 const fmtSigned = v => v == null ? "–" : (v > 0 ? "+" : "") + fmtMoney(v);
@@ -930,7 +967,7 @@ function renderList() {
       <span class="pill p-info" style="margin-left:6px">核心 ${core.weight}%</span></div>
       ${core.quote ? `<div class="px">${fmtPx(core.quote.price)}<span class="${clsOf(core.quote.chg_1d_pct)}">${fmtPct(core.quote.chg_1d_pct)}</span></div>` : ""}
       <div class="small">一半資金一直放 ${esc(core.t)}，不看分數、不換股；另一半平均分給下面 ${bk.target_count} 檔，每檔 ${Math.round((100 - core.weight) / Math.max(bk.target_count, 1) * 10) / 10}%。</div></div></div>` : "";
-  $("list").innerHTML = (tab === "m" ? addBoxHtml() + portfolioHtml(items) : coreHtml) + (shown.map(rowHtml).join("") + goneHtml || `<div class="empty">${hint}</div>`);
+  $("list").innerHTML = (tab === "m" ? addBoxHtml() + portfolioHtml(items) + realizedHtml() : coreHtml) + (shown.map(rowHtml).join("") + goneHtml || `<div class="empty">${hint}</div>`);
   if (openTicker) {
     const row = [...$("list").querySelectorAll(".row")].find(r => r.dataset.t === openTicker);
     if (row) openRow(row); else openTicker = null;
@@ -1003,6 +1040,89 @@ function portfolioHtml(items) {
       <div class="small" style="margin-top:6px">今天 <b class="${clsOf(day)}">${fmtSigned(day)}</b>・報價時間同上方更新時間，盤中是延遲報價；未含手續費和稅。資料只存在這台裝置的瀏覽器，不會上傳。</div></section>`;
 }
 
+function realizedHtml() {
+  const all = trades();
+  const c = feeCfg(), tw = data.market === "tw";
+  const cfg = `<details><summary>手續費設定</summary><div class="fcfg">${tw
+    ? `<label>手續費折數（6 折填 0.6，0＝不算）<input class="fc" data-k="twDisc" type="number" inputmode="decimal" step="any" min="0" value="${c.twDisc}"></label>
+       <label>最低手續費 NT$<input class="fc" data-k="twMin" type="number" inputmode="decimal" step="any" min="0" value="${c.twMin}"></label>`
+    : `<label>每筆賣出手續費 US$<input class="fc" data-k="usFee" type="number" inputmode="decimal" step="any" min="0" value="${c.usFee}"></label>`}</div>
+    <div class="note">${tw ? "證交稅自動算：股票 0.3%、ETF（00 開頭）0.1%。手續費＝成交金額 × 0.1425% × 折數，不足最低收費以最低計（例如 NT$20）。目前預設手續費 0。" : "多數美股券商免手續費，填 0 即可。"}賣出時也可以直接改費用欄。</div></details>`;
+  if (!all.length) return `<section class="card rlz"><h2>已實現損益</h2><div class="small">持股展開後按「賣出」，填股數和賣出價，就會扣掉持股、記到這裡。「移除」只用在輸錯資料，不會記錄損益。</div>${cfg}</section>`;
+  const yr = String(new Date().getFullYear());
+  const sum = a => a.reduce((s, x) => s + x.pnl, 0);
+  const ytd = all.filter(x => x.d.startsWith(yr)), wins = all.filter(x => x.pnl > 0).length;
+  const costSum = all.reduce((s, x) => s + x.sh * x.avg, 0), tot = sum(all);
+  const list = all.map((x, k) => ({ x, k })).sort((a, b) => b.x.d.localeCompare(a.x.d) || b.k - a.k);
+  const rows = list.slice(0, rlzAll ? list.length : 5).map(({ x, k }) => `<tr><td>${esc(x.d.slice(5).replace("-", "/"))} <b>${esc(x.t)}</b>${x.name ? ` ${esc(x.name)}` : ""}<div class="small">${x.sh.toLocaleString()} 股 ${fmtPx(x.avg)}→${fmtPx(x.px)}</div></td>
+    <td>${fmtMoney(x.fee + x.tax)}</td><td class="${clsOf(x.pnl)}"><b>${fmtSigned(x.pnl)}</b><div class="small ${clsOf(x.pnl)}">${fmtP1(x.pnl / (x.sh * x.avg) * 100)}</div></td>
+    <td><button class="tdel" data-k="${k}" aria-label="刪除這筆賣出紀錄" title="刪除這筆（股數加回持股）">✕</button></td></tr>`).join("");
+  return `<section class="card rlz"><h2>已實現損益（${all.length} 筆賣出）</h2><div class="pfsum">
+      <div><span>累計</span><b class="${clsOf(tot)}">${fmtSigned(tot)}</b><span class="${clsOf(tot)}">${costSum > 0 ? fmtP1(tot / costSum * 100) : ""}</span></div>
+      <div><span>${yr} 年</span><b class="${clsOf(sum(ytd))}">${fmtSigned(sum(ytd))}</b></div>
+      <div><span>勝率</span><b>${Math.round(wins / all.length * 100)}%</b><span>${wins} 勝 ${all.length - wins} 敗</span></div></div>
+    <div class="rlzwrap"><table><tr><th>日期／股票</th><th>費用＋稅</th><th>損益</th><th></th></tr>${rows}</table></div>${list.length > 5 ? `<button class="rlzmore" style="margin-top:6px">${rlzAll ? "只顯示最近 5 筆" : `顯示全部 ${list.length} 筆`}</button>` : ""}
+    <div class="small" style="margin-top:6px">已扣賣出手續費和稅；成本用你填的均價（若均價沒含買進手續費，損益會略高估）。按 ✕ 刪除輸錯的紀錄，股數會加回持股。資料只存在這台裝置的瀏覽器，不會上傳。</div>${cfg}</section>`;
+}
+function sellHtml(i) {
+  const p = positions()[i.ticker];
+  if (sellOpen !== i.ticker || !p || !(p.sh > 0)) return "";
+  const d = sellDraft?.t === i.ticker ? sellDraft : { t: i.ticker, sh: p.sh, px: i.price ?? "", d: today(), fee: null };
+  sellDraft = d;
+  return `<div class="sellbox" data-t="${esc(i.ticker)}"><h3>賣出 ${esc(i.ticker)}${i.name ? ` ${esc(i.name)}` : ""}（持有 ${p.sh.toLocaleString()} 股）</h3>
+    <label>賣出股數<input class="ssh" type="number" inputmode="decimal" min="0" step="any" value="${d.sh}"></label>
+    <label>賣出價<input class="spx" type="number" inputmode="decimal" min="0" step="any" value="${d.px}"></label>
+    <label>成交日期<input class="sd" type="date" value="${esc(d.d)}"></label>
+    <label>手續費＋稅（自動算，可改）<input class="sfee" type="number" inputmode="decimal" min="0" step="any" value="${d.fee ?? ""}"></label>
+    <div class="sprev">${sellPreview(i.ticker)}</div>
+    <div class="pbtns"><button class="sok">確認賣出</button><button class="scancel">取消</button></div></div>`;
+}
+// 依目前填的數字算出這筆賣出的結果；fee 沒手動改過就自動算
+function sellCalc(t) {
+  const p = positions()[t], d = sellDraft;
+  if (!p || !d || d.t !== t) return null;
+  const sh = parseFloat(d.sh), px = parseFloat(d.px);
+  const auto = sellCost(t, sh, px), cost = d.fee === null || d.fee === "" ? auto.fee + auto.tax : parseFloat(d.fee) || 0;
+  const pnl = sh > 0 && px > 0 ? sh * px - cost - sh * p.avg : null;
+  return { sh, px, cost, auto, pnl, ok: sh > 0 && px > 0 && sh <= p.sh + 1e-9 && /^\d{4}-\d{2}-\d{2}$/.test(d.d), over: sh > p.sh + 1e-9, p };
+}
+function sellPreview(t) {
+  const c = sellCalc(t);
+  if (!c) return "";
+  if (c.over) return `<span class="down">超過持有的 ${c.p.sh.toLocaleString()} 股</span>`;
+  if (c.pnl == null) return `<span class="small">填賣出股數和賣出價</span>`;
+  const feeTxt = data.market === "tw" ? `手續費 ${fmtMoney(c.auto.fee)}＋證交稅 ${fmtMoney(c.auto.tax)}` : `手續費 ${fmtMoney(c.auto.fee)}`;
+  return `收到 ${fmtMoney(c.sh * c.px - c.cost)}・實現損益 <b class="${clsOf(c.pnl)}">${fmtSigned(c.pnl)}（${fmtP1(c.pnl / (c.sh * c.p.avg) * 100)}）</b>
+    <div class="small">自動算：${feeTxt}・賣完剩 ${(c.p.sh - c.sh).toLocaleString()} 股</div>`;
+}
+function doSell(t) {
+  const c = sellCalc(t);
+  if (!c?.ok) { alert(c?.over ? "賣出股數超過持有股數。" : "請填好賣出股數、賣出價和日期。"); return; }
+  const i = myItems().find(x => x.ticker === t);
+  const a = trades();
+  a.push({ t, name: i?.name || "", d: sellDraft.d, sh: c.sh, px: c.px, avg: c.p.avg,
+    fee: c.cost === c.auto.fee + c.auto.tax ? c.auto.fee : c.cost, tax: c.cost === c.auto.fee + c.auto.tax ? c.auto.tax : 0,
+    pnl: Math.round(c.pnl * 100) / 100, at: Date.now() });
+  setTrades(a);
+  const left = Math.round((c.p.sh - c.sh) * 1e6) / 1e6;
+  if (left > 0) setPos(t, { sh: left, avg: c.p.avg });
+  else { setPos(t, null); if (mine().has(t)) toggleMine(t); }
+  sellOpen = null; sellDraft = null;
+  openTicker = left > 0 ? t : null;
+  renderSummary(); renderTodo(); renderList();
+}
+// 刪除輸錯的賣出紀錄：股數加回持股（均價用加權平均）
+function undoTrade(k) {
+  const a = trades(), x = a[k];
+  if (!x || !confirm(`刪除 ${x.d} 賣出 ${x.t} ${x.sh.toLocaleString()} 股的紀錄？這些股數會加回持股。`)) return;
+  a.splice(k, 1); setTrades(a);
+  const p = positions()[x.t];
+  const sh = (p?.sh || 0) + x.sh, avg = p?.sh > 0 ? (p.sh * p.avg + x.sh * x.avg) / sh : x.avg;
+  if (!mine().has(x.t)) toggleMine(x.t);
+  setPos(x.t, { sh: Math.round(sh * 1e6) / 1e6, avg: Math.round(avg * 1e4) / 1e4 });
+  renderSummary(); renderTodo(); renderList();
+}
+
 function rowHtml(i) {
   const chg = i.chg_1d_pct;
   const isMine = mine().has(i.ticker);
@@ -1034,7 +1154,7 @@ function rowHtml(i) {
   const posEdit = isMine ? `<div class="posedit" data-t="${esc(i.ticker)}">
       <label>股數${data.market === "tw" ? "（1 張＝1000 股）" : ""}<input class="psh" type="number" inputmode="decimal" min="0" step="any" value="${p0.sh ?? ""}" placeholder="例如 ${data.market === "tw" ? "1000" : "10"}"></label>
       <label>均價<input class="pavg" type="number" inputmode="decimal" min="0" step="any" value="${p0.avg ?? ""}" placeholder="買進平均成本"></label>
-      <button class="psave">儲存</button><button class="premove">移除</button></div>` : "";
+      <div class="pbtns"><button class="psave">儲存</button>${p0.sh > 0 ? `<button class="psell">賣出</button>` : ""}<button class="premove" title="只用在輸錯資料；賣出請按「賣出」，才會記錄已實現損益">移除（輸錯用）</button></div></div>${sellHtml(i)}` : "";
   return `<div class="row" data-t="${esc(i.ticker)}"><button class="qstar" aria-pressed="${isMine}" aria-label="${isMine ? "從我的持股移除" : "加入我的持股"}" title="${isMine ? "從我的持股移除" : "加入我的持股"}">${isMine ? "★" : "☆"}</button><button class="rb" aria-expanded="false">
       <div style="min-width:0"><div class="tkr">${esc(i.ticker)}${i.name ? `<span class="nm">${esc(i.name)}</span>` : ""}${isMine ? `<span class="star">★</span>` : ""}</div>
         ${px.replace(/<\/div>$/, brokeTag + "</div>")}${extTag}${posLine}<div class="subline"><span class="pill ${SIG_CLASS[i.signal] || "p-mute"}">${esc(i.signal_label)}</span><span class="sub">${esc(sub)}</span></div></div>
@@ -1663,12 +1783,38 @@ function showTab(t) {
 $("list").addEventListener("keydown", e => {
   if (e.target.id === "maddq" && e.key === "Enter") { e.preventDefault(); addManual(); }
 });
+// 賣出表單：邊填邊更新預覽；費用欄手動改過就不再自動算
+$("list").addEventListener("input", e => {
+  const box = e.target.closest(".sellbox");
+  if (!box || !sellDraft) return;
+  const k = { ssh: "sh", spx: "px", sd: "d", sfee: "fee" }[e.target.className];
+  if (!k) return;
+  sellDraft[k] = e.target.value;
+  if (k === "fee" && e.target.value === "") sellDraft.fee = null;
+  box.querySelector(".sprev").innerHTML = sellPreview(box.dataset.t);
+});
+$("list").addEventListener("change", e => {
+  const f = e.target.closest(".fc");
+  if (!f) return;
+  let c = {}; try { c = JSON.parse(store.get("feecfg") || "{}") || {}; } catch {}
+  const v = parseFloat(f.value);
+  if (v >= 0) c[f.dataset.k] = v; else delete c[f.dataset.k];
+  store.set("feecfg", JSON.stringify(c));
+  renderList();
+});
 $("list").addEventListener("click", e => {
   if (e.target.closest(".maddbtn")) { addManual(); return; }
+  const sb = e.target.closest(".psell");
+  if (sb) { const t = sb.closest(".posedit").dataset.t; sellOpen = sellOpen === t ? null : t; sellDraft = null; openTicker = t; renderList(); return; }
+  if (e.target.closest(".sok")) { doSell(e.target.closest(".sellbox").dataset.t); return; }
+  if (e.target.closest(".scancel")) { sellOpen = null; sellDraft = null; renderList(); return; }
+  if (e.target.closest(".rlzmore")) { rlzAll = !rlzAll; renderList(); return; }
+  const td = e.target.closest(".tdel");
+  if (td) { undoTrade(+td.dataset.k); return; }
   const rm = e.target.closest(".premove");
   if (rm) {
     const t = rm.closest(".posedit").dataset.t;
-    if (!confirm(`把 ${t} 從我的持股移除？填過的股數和均價也會刪掉。`)) return;
+    if (!confirm(`把 ${t} 從我的持股移除？填過的股數和均價也會刪掉，不會記錄損益。\n\n如果是真的賣掉了，請按「取消」再按「賣出」。`)) return;
     if (mine().has(t)) toggleMine(t);
     setPos(t, null);
     openTicker = null;
@@ -1679,7 +1825,7 @@ $("list").addEventListener("click", e => {
   if (star) {
     const row = star.closest(".row"), t = row.dataset.t;
     const had = mine().has(t);
-    if (had && positions()[t] && !confirm(`把 ${t} 從我的持股移除？填過的股數和均價也會刪掉。`)) return;
+    if (had && positions()[t] && !confirm(`把 ${t} 從我的持股移除？填過的股數和均價也會刪掉，不會記錄損益。\n\n如果是真的賣掉了，請按「取消」，展開後按「賣出」。`)) return;
     toggleMine(t);
     if (!had) openTicker = t;  // 剛加入就打開，方便填股數和均價
     renderSummary(); renderTodo(); renderList();
