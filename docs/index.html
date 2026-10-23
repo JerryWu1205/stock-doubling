@@ -339,7 +339,7 @@ details p { margin: 6px 0; }
   <details>
     <summary>分數怎麼算</summary>
     <p>大盤燈號：基準指數收在 200 日線上＝多頭（綠），下面＝空頭（紅），旁邊的百分比是離 200 日線多遠。</p>
-    <p><b>「程式選股」不是你的帳戶</b>：那是程式照規則挑的模擬組合，回測和績效都用它算。你實際買的股票，打開那一檔按「☆ 加入我的持股」，就會出現在「我的 ★」分頁（只存在這台裝置）。</p>
+    <p><b>「程式選股」不是你的帳戶</b>：那是程式照規則挑的模擬組合，回測和績效都用它算。你實際買的股票，打開那一檔按「☆ 加入我的持股」，就會出現在「我的 ★」分頁（存在你的裝置；在「我的」開啟跨裝置同步，手機電腦就共用同一份）。</p>
     <p>兩套名單用同一批股票，各自評分、各自持股，美股和台股各自排名，不互相比較。</p>
     <p><b>強勢</b>：總分 0–100，相對強弱 30、資金流 25、趨勢 20、反彈 15，風險最多扣 10 分。持股：強勢續抱 ≥75、續抱、轉弱留意 &lt;50、出場訊號 &lt;40 且跌破 50 日線。候選：可進場 ≥70 且趨勢夠強、觀察 ≥60；漲太多離 20 日線太遠的會標「漲多等回檔」。</p>
     <p><b>跌深</b>：跌深 35（離半年高點跌 10–35% 最高分，跌超過 55% 歸零，避免接到一路崩的股票）、超賣 25（RSI 低於 40 的程度）、止跌 25（從 5 日低點彈 3%、RSI 翻揚、站上 5 日線）、資金回流 15，風險最多扣 10 分。可進場要 ≥60 而且止跌 ≥70，沒有合格的股票就空著，不硬湊滿檔。持股：再破 20 日低點＝出場、回到半年高點 5% 內＝反彈達標。</p>
@@ -374,11 +374,11 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
-  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} syncTouch(k); },
 };
 
 let book = store.get("book") === "dip" ? "dip" : "strong";
-// 我的持股：你自己按 ☆ 加入的股票，只存在這台裝置的瀏覽器
+// 我的持股：你自己按 ☆ 加入的股票，存在這台裝置的瀏覽器（開啟跨裝置同步後，加密同步到你的其他裝置）
 const mineKey = () => "mine_" + (data?.market || market);
 const mine = () => { try { return new Set(JSON.parse(store.get(mineKey()) || "[]")); } catch { return new Set(); } };
 function toggleMine(t) {
@@ -387,7 +387,7 @@ function toggleMine(t) {
   store.set(mineKey(), JSON.stringify([...m]));
   if (!m.has(t)) setPos(t, null);
 }
-// 股數與均價：也只存在這台裝置的瀏覽器，不會上傳
+// 股數與均價：同上，不會出現在公開網頁
 const posKey = () => "pos_" + (data?.market || market);
 const positions = () => { try { return JSON.parse(store.get(posKey()) || "{}") || {}; } catch { return {}; } };
 function setPos(t, p) {
@@ -403,7 +403,7 @@ function pnlOf(t) {
   const prev = i.chg_1d_pct != null ? i.price / (1 + i.chg_1d_pct / 100) : null;
   return { sh: p.sh, avg: p.avg, cost, val, pnl: val - cost, pct: (val / cost - 1) * 100, day: prev ? p.sh * (i.price - prev) : null };
 }
-// 賣出紀錄（已實現損益）：也只存在這台裝置的瀏覽器，不會上傳
+// 賣出紀錄（已實現損益）：同上，不會出現在公開網頁
 const tradeKey = () => "trades_" + (data?.market || market);
 const trades = () => { try { return JSON.parse(store.get(tradeKey()) || "[]") || []; } catch { return []; } };
 const setTrades = a => store.set(tradeKey(), JSON.stringify(a));
@@ -967,7 +967,7 @@ function renderList() {
       <span class="pill p-info" style="margin-left:6px">核心 ${core.weight}%</span></div>
       ${core.quote ? `<div class="px">${fmtPx(core.quote.price)}<span class="${clsOf(core.quote.chg_1d_pct)}">${fmtPct(core.quote.chg_1d_pct)}</span></div>` : ""}
       <div class="small">一半資金一直放 ${esc(core.t)}，不看分數、不換股；另一半平均分給下面 ${bk.target_count} 檔，每檔 ${Math.round((100 - core.weight) / Math.max(bk.target_count, 1) * 10) / 10}%。</div></div></div>` : "";
-  $("list").innerHTML = (tab === "m" ? addBoxHtml() + portfolioHtml(items) + realizedHtml() : coreHtml) + (shown.map(rowHtml).join("") + goneHtml || `<div class="empty">${hint}</div>`);
+  $("list").innerHTML = (tab === "m" ? (syncCfg() ? "" : syncHtml()) + addBoxHtml() + portfolioHtml(items) + realizedHtml() + (syncCfg() ? syncHtml() : "") : coreHtml) + (shown.map(rowHtml).join("") + goneHtml || `<div class="empty">${hint}</div>`);
   if (openTicker) {
     const row = [...$("list").querySelectorAll(".row")].find(r => r.dataset.t === openTicker);
     if (row) openRow(row); else openTicker = null;
@@ -1030,14 +1030,14 @@ function exitHtml(i) {
 
 function portfolioHtml(items) {
   const rows = items.map(i => pnlOf(i.ticker)).filter(Boolean);
-  if (!rows.length) return items.length ? `<section class="card"><h2>我的持股損益</h2><div class="small">打開下面任何一檔，填上股數和均價，這裡就會加總損益。資料只存在這台裝置的瀏覽器，不會上傳。</div></section>` : "";
+  if (!rows.length) return items.length ? `<section class="card"><h2>我的持股損益</h2><div class="small">打開下面任何一檔，填上股數和均價，這裡就會加總損益。${syncNote()}</div></section>` : "";
   const sum = k => rows.reduce((a, r) => a + (r[k] ?? 0), 0);
   const cost = sum("cost"), val = sum("val"), pnl = val - cost, day = sum("day");
   return `<section class="card"><h2>我的持股損益（${rows.length} 檔有填）</h2><div class="pfsum">
       <div><span>總成本</span><b>${fmtMoney(cost)}</b></div>
       <div><span>目前市值</span><b>${fmtMoney(val)}</b></div>
       <div><span>未實現損益</span><b class="${clsOf(pnl)}">${fmtSigned(pnl)}</b><span class="${clsOf(pnl)}">${fmtP1((val / cost - 1) * 100)}</span></div></div>
-      <div class="small" style="margin-top:6px">今天 <b class="${clsOf(day)}">${fmtSigned(day)}</b>・報價時間同上方更新時間，盤中是延遲報價；未含手續費和稅。資料只存在這台裝置的瀏覽器，不會上傳。</div></section>`;
+      <div class="small" style="margin-top:6px">今天 <b class="${clsOf(day)}">${fmtSigned(day)}</b>・報價時間同上方更新時間，盤中是延遲報價；未含手續費和稅。${syncNote()}</div></section>`;
 }
 
 function realizedHtml() {
@@ -1062,7 +1062,7 @@ function realizedHtml() {
       <div><span>${yr} 年</span><b class="${clsOf(sum(ytd))}">${fmtSigned(sum(ytd))}</b></div>
       <div><span>勝率</span><b>${Math.round(wins / all.length * 100)}%</b><span>${wins} 勝 ${all.length - wins} 敗</span></div></div>
     <div class="rlzwrap"><table><tr><th>日期／股票</th><th>費用＋稅</th><th>損益</th><th></th></tr>${rows}</table></div>${list.length > 5 ? `<button class="rlzmore" style="margin-top:6px">${rlzAll ? "只顯示最近 5 筆" : `顯示全部 ${list.length} 筆`}</button>` : ""}
-    <div class="small" style="margin-top:6px">已扣賣出手續費和稅；成本用你填的均價（若均價沒含買進手續費，損益會略高估）。按 ✕ 刪除輸錯的紀錄，股數會加回持股。資料只存在這台裝置的瀏覽器，不會上傳。</div>${cfg}</section>`;
+    <div class="small" style="margin-top:6px">已扣賣出手續費和稅；成本用你填的均價（若均價沒含買進手續費，損益會略高估）。按 ✕ 刪除輸錯的紀錄，股數會加回持股。${syncNote()}</div>${cfg}</section>`;
 }
 function sellHtml(i) {
   const p = positions()[i.ticker];
@@ -1895,9 +1895,213 @@ window.addEventListener("hashchange", () => {
   if (h && h !== market && markets.some(m => m.key === h)) { market = h; openTicker = null; ext = null; load().then(loadExtras); }
 });
 
+
+// ───────── 跨裝置同步（手機、電腦看到同一份「我的」） ─────────
+// 同步的是：我的持股清單、股數均價、賣出紀錄、手續費設定。先在這台裝置加密（AES-GCM），再存到你自己 GitHub 帳號的私密 gist。
+// 鑰匙（GitHub token、gist 編號、加密鑰匙）只存在你的裝置，網頁和程式碼都沒有；gist 裡只有亂碼，沒有鑰匙看不懂。
+// 平常每一項以最後修改的為準；一台裝置第一次連結時，兩邊的持股和紀錄合併（不會互相蓋掉）。
+var SYNC_RE = /^(mine|pos|trades)_\w+$|^feecfg$/, SYNC_FILE = "stock-doubling-sync.json";
+var syncTimer = null, syncBusy = null, syncAgain = false, syncApplying = false, syncPending = false;
+var syncState = { msg: "", err: false, at: 0 }, syncShowLink = false;
+const syncCfg = () => { try { return JSON.parse(localStorage.getItem("sync_cfg") || "null"); } catch { return null; } };
+const setSyncCfg = c => { try { c ? localStorage.setItem("sync_cfg", JSON.stringify(c)) : localStorage.removeItem("sync_cfg"); } catch {} };
+const syncMeta = () => { try { return JSON.parse(localStorage.getItem("sync_meta") || "{}") || {}; } catch { return {}; } };
+const setSyncMeta = m => { try { localStorage.setItem("sync_meta", JSON.stringify(m)); } catch {} };
+function syncTouch(k) {
+  if (syncApplying || !SYNC_RE || !SYNC_RE.test(k)) return;
+  const m = syncMeta(); m[k] = Date.now(); setSyncMeta(m);
+  if (syncCfg()) { clearTimeout(syncTimer); syncTimer = setTimeout(() => syncNow(), 1200); }
+}
+const b64 = u8 => { let s = ""; for (let i = 0; i < u8.length; i += 8192) s += String.fromCharCode(...u8.subarray(i, i + 8192)); return btoa(s); };
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const b64u = u8 => b64(u8).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const unb64u = s => unb64(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4));
+const syncAes = cfg => crypto.subtle.importKey("raw", unb64u(cfg.key), "AES-GCM", false, ["encrypt", "decrypt"]);
+async function syncEncrypt(cfg, obj) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await syncAes(cfg), new TextEncoder().encode(JSON.stringify(obj)));
+  return { v: 1, iv: b64(iv), ct: b64(new Uint8Array(ct)) };
+}
+async function syncDecrypt(cfg, box) {
+  if (!box?.ct) return { keys: {} };
+  try {
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(box.iv) }, await syncAes(cfg), unb64(box.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  } catch { throw new Error("key"); }
+}
+async function gh(token, path, opt = {}) {
+  let r;
+  try {
+    r = await fetch("https://api.github.com" + path, { ...opt, cache: "no-store",
+      headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", ...(opt.body ? { "Content-Type": "application/json" } : {}) } });
+  } catch { throw new Error("net"); }
+  if (r.status === 401 || r.status === 403) throw new Error("token");
+  if (r.status === 404) throw new Error("gone");
+  if (!r.ok) throw new Error("http");
+  return r.json();
+}
+function syncLocal() {
+  const o = {};
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (SYNC_RE.test(k)) o[k] = localStorage.getItem(k); } } catch {}
+  return o;
+}
+// 第一次連結時合併：清單取聯集、股數均價和手續費以雲端為準再補上本機才有的
+function syncMerge(local, remote) {
+  try {
+    const x = JSON.parse(local), y = JSON.parse(remote);
+    if (Array.isArray(x) && Array.isArray(y)) {
+      const seen = new Set(y.map(v => JSON.stringify(v)));
+      return JSON.stringify([...y, ...x.filter(v => !seen.has(JSON.stringify(v)))]);
+    }
+    if (x && y && typeof x === "object" && typeof y === "object") return JSON.stringify({ ...x, ...y });
+  } catch {}
+  return remote;
+}
+function syncNow(join) {
+  const cfg = syncCfg();
+  if (!cfg) return Promise.resolve();
+  if (syncBusy) { syncAgain = true; return syncBusy; }
+  join = join || !cfg.joined;
+  syncBusy = (async () => {
+    try {
+      const g = await gh(cfg.token, "/gists/" + cfg.gist);
+      const f = g.files?.[SYNC_FILE];
+      if (!f) throw new Error("gone");
+      const text = f.truncated ? await (await fetch(f.raw_url, { cache: "no-store" })).text() : f.content;
+      const remote = await syncDecrypt(cfg, JSON.parse(text || "{}"));
+      const rk = remote.keys || {}, meta = syncMeta(), local = syncLocal(), out = {}, now = Date.now();
+      let changed = false, push = false;
+      for (const k of new Set([...Object.keys(local), ...Object.keys(rk)])) {
+        const L = local[k], R = rk[k], lt = meta[k] || 0;
+        let v, t;
+        if (!R) { v = L; t = lt || now; push = true; }
+        else if (L == null) { v = R.v; t = R.t; }
+        else if (join) { v = syncMerge(L, R.v); t = v === R.v ? R.t : now; if (v !== R.v) push = true; }
+        else if (R.t >= lt) { v = R.v; t = R.t; }
+        else { v = L; t = lt; if (L !== R.v) push = true; }
+        out[k] = { v, t };
+        meta[k] = t;
+        if (v !== L) { syncApplying = true; store.set(k, v); syncApplying = false; changed = true; }
+      }
+      setSyncMeta(meta);
+      if (push) await gh(cfg.token, "/gists/" + cfg.gist, { method: "PATCH",
+        body: JSON.stringify({ files: { [SYNC_FILE]: { content: JSON.stringify(await syncEncrypt(cfg, { v: 1, at: now, keys: out })) } } }) });
+      if (!cfg.joined) { cfg.joined = true; setSyncCfg(cfg); }
+      syncState = { msg: join ? "已連結，兩邊的持股已合併。" : "", err: false, at: Date.now() };
+      if (changed) syncRefresh();
+    } catch (e) {
+      syncState = { ...syncState, err: true, msg: {
+        token: "GitHub 鑰匙（token）失效或過期了。請按「停止同步」，再用新的 token 重新開啟（資料不會不見）。",
+        gone: "找不到雲端的同步資料（gist 可能被刪了）。請按「停止同步」後重新開啟。",
+        key: "同步碼的加密鑰匙不對，請重新貼一次正確的同步碼。",
+        net: "暫時連不上 GitHub，稍後會自動再試。",
+      }[e.message] || "同步失敗，稍後會自動再試。" };
+    } finally {
+      syncBusy = null;
+      syncPaint();
+      if (syncAgain) { syncAgain = false; syncNow(); }
+    }
+  })();
+  return syncBusy;
+}
+// 雲端有新資料：重畫（正在輸入時先不重畫，離開輸入框再畫）
+function syncRefresh() {
+  if (!data) return;
+  const a = document.activeElement;
+  if (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName) && a.closest("#list")) { syncPending = true; return; }
+  syncPending = false;
+  renderSummary(); renderTodo();
+  if (tab !== "p" && tab !== "r" && tab !== "s") renderList();
+}
+const syncCode = c => `${c.token}.${c.gist}.${c.key}`;
+const syncLink = c => `${location.origin}${location.pathname}#sync=${syncCode(c)}`;
+async function syncSetup(token) {
+  token = (token || "").trim();
+  if (!/^(ghp_|github_pat_|gho_)\w+$/.test(token)) { syncState = { msg: "這看起來不像 GitHub token（應該是 ghp_ 開頭）。", err: true, at: 0 }; syncPaint(true); return; }
+  syncState = { msg: "建立中…", err: false, at: 0 }; syncPaint(true);
+  try {
+    const cfg = { token, key: b64u(crypto.getRandomValues(new Uint8Array(32))) };
+    const box = await syncEncrypt(cfg, { v: 1, at: Date.now(), keys: {} });
+    const g = await gh(token, "/gists", { method: "POST", body: JSON.stringify({ description: "stock-doubling 我的持股同步（已加密）", public: false,
+      files: { [SYNC_FILE]: { content: JSON.stringify(box) } } }) });
+    cfg.gist = g.id;
+    setSyncCfg(cfg);
+    syncShowLink = true;
+    await syncNow(true);
+  } catch (e) {
+    syncState = { msg: e.message === "token" ? "這個 token 沒有建立 gist 的權限，或已過期。請確認勾了「gist」再試。" : "連不上 GitHub，請稍後再試。", err: true, at: 0 };
+    syncPaint(true);
+  }
+}
+async function syncJoin(code) {
+  const m = (code || "").trim().replace(/^.*#sync=/, "").match(/^((?:ghp_|github_pat_|gho_)\w+)\.([0-9a-f]+)\.([\w-]{40,})$/);
+  if (!m) { syncState = { msg: "同步碼格式不對，請整段複製再貼一次。", err: true, at: 0 }; syncPaint(true); return; }
+  setSyncCfg({ token: m[1], gist: m[2], key: m[3] });
+  syncState = { msg: "連結中…", err: false, at: 0 }; syncPaint(true);
+  await syncNow(true);
+  if (syncState.err) setSyncCfg(null);
+}
+function syncHtml() {
+  const c = syncCfg();
+  const st = syncState.msg ? `<div class="small${syncState.err ? " down" : ""}" style="margin-top:6px">${esc(syncState.msg)}</div>` : "";
+  if (c) {
+    const when = syncState.at ? new Date(syncState.at).toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", hour12: false }) : "";
+    return `<section class="card" id="syncCard"><h2>☁ 跨裝置同步：已開啟</h2>
+      <div class="small">手機、電腦用同一份持股和賣出紀錄，改了會自動同步${when ? `・上次同步 ${when}` : busyNote()}。資料先加密，再存在你自己的 GitHub 私密 gist，網頁上看不到。</div>${st}
+      <div class="maddrow"><button class="syncgo">立即同步</button><button class="synclink">${syncShowLink ? "收起" : "連結其他裝置"}</button><button class="syncoff">停止同步</button></div>
+      ${syncShowLink ? `<div class="small">把下面這個連結傳給自己（例如 LINE 的 Keep、或傳給自己的 Telegram），在另一台裝置（電腦、或手機桌面上的網頁 App）打開就連好了。<b>這個連結等於鑰匙，不要給別人。</b></div>
+      <div class="maddrow"><input readonly id="synccode" value="${esc(syncLink(c))}"><button class="synccopy">複製</button>${navigator.share ? `<button class="syncshare">分享</button>` : ""}</div>` : ""}</section>`;
+  }
+  return `<section class="card" id="syncCard"><details${syncState.msg ? " open" : ""}><summary><b>☁ 手機和電腦看到同一份持股（設定一次）</b></summary>
+    <div class="small" style="margin:6px 0">現在「我的」只存在這台裝置的瀏覽器，所以手機加的電腦看不到。開啟同步後，資料會先加密，再存到你自己 GitHub 帳號的私密 gist，只有你的裝置有鑰匙。</div>
+    <div class="small"><b>還沒在任何裝置開過：</b>在資料最多的那台做。① <a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=stock-doubling%20sync" target="_blank" rel="noopener">按這裡到 GitHub 建立鑰匙</a>（已幫你勾好 gist；Expiration 選 No expiration，拉到最下面按 Generate token，複製 ghp_ 開頭那串）② 貼到下面按「開啟同步」。</div>
+    <div class="maddrow"><input id="synctoken" type="password" autocomplete="off" placeholder="貼上 ghp_ 開頭的 token"><button class="syncsetup">開啟同步</button></div>
+    <div class="small"><b>已經在別台開過：</b>在那台按「連結其他裝置」，打開它給的連結；或把同步碼貼在這裡。</div>
+    <div class="maddrow"><input id="syncjoin" autocomplete="off" placeholder="貼上同步連結或同步碼"><button class="syncjoinbtn">連結</button></div>${st}</details></section>`;
+}
+const busyNote = () => syncBusy ? "・同步中…" : "";
+// 只重畫同步卡片（使用者正在卡片裡輸入時除非 force 不動）
+function syncPaint(force) {
+  const el = $("syncCard");
+  if (!el || (!force && el.contains(document.activeElement) && document.activeElement.tagName === "INPUT")) return;
+  const open = el.querySelector("details")?.open;
+  el.outerHTML = syncHtml();
+  if (open) $("syncCard").querySelector("details")?.setAttribute("open", "");
+}
+$("list").addEventListener("click", e => {
+  const b = e.target.closest("#syncCard button");
+  if (!b) return;
+  if (b.classList.contains("syncsetup")) syncSetup($("synctoken")?.value);
+  else if (b.classList.contains("syncjoinbtn")) syncJoin($("syncjoin")?.value);
+  else if (b.classList.contains("syncgo")) { syncState.msg = ""; syncNow(); syncPaint(true); }
+  else if (b.classList.contains("synclink")) { syncShowLink = !syncShowLink; syncPaint(true); }
+  else if (b.classList.contains("synccopy")) {
+    const inp = $("synccode");
+    (navigator.clipboard ? navigator.clipboard.writeText(inp.value) : Promise.reject()).catch(() => { inp.select(); document.execCommand("copy"); })
+      .finally(() => { b.textContent = "已複製"; });
+  }
+  else if (b.classList.contains("syncshare")) navigator.share({ title: "股票翻倍計畫 同步連結", text: $("synccode").value }).catch(() => {});
+  else if (b.classList.contains("syncoff")) {
+    if (!confirm("這台裝置停止同步？這台的資料會留著，只是之後不再和其他裝置同步。")) return;
+    setSyncCfg(null); syncShowLink = false; syncState = { msg: "", err: false, at: 0 }; syncPaint(true);
+  }
+});
+$("list").addEventListener("focusout", () => setTimeout(() => { if (syncPending) syncRefresh(); }, 0));
+// 從「連結其他裝置」的連結打開：讀取同步碼後馬上從網址拿掉，再切到「我的」
+var syncFromLink = (() => {
+  const m = location.hash.match(/^#sync=(.+)$/);
+  if (!m) return null;
+  history.replaceState(null, "", location.pathname + location.search);
+  return m[1];
+})();
+const syncNote = () => syncCfg() ? "資料加密後同步到你的其他裝置，公開網頁看不到。" : "資料只存在這台裝置的瀏覽器（可在「我的」開啟跨裝置同步）。";
+
 load().then(loadExtras);
 setInterval(() => { load(); loadExtras(); }, 5 * 60 * 1000);
-document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { load(); syncNow(); } });
+if (syncFromLink) { showTab("m"); syncJoin(syncFromLink).then(() => { if (tab !== "m") showTab("m"); }); }
+else syncNow();
+setInterval(() => { if (!document.hidden) syncNow(); }, 3 * 60 * 1000);
 
 // ───────── 專業術語說明：滑鼠移過去（手機點一下）就跳出小視窗 ─────────
 // 整段文字剛好等於這些詞才標（避免「趨勢」之類的短詞亂標）
@@ -1911,7 +2115,7 @@ const GLOSS_EXACT = {
   "止跌": "跌深策略用：從 5 日低點反彈 3%、RSI 翻揚、站上 5 日線，代表開始止跌。",
   "程式選股": "程式依分數自動挑的模擬組合，換股規則固定，用來追蹤這套方法的成績。",
   "候選": "還沒進組合但分數在追蹤中的股票，夠強就會換進來。",
-  "我的 ★": "你自己的真實持股，股數和均價只存在你這台裝置的瀏覽器裡，不會上傳。",
+  "我的 ★": "你自己的真實持股。股數和均價存在你的裝置，開啟跨裝置同步後會加密同步到你的其他裝置，公開網頁上看不到。",
   "類股": "看資金流向哪些產業、題材：哪一群最強、最近排名往上或往下。",
   "績效": "回測：照這套規則過去一年的報酬、最大回檔，和大盤比。",
   "有動作": "只顯示今天要處理的（出場、換股、可進場）。",
