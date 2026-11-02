@@ -5,18 +5,18 @@
  "timezone": "Asia/Taipei",
  "tz_label": "台北",
  "currency": "TWD",
- "quote_delay_minutes": 0,
+ "quote_delay_minutes": 20,
  "trading_hours": "09:00–13:30",
  "demo": false,
- "mode": "intraday",
- "mode_label": "盤中暫定",
- "market_session": "open",
- "generated_at": "2026-11-02T06:15:03Z",
- "generated_at_local": "2026-11-02 14:15 台北",
- "generated_at_et": "2026-11-02 01:15 ET",
- "price_time": "13:30",
+ "mode": "close",
+ "mode_label": "收盤確認",
+ "market_session": "closed",
+ "generated_at": "2026-11-02T06:30:03Z",
+ "generated_at_local": "2026-11-02 14:30 台北",
+ "generated_at_et": "2026-11-02 01:30 ET",
+ "price_time": "收盤",
  "data_date": "2026-11-02",
- "stale_after_minutes": 40,
+ "stale_after_minutes": 1154,
  "benchmark": "0050",
  "benchmark_name": "元大台灣50",
  "benchmark_quote": {
@@ -62,7 +62,7 @@
    "gap": 20.5,
    "streak": 3,
    "need": 3,
-   "status": "provisional"
+   "status": "confirmed"
   },
   {
    "in": "2892",
@@ -70,7 +70,7 @@
    "gap": 18.3,
    "streak": 3,
    "need": 3,
-   "status": "provisional"
+   "status": "confirmed"
   }
  ],
  "portfolio_changes": [
@@ -262,7 +262,7 @@
     "h": 163.0,
     "l": 158.5,
     "c": 159.5,
-    "v": 19504000
+    "v": 19620996
    },
    "extended": false,
    "pullback_ok": false,
@@ -344,7 +344,7 @@
     "h": 49.6,
     "l": 48.35,
     "c": 48.7,
-    "v": 31199000
+    "v": 31402474
    },
    "extended": false,
    "pullback_ok": false,
@@ -426,7 +426,7 @@
     "h": 73.9,
     "l": 70.2,
     "c": 73.1,
-    "v": 20004000
+    "v": 20125172
    },
    "extended": false,
    "pullback_ok": false,
@@ -451,7 +451,7 @@
    "score": 62.9,
    "components": {
     "rs": 79.2,
-    "mf": 48.6,
+    "mf": 48.7,
     "trend": 40.0,
     "rebound": 70.0,
     "risk": 15.2
@@ -507,7 +507,7 @@
     "h": 925.0,
     "l": 904.0,
     "c": 912.0,
-    "v": 2370000
+    "v": 2426649
    },
    "extended": false,
    "pullback_ok": false,
@@ -520,8 +520,8 @@
     "跌破 50 日線"
    ],
    "alerts": [],
-   "signal": "hold",
-   "signal_label": "續抱",
+   "signal": "swap_out",
+   "signal_label": "汰換對象",
    "weakest": true,
    "source": "auto"
   }
@@ -591,7 +591,7 @@
     "h": 31.15,
     "l": 30.25,
     "c": 30.85,
-    "v": 26382000
+    "v": 26517314
    },
    "extended": true,
    "pullback_ok": false,
@@ -610,7 +610,7 @@
    "signal": "swap_in",
    "signal_label": "換股候選",
    "swap": {
-    "status": "provisional",
+    "status": "confirmed",
     "streak": 3,
     "need": 3,
     "gap": 20.5,
@@ -681,7 +681,7 @@
     "h": 120.5,
     "l": 116.5,
     "c": 119.5,
-    "v": 9937000
+    "v": 9988471
    },
    "extended": false,
    "pullback_ok": false,
@@ -768,7 +768,7 @@
     "h": 44.8,
     "l": 43.5,
     "c": 43.65,
-    "v": 20845000
+    "v": 21030737
    },
    "extended": false,
    "pullback_ok": false,
@@ -786,7 +786,7 @@
    "signal": "swap_in",
    "signal_label": "換股候選",
    "swap": {
-    "status": "provisional",
+    "status": "confirmed",
     "streak": 3,
     "need": 3,
     "gap": 18.3,
@@ -857,7 +857,7 @@
     "h": 274.5,
     "l": 269.0,
     "c": 274.5,
-    "v": 12169000
+    "v": 12504764
    },
    "extended": true,
    "pullback_ok": false,
@@ -947,7 +947,7 @@
     "h": 72.9,
     "l": 70.9,
     "c": 71.5,
-    "v": 20104000
+    "v": 20285536
    },
    "extended": false,
    "pullback_ok": false,
@@ -972,7 +972,7 @@
    "score": 75.7,
    "components": {
     "rs": 74.0,
-    "mf": 87.3,
+    "mf": 87.4,
     "trend": 100.0,
     "rebound": 21.2,
     "risk": 15.0
@@ -1028,7 +1028,7 @@
     "h": 64.1,
     "l": 62.1,
     "c": 64.0,
-    "v": 15584000
+    "v": 15736081
    },
    "extended": false,
    "pullback_ok": true,
@@ -1110,7 +1110,7 @@
     "h": 76.4,
     "l": 74.1,
     "c": 75.0,
-    "v": 46325000
+    "v": 46535285
    },
    "extended": false,
    "pullback_ok": false,
@@ -1135,7 +1135,7 @@
    "score": 74.4,
    "components": {
     "rs": 67.5,
-    "mf": 80.3,
+    "mf": 80.2,
     "trend": 100.0,
     "rebound": 33.7,
     "risk": 9.5
@@ -1191,7 +1191,7 @@
     "h": 587.0,
     "l": 556.0,
     "c": 571.0,
-    "v": 3744000
+    "v": 3794193
    },
    "extended": false,
    "pullback_ok": false,
@@ -1271,7 +1271,7 @@
     "h": 29.5,
     "l": 28.7,
     "c": 29.05,
-    "v": 22055000
+    "v": 22278278
    },
    "extended": false,
    "pullback_ok": false,
@@ -1297,7 +1297,7 @@
    "score": 73.2,
    "components": {
     "rs": 68.8,
-    "mf": 87.6,
+    "mf": 87.5,
     "trend": 100.0,
     "rebound": 9.0,
     "risk": 6.9
@@ -1353,7 +1353,7 @@
     "h": 845.0,
     "l": 773.0,
     "c": 785.0,
-    "v": 4544000
+    "v": 4639137
    },
    "extended": false,
    "pullback_ok": false,
@@ -1433,7 +1433,7 @@
     "h": 55.9,
     "l": 53.8,
     "c": 54.1,
-    "v": 21891000
+    "v": 22028067
    },
    "extended": false,
    "pullback_ok": false,
@@ -1457,7 +1457,7 @@
    "score": 71.7,
    "components": {
     "rs": 81.8,
-    "mf": 68.9,
+    "mf": 68.8,
     "trend": 100.0,
     "rebound": 6.3,
     "risk": 9.9
@@ -1513,7 +1513,7 @@
     "h": 51.0,
     "l": 49.5,
     "c": 49.6,
-    "v": 11730000
+    "v": 11825009
    },
    "extended": false,
    "pullback_ok": false,
@@ -1594,7 +1594,7 @@
     "h": 117.5,
     "l": 114.5,
     "c": 116.0,
-    "v": 27611000
+    "v": 27714550
    },
    "extended": false,
    "pullback_ok": false,
@@ -1675,7 +1675,7 @@
     "h": 161.5,
     "l": 157.5,
     "c": 159.5,
-    "v": 9639000
+    "v": 9714169
    },
    "extended": true,
    "pullback_ok": false,
@@ -1758,7 +1758,7 @@
     "h": 60.3,
     "l": 58.5,
     "c": 59.6,
-    "v": 10103000
+    "v": 10168289
    },
    "extended": false,
    "pullback_ok": false,
@@ -1840,7 +1840,7 @@
     "h": 38.3,
     "l": 37.1,
     "c": 37.25,
-    "v": 34302000
+    "v": 34499292
    },
    "extended": false,
    "pullback_ok": false,
@@ -1863,7 +1863,7 @@
    "score": 68.6,
    "components": {
     "rs": 50.6,
-    "mf": 94.5,
+    "mf": 94.6,
     "trend": 100.0,
     "rebound": 0.0,
     "risk": 2.3
@@ -1919,7 +1919,7 @@
     "h": 81.9,
     "l": 80.1,
     "c": 80.6,
-    "v": 11733000
+    "v": 11890912
    },
    "extended": false,
    "pullback_ok": false,
@@ -1943,7 +1943,7 @@
    "score": 68.5,
    "components": {
     "rs": 58.4,
-    "mf": 81.5,
+    "mf": 81.4,
     "trend": 100.0,
     "rebound": 4.5,
     "risk": 0.7
@@ -1999,7 +1999,7 @@
     "h": 135.5,
     "l": 132.0,
     "c": 133.0,
-    "v": 9606000
+    "v": 9656790
    },
    "extended": false,
    "pullback_ok": false,
@@ -2020,10 +2020,10 @@
    "name": "眾達-KY",
    "yahoo": "4977.TW",
    "theme": "光通訊",
-   "score": 67.3,
+   "score": 67.4,
    "components": {
     "rs": 80.5,
-    "mf": 49.7,
+    "mf": 49.8,
     "trend": 100.0,
     "rebound": 31.8,
     "risk": 40.2
@@ -2079,13 +2079,13 @@
     "h": 189.0,
     "l": 166.0,
     "c": 183.0,
-    "v": 7513000
+    "v": 7644696
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 51.6,
-   "score_chg": 15.7,
+   "score_chg": 15.8,
    "reasons": [
     "相對大盤強勢",
     "多頭排列"
@@ -2100,10 +2100,10 @@
    "name": "雙鴻",
    "yahoo": "3324.TWO",
    "theme": "AI伺服器",
-   "score": 66.6,
+   "score": 66.7,
    "components": {
     "rs": 87.0,
-    "mf": 47.2,
+    "mf": 47.4,
     "trend": 60.0,
     "rebound": 70.0,
     "risk": 37.8
@@ -2159,13 +2159,13 @@
     "h": 1430.0,
     "l": 1280.0,
     "c": 1395.0,
-    "v": 4575000
+    "v": 4694647
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 48.9,
-   "score_chg": 17.7,
+   "score_chg": 17.8,
    "reasons": [
     "相對大盤強勢",
     "拉回止跌"
@@ -2183,7 +2183,7 @@
    "score": 66.3,
    "components": {
     "rs": 93.5,
-    "mf": 46.5,
+    "mf": 46.4,
     "trend": 80.0,
     "rebound": 26.9,
     "risk": 33.9
@@ -2239,7 +2239,7 @@
     "h": 1205.0,
     "l": 1170.0,
     "c": 1190.0,
-    "v": 1061000
+    "v": 1117899
    },
    "extended": false,
    "pullback_ok": false,
@@ -2261,10 +2261,10 @@
    "name": "鴻海",
    "yahoo": "2317.TW",
    "theme": "AI伺服器",
-   "score": 64.9,
+   "score": 65.0,
    "components": {
     "rs": 48.1,
-    "mf": 60.2,
+    "mf": 60.4,
     "trend": 80.0,
     "rebound": 70.0,
     "risk": 10.3
@@ -2320,13 +2320,13 @@
     "h": 252.0,
     "l": 242.5,
     "c": 251.0,
-    "v": 48224000
+    "v": 49704545
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 51.1,
-   "score_chg": 13.8,
+   "score_chg": 13.9,
    "reasons": [
     "多頭排列",
     "拉回止跌"
@@ -2400,7 +2400,7 @@
     "h": 549.0,
     "l": 531.0,
     "c": 536.0,
-    "v": 283000
+    "v": 287258
    },
    "extended": false,
    "pullback_ok": false,
@@ -2480,7 +2480,7 @@
     "h": 46.75,
     "l": 45.6,
     "c": 45.8,
-    "v": 33917000
+    "v": 34120026
    },
    "extended": false,
    "pullback_ok": false,
@@ -2560,7 +2560,7 @@
     "h": 228.5,
     "l": 223.5,
     "c": 225.5,
-    "v": 1381000
+    "v": 1401278
    },
    "extended": false,
    "pullback_ok": false,
@@ -2641,7 +2641,7 @@
     "h": 462.5,
     "l": 424.5,
     "c": 456.5,
-    "v": 34426000
+    "v": 34842480
    },
    "extended": false,
    "pullback_ok": false,
@@ -2667,7 +2667,7 @@
    "score": 59.6,
    "components": {
     "rs": 72.7,
-    "mf": 32.3,
+    "mf": 32.5,
     "trend": 60.0,
     "rebound": 70.0,
     "risk": 27.9
@@ -2723,7 +2723,7 @@
     "h": 692.0,
     "l": 645.0,
     "c": 674.0,
-    "v": 24145000
+    "v": 24596126
    },
    "extended": false,
    "pullback_ok": false,
@@ -2748,7 +2748,7 @@
    "score": 59.4,
    "components": {
     "rs": 100.0,
-    "mf": 11.4,
+    "mf": 11.3,
     "trend": 60.0,
     "rebound": 55.0,
     "risk": 37.0
@@ -2804,7 +2804,7 @@
     "h": 7575.0,
     "l": 7115.0,
     "c": 7285.0,
-    "v": 2200000
+    "v": 2295372
    },
    "extended": false,
    "pullback_ok": false,
@@ -2886,7 +2886,7 @@
     "h": 38.0,
     "l": 35.3,
     "c": 37.6,
-    "v": 24236000
+    "v": 24342364
    },
    "extended": false,
    "pullback_ok": false,
@@ -2968,7 +2968,7 @@
     "h": 26.0,
     "l": 25.7,
     "c": 25.85,
-    "v": 9322000
+    "v": 9345254
    },
    "extended": false,
    "pullback_ok": false,
@@ -3047,7 +3047,7 @@
     "h": 185.0,
     "l": 179.5,
     "c": 181.5,
-    "v": 18299000
+    "v": 18557198
    },
    "extended": false,
    "pullback_ok": false,
@@ -3126,7 +3126,7 @@
     "h": 19.4,
     "l": 19.0,
     "c": 19.4,
-    "v": 29550000
+    "v": 29651026
    },
    "extended": false,
    "pullback_ok": false,
@@ -3151,7 +3151,7 @@
    "score": 53.1,
    "components": {
     "rs": 84.4,
-    "mf": 19.1,
+    "mf": 18.9,
     "trend": 40.0,
     "rebound": 40.0,
     "risk": 10.1
@@ -3207,7 +3207,7 @@
     "h": 693.0,
     "l": 649.0,
     "c": 655.0,
-    "v": 2984000
+    "v": 3065613
    },
    "extended": false,
    "pullback_ok": false,
@@ -3234,7 +3234,7 @@
    "score": 52.8,
    "components": {
     "rs": 76.6,
-    "mf": 41.8,
+    "mf": 42.0,
     "trend": 40.0,
     "rebound": 54.1,
     "risk": 67.5
@@ -3290,7 +3290,7 @@
     "h": 2465.0,
     "l": 2290.0,
     "c": 2415.0,
-    "v": 3311000
+    "v": 3424225
    },
    "extended": false,
    "pullback_ok": false,
@@ -3311,10 +3311,10 @@
    "name": "技嘉",
    "yahoo": "2376.TW",
    "theme": "AI伺服器",
-   "score": 51.6,
+   "score": 51.7,
    "components": {
     "rs": 53.2,
-    "mf": 27.8,
+    "mf": 27.9,
     "trend": 40.0,
     "rebound": 85.0,
     "risk": 20.5
@@ -3370,13 +3370,13 @@
     "h": 342.0,
     "l": 331.0,
     "c": 339.5,
-    "v": 3606000
+    "v": 3649016
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 43.0,
-   "score_chg": 8.6,
+   "score_chg": 8.7,
    "reasons": [
     "資金流出",
     "拉回止跌",
@@ -3451,7 +3451,7 @@
     "h": 209.0,
     "l": 196.5,
     "c": 205.0,
-    "v": 15296000
+    "v": 15493652
    },
    "extended": false,
    "pullback_ok": false,
@@ -3476,7 +3476,7 @@
    "score": 47.8,
    "components": {
     "rs": 22.1,
-    "mf": 69.4,
+    "mf": 69.3,
     "trend": 60.0,
     "rebound": 18.3,
     "risk": 8.7
@@ -3532,7 +3532,7 @@
     "h": 70.4,
     "l": 68.9,
     "c": 68.9,
-    "v": 776000
+    "v": 785718
    },
    "extended": false,
    "pullback_ok": false,
@@ -3553,10 +3553,10 @@
    "name": "奇鋐",
    "yahoo": "3017.TW",
    "theme": "AI伺服器",
-   "score": 46.8,
+   "score": 46.9,
    "components": {
     "rs": 59.7,
-    "mf": 31.2,
+    "mf": 31.3,
     "trend": 40.0,
     "rebound": 40.0,
     "risk": 28.9
@@ -3612,13 +3612,13 @@
     "h": 3105.0,
     "l": 2980.0,
     "c": 3060.0,
-    "v": 1923000
+    "v": 1998185
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 47.3,
-   "score_chg": -0.5,
+   "score_chg": -0.4,
    "reasons": [
     "資金流出",
     "跌破 50 日線"
@@ -3636,7 +3636,7 @@
    "score": 46.7,
    "components": {
     "rs": 49.4,
-    "mf": 43.8,
+    "mf": 43.9,
     "trend": 40.0,
     "rebound": 55.0,
     "risk": 53.2
@@ -3692,7 +3692,7 @@
     "h": 1080.0,
     "l": 984.0,
     "c": 1060.0,
-    "v": 7291000
+    "v": 7427733
    },
    "extended": false,
    "pullback_ok": false,
@@ -3715,7 +3715,7 @@
    "score": 46.7,
    "components": {
     "rs": 61.0,
-    "mf": 16.0,
+    "mf": 16.2,
     "trend": 40.0,
     "rebound": 72.3,
     "risk": 44.7
@@ -3771,7 +3771,7 @@
     "h": 1020.0,
     "l": 940.0,
     "c": 997.0,
-    "v": 20360000
+    "v": 20722005
    },
    "extended": false,
    "pullback_ok": false,
@@ -3793,10 +3793,10 @@
    "name": "聯發科",
    "yahoo": "2454.TW",
    "theme": "半導體",
-   "score": 45.7,
+   "score": 45.8,
    "components": {
     "rs": 66.2,
-    "mf": 3.4,
+    "mf": 3.7,
     "trend": 40.0,
     "rebound": 72.0,
     "risk": 38.0
@@ -3852,13 +3852,13 @@
     "h": 4070.0,
     "l": 3790.0,
     "c": 3970.0,
-    "v": 11663000
+    "v": 12208320
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 35.5,
-   "score_chg": 10.2,
+   "score_chg": 10.3,
    "reasons": [
     "資金流出",
     "拉回止跌",
@@ -3933,7 +3933,7 @@
     "h": 323.0,
     "l": 314.0,
     "c": 318.0,
-    "v": 7973000
+    "v": 8102108
    },
    "extended": false,
    "pullback_ok": false,
@@ -4012,7 +4012,7 @@
     "h": 9655.0,
     "l": 9270.0,
     "c": 9420.0,
-    "v": 352000
+    "v": 377093
    },
    "extended": false,
    "pullback_ok": false,
@@ -4037,7 +4037,7 @@
    "score": 42.6,
    "components": {
     "rs": 31.2,
-    "mf": 40.5,
+    "mf": 40.6,
     "trend": 20.0,
     "rebound": 85.0,
     "risk": 36.1
@@ -4093,7 +4093,7 @@
     "h": 223.0,
     "l": 207.0,
     "c": 219.5,
-    "v": 3807000
+    "v": 3872131
    },
    "extended": false,
    "pullback_ok": false,
@@ -4115,10 +4115,10 @@
    "name": "台光電",
    "yahoo": "2383.TW",
    "theme": "AI伺服器",
-   "score": 42.1,
+   "score": 42.2,
    "components": {
     "rs": 37.7,
-    "mf": 29.6,
+    "mf": 29.9,
     "trend": 40.0,
     "rebound": 70.2,
     "risk": 51.4
@@ -4174,13 +4174,13 @@
     "h": 4835.0,
     "l": 4500.0,
     "c": 4705.0,
-    "v": 2928000
+    "v": 3056594
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 28.6,
-   "score_chg": 13.5,
+   "score_chg": 13.6,
    "reasons": [
     "資金流出",
     "拉回止跌",
@@ -4196,7 +4196,7 @@
    "name": "聯鈞",
    "yahoo": "3450.TW",
    "theme": "光通訊",
-   "score": 39.2,
+   "score": 39.3,
    "components": {
     "rs": 54.5,
     "mf": 15.3,
@@ -4255,13 +4255,13 @@
     "h": 422.0,
     "l": 392.0,
     "c": 415.0,
-    "v": 3893000
+    "v": 3951856
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 27.7,
-   "score_chg": 11.5,
+   "score_chg": 11.6,
    "reasons": [
     "資金流出",
     "跌破 50 日線"
@@ -4276,10 +4276,10 @@
    "name": "台積電",
    "yahoo": "2330.TW",
    "theme": "半導體",
-   "score": 37.9,
+   "score": 37.8,
    "components": {
     "rs": 32.5,
-    "mf": 18.6,
+    "mf": 18.4,
     "trend": 40.0,
     "rebound": 40.0,
     "risk": 5.4
@@ -4335,100 +4335,19 @@
     "h": 2345.0,
     "l": 2310.0,
     "c": 2330.0,
-    "v": 34199000
+    "v": 38832588
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 39.8,
-   "score_chg": -1.9,
+   "score_chg": -2.0,
    "reasons": [
     "資金流出",
     "跌破 50 日線"
    ],
    "alerts": [
     "跌破支撐區"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "5274",
-   "name": "信驊",
-   "yahoo": "5274.TWO",
-   "theme": "半導體",
-   "score": 37.5,
-   "components": {
-    "rs": 33.8,
-    "mf": 39.2,
-    "trend": 40.0,
-    "rebound": 26.0,
-    "risk": 43.3
-   },
-   "price": 15625.0,
-   "prev_close": 15970.0,
-   "chg_1d_pct": -2.16,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-02",
-   "spark": [
-    18250.0,
-    18275.0,
-    19290.0,
-    19820.0,
-    20905.0,
-    20280.0,
-    19835.0,
-    19395.0,
-    18750.0,
-    19040.0,
-    18840.0,
-    19520.0,
-    18985.0,
-    17750.0,
-    17485.0,
-    17695.0,
-    17350.0,
-    17500.0,
-    15945.0,
-    16480.0,
-    15980.0,
-    15900.0,
-    16515.0,
-    16010.0,
-    16010.0,
-    16015.0,
-    17295.0,
-    16980.0,
-    15970.0,
-    15625.0
-   ],
-   "exit": {
-    "atr": 961.43,
-    "trail": 16635.71,
-    "hi22": 19520.0,
-    "sma50": 17462.3
-   },
-   "bar": {
-    "t": "2026-11-02",
-    "o": 15795.0,
-    "h": 16165.0,
-    "l": 15155.0,
-    "c": 15625.0,
-    "v": 246000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 43.5,
-   "score_chg": -6.0,
-   "reasons": [
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "跌破上升趨勢線"
    ],
    "signal": "none",
    "signal_label": "未達標",
@@ -4442,7 +4361,7 @@
    "score": 37.5,
    "components": {
     "rs": 29.9,
-    "mf": 14.6,
+    "mf": 14.7,
     "trend": 40.0,
     "rebound": 55.0,
     "risk": 14.2
@@ -4498,7 +4417,7 @@
     "h": 47.1,
     "l": 45.35,
     "c": 46.8,
-    "v": 698000
+    "v": 710748
    },
    "extended": false,
    "pullback_ok": false,
@@ -4515,14 +4434,95 @@
    "swap": null
   },
   {
+   "ticker": "5274",
+   "name": "信驊",
+   "yahoo": "5274.TWO",
+   "theme": "半導體",
+   "score": 37.4,
+   "components": {
+    "rs": 33.8,
+    "mf": 38.7,
+    "trend": 40.0,
+    "rebound": 26.0,
+    "risk": 43.3
+   },
+   "price": 15625.0,
+   "prev_close": 15970.0,
+   "chg_1d_pct": -2.16,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-02",
+   "spark": [
+    18250.0,
+    18275.0,
+    19290.0,
+    19820.0,
+    20905.0,
+    20280.0,
+    19835.0,
+    19395.0,
+    18750.0,
+    19040.0,
+    18840.0,
+    19520.0,
+    18985.0,
+    17750.0,
+    17485.0,
+    17695.0,
+    17350.0,
+    17500.0,
+    15945.0,
+    16480.0,
+    15980.0,
+    15900.0,
+    16515.0,
+    16010.0,
+    16010.0,
+    16015.0,
+    17295.0,
+    16980.0,
+    15970.0,
+    15625.0
+   ],
+   "exit": {
+    "atr": 961.43,
+    "trail": 16635.71,
+    "hi22": 19520.0,
+    "sma50": 17462.3
+   },
+   "bar": {
+    "t": "2026-11-02",
+    "o": 15795.0,
+    "h": 16165.0,
+    "l": 15155.0,
+    "c": 15625.0,
+    "v": 278934
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 43.5,
+   "score_chg": -6.1,
+   "reasons": [
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "跌破上升趨勢線"
+   ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "6669",
    "name": "緯穎",
    "yahoo": "6669.TW",
    "theme": "AI伺服器",
-   "score": 37.3,
+   "score": 37.4,
    "components": {
     "rs": 39.0,
-    "mf": 15.4,
+    "mf": 15.7,
     "trend": 40.0,
     "rebound": 57.3,
     "risk": 48.5
@@ -4578,13 +4578,13 @@
     "h": 1830.0,
     "l": 1765.0,
     "c": 1820.0,
-    "v": 3534000
+    "v": 3693513
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 26.8,
-   "score_chg": 10.5,
+   "score_chg": 10.6,
    "reasons": [
     "資金流出",
     "跌破 50 日線"
@@ -4658,7 +4658,7 @@
     "h": 155.5,
     "l": 151.5,
     "c": 154.0,
-    "v": 1283000
+    "v": 1331590
    },
    "extended": false,
    "pullback_ok": false,
@@ -4685,7 +4685,7 @@
    "score": 35.5,
    "components": {
     "rs": 35.1,
-    "mf": 32.7,
+    "mf": 32.6,
     "trend": 20.0,
     "rebound": 40.0,
     "risk": 32.1
@@ -4741,7 +4741,7 @@
     "h": 1905.0,
     "l": 1805.0,
     "c": 1875.0,
-    "v": 2527000
+    "v": 2688582
    },
    "extended": false,
    "pullback_ok": false,
@@ -4768,7 +4768,7 @@
    "score": 35.4,
    "components": {
     "rs": 46.8,
-    "mf": 26.7,
+    "mf": 26.9,
     "trend": 20.0,
     "rebound": 43.8,
     "risk": 58.8
@@ -4824,7 +4824,7 @@
     "h": 1310.0,
     "l": 1215.0,
     "c": 1300.0,
-    "v": 932000
+    "v": 967711
    },
    "extended": false,
    "pullback_ok": false,
@@ -4849,7 +4849,7 @@
    "score": 30.7,
    "components": {
     "rs": 19.5,
-    "mf": 15.4,
+    "mf": 15.5,
     "trend": 20.0,
     "rebound": 74.1,
     "risk": 41.0
@@ -4905,7 +4905,7 @@
     "h": 147.5,
     "l": 141.0,
     "c": 145.0,
-    "v": 16460000
+    "v": 16597816
    },
    "extended": false,
    "pullback_ok": false,
@@ -4988,7 +4988,7 @@
     "h": 57.1,
     "l": 55.9,
     "c": 56.3,
-    "v": 538000
+    "v": 544093
    },
    "extended": false,
    "pullback_ok": false,
@@ -5070,7 +5070,7 @@
     "h": 111.0,
     "l": 107.5,
     "c": 110.0,
-    "v": 129476000
+    "v": 131534402
    },
    "extended": false,
    "pullback_ok": false,
@@ -5094,7 +5094,7 @@
    "score": 27.5,
    "components": {
     "rs": 26.0,
-    "mf": 20.5,
+    "mf": 20.4,
     "trend": 20.0,
     "rebound": 32.7,
     "risk": 43.3
@@ -5150,7 +5150,7 @@
     "h": 3465.0,
     "l": 3330.0,
     "c": 3395.0,
-    "v": 1125000
+    "v": 1200588
    },
    "extended": false,
    "pullback_ok": false,
@@ -5232,7 +5232,7 @@
     "h": 95.3,
     "l": 92.0,
     "c": 93.6,
-    "v": 918000
+    "v": 942314
    },
    "extended": false,
    "pullback_ok": false,
@@ -5315,7 +5315,7 @@
     "h": 770.0,
     "l": 731.0,
     "c": 760.0,
-    "v": 10013000
+    "v": 10390523
    },
    "extended": false,
    "pullback_ok": false,
@@ -5396,7 +5396,7 @@
     "h": 50.9,
     "l": 49.3,
     "c": 50.2,
-    "v": 53000
+    "v": 54244
    },
    "extended": false,
    "pullback_ok": false,
@@ -5423,7 +5423,7 @@
    "score": 24.6,
    "components": {
     "rs": 20.8,
-    "mf": 14.0,
+    "mf": 14.1,
     "trend": 0.0,
     "rebound": 40.0,
     "risk": 11.2
@@ -5479,7 +5479,7 @@
     "h": 188.5,
     "l": 184.5,
     "c": 185.5,
-    "v": 622000
+    "v": 642324
    },
    "extended": false,
    "pullback_ok": false,
@@ -5505,7 +5505,7 @@
    "score": 24.1,
    "components": {
     "rs": 15.6,
-    "mf": 26.8,
+    "mf": 27.0,
     "trend": 0.0,
     "rebound": 57.5,
     "risk": 59.4
@@ -5561,7 +5561,7 @@
     "h": 1280.0,
     "l": 1195.0,
     "c": 1265.0,
-    "v": 1498000
+    "v": 1547712
    },
    "extended": false,
    "pullback_ok": false,
@@ -5587,7 +5587,7 @@
    "score": 22.7,
    "components": {
     "rs": 13.0,
-    "mf": 16.4,
+    "mf": 16.3,
     "trend": 0.0,
     "rebound": 40.0,
     "risk": 12.8
@@ -5643,7 +5643,7 @@
     "h": 169.0,
     "l": 165.0,
     "c": 165.0,
-    "v": 681000
+    "v": 716747
    },
    "extended": false,
    "pullback_ok": false,
@@ -5669,7 +5669,7 @@
    "score": 19.4,
    "components": {
     "rs": 10.4,
-    "mf": 12.2,
+    "mf": 12.5,
     "trend": 0.0,
     "rebound": 48.9,
     "risk": 41.4
@@ -5725,7 +5725,7 @@
     "h": 575.0,
     "l": 545.0,
     "c": 555.0,
-    "v": 2259000
+    "v": 2326425
    },
    "extended": false,
    "pullback_ok": false,
@@ -5748,10 +5748,10 @@
    "name": "台達電",
    "yahoo": "2308.TW",
    "theme": "重電",
-   "score": 18.9,
+   "score": 19.0,
    "components": {
     "rs": 3.9,
-    "mf": 8.0,
+    "mf": 8.4,
     "trend": 20.0,
     "rebound": 47.9,
     "risk": 54.4
@@ -5807,13 +5807,13 @@
     "h": 1365.0,
     "l": 1255.0,
     "c": 1355.0,
-    "v": 20961000
+    "v": 21880823
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 11.1,
-   "score_chg": 7.8,
+   "score_chg": 7.9,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -5828,88 +5828,6 @@
    "swap": null
   },
   {
-   "ticker": "6472",
-   "name": "保瑞",
-   "yahoo": "6472.TW",
-   "theme": "生技醫療",
-   "score": 18.5,
-   "components": {
-    "rs": 14.3,
-    "mf": 4.9,
-    "trend": 0.0,
-    "rebound": 34.0,
-    "risk": 21.6
-   },
-   "price": 365.5,
-   "prev_close": 379.0,
-   "chg_1d_pct": -3.56,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-02",
-   "spark": [
-    412.0,
-    425.0,
-    444.5,
-    420.5,
-    420.0,
-    436.0,
-    421.5,
-    422.5,
-    424.0,
-    429.5,
-    420.5,
-    420.5,
-    416.5,
-    428.0,
-    421.0,
-    422.5,
-    420.0,
-    424.5,
-    424.0,
-    425.5,
-    412.5,
-    413.0,
-    413.5,
-    403.0,
-    403.0,
-    398.5,
-    396.0,
-    392.0,
-    379.0,
-    365.5
-   ],
-   "exit": {
-    "atr": 10.71,
-    "trail": 397.36,
-    "hi22": 429.5,
-    "sma50": 419.45
-   },
-   "bar": {
-    "t": "2026-11-02",
-    "o": 376.0,
-    "h": 379.5,
-    "l": 364.0,
-    "c": 365.5,
-    "v": 708000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 22.8,
-   "score_chg": -4.3,
-   "reasons": [
-    "相對大盤弱勢",
-    "資金流出",
-    "空頭排列",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "4979",
    "name": "華星光",
    "yahoo": "4979.TWO",
@@ -5917,7 +5835,7 @@
    "score": 18.4,
    "components": {
     "rs": 18.2,
-    "mf": 16.3,
+    "mf": 16.2,
     "trend": 20.0,
     "rebound": 7.3,
     "risk": 62.1
@@ -5973,7 +5891,7 @@
     "h": 450.0,
     "l": 423.0,
     "c": 426.0,
-    "v": 7668000
+    "v": 7819460
    },
    "extended": false,
    "pullback_ok": false,
@@ -5989,6 +5907,88 @@
    "alerts": [
     "跌破支撐區"
    ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "6472",
+   "name": "保瑞",
+   "yahoo": "6472.TW",
+   "theme": "生技醫療",
+   "score": 18.4,
+   "components": {
+    "rs": 14.3,
+    "mf": 4.7,
+    "trend": 0.0,
+    "rebound": 34.0,
+    "risk": 21.6
+   },
+   "price": 365.5,
+   "prev_close": 379.0,
+   "chg_1d_pct": -3.56,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-02",
+   "spark": [
+    412.0,
+    425.0,
+    444.5,
+    420.5,
+    420.0,
+    436.0,
+    421.5,
+    422.5,
+    424.0,
+    429.5,
+    420.5,
+    420.5,
+    416.5,
+    428.0,
+    421.0,
+    422.5,
+    420.0,
+    424.5,
+    424.0,
+    425.5,
+    412.5,
+    413.0,
+    413.5,
+    403.0,
+    403.0,
+    398.5,
+    396.0,
+    392.0,
+    379.0,
+    365.5
+   ],
+   "exit": {
+    "atr": 10.71,
+    "trail": 397.36,
+    "hi22": 429.5,
+    "sma50": 419.45
+   },
+   "bar": {
+    "t": "2026-11-02",
+    "o": 376.0,
+    "h": 379.5,
+    "l": 364.0,
+    "c": 365.5,
+    "v": 777168
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 22.8,
+   "score_chg": -4.4,
+   "reasons": [
+    "相對大盤弱勢",
+    "資金流出",
+    "空頭排列",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
    "signal": "none",
    "signal_label": "未達標",
    "swap": null
@@ -6057,7 +6057,7 @@
     "h": 1635.0,
     "l": 1555.0,
     "c": 1615.0,
-    "v": 3525000
+    "v": 3645165
    },
    "extended": false,
    "pullback_ok": false,
@@ -6139,7 +6139,7 @@
     "h": 517.0,
     "l": 486.0,
     "c": 510.0,
-    "v": 1245000
+    "v": 1284899
    },
    "extended": false,
    "pullback_ok": false,
@@ -6165,7 +6165,7 @@
    "score": 14.2,
    "components": {
     "rs": 6.5,
-    "mf": 12.5,
+    "mf": 12.4,
     "trend": 0.0,
     "rebound": 19.9,
     "risk": 38.6
@@ -6221,7 +6221,7 @@
     "h": 2450.0,
     "l": 2345.0,
     "c": 2395.0,
-    "v": 1587000
+    "v": 1632174
    },
    "extended": false,
    "pullback_ok": false,
@@ -6234,7 +6234,9 @@
     "空頭排列",
     "跌破 50 日線"
    ],
-   "alerts": [],
+   "alerts": [
+    "爆量下跌"
+   ],
    "signal": "none",
    "signal_label": "未達標",
    "swap": null
@@ -6303,7 +6305,7 @@
     "h": 8.98,
     "l": 8.8,
     "c": 8.8,
-    "v": 111000
+    "v": 113534
    },
    "extended": false,
    "pullback_ok": false,
@@ -6385,7 +6387,7 @@
     "h": 4625.0,
     "l": 4350.0,
     "c": 4485.0,
-    "v": 421000
+    "v": 450546
    },
    "extended": false,
    "pullback_ok": false,
@@ -6467,7 +6469,7 @@
     "h": 464.5,
     "l": 439.0,
     "c": 458.0,
-    "v": 3839000
+    "v": 3935951
    },
    "extended": false,
    "pullback_ok": false,
@@ -6697,7 +6699,7 @@
       "h": 462.5,
       "l": 424.5,
       "c": 456.5,
-      "v": 34426000
+      "v": 34842480
      },
      "extended": false,
      "pullback_ok": false,
@@ -6706,7 +6708,7 @@
       "depth": 100.0,
       "oversold": 47.0,
       "reversal": 40.0,
-      "mfturn": 34.6,
+      "mfturn": 34.4,
       "risk": 44.2
      },
      "dd126": 0.159,
@@ -6779,23 +6781,23 @@
       "h": 1905.0,
       "l": 1805.0,
       "c": 1875.0,
-      "v": 2527000
+      "v": 2688582
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 57.9,
+     "score": 57.8,
      "components": {
       "depth": 100.0,
       "oversold": 36.4,
       "reversal": 0.0,
-      "mfturn": 84.9,
+      "mfturn": 83.9,
       "risk": 32.1
      },
      "dd126": 0.344,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 66.4,
-     "score_chg": -8.5,
+     "score_chg": -8.6,
      "reasons": [
       "距半年高點 −34%",
       "資金回流"
@@ -6864,23 +6866,23 @@
       "h": 342.0,
       "l": 331.0,
       "c": 339.5,
-      "v": 3606000
+      "v": 3649016
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 46.9,
+     "score": 47.0,
      "components": {
       "depth": 100.0,
       "oversold": 5.8,
       "reversal": 0.0,
-      "mfturn": 45.9,
+      "mfturn": 46.0,
       "risk": 20.5
      },
      "dd126": 0.146,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 46.7,
-     "score_chg": 0.2,
+     "score_chg": 0.3,
      "reasons": [
       "距半年高點 −15%"
      ],
@@ -6946,7 +6948,7 @@
       "h": 60.3,
       "l": 58.5,
       "c": 59.6,
-      "v": 10103000
+      "v": 10168289
      },
      "extended": false,
      "pullback_ok": false,
@@ -7030,7 +7032,7 @@
       "h": 50.9,
       "l": 49.3,
       "c": 50.2,
-      "v": 53000
+      "v": 54244
      },
      "extended": false,
      "pullback_ok": false,
@@ -7118,7 +7120,7 @@
       "h": 38.0,
       "l": 35.3,
       "c": 37.6,
-      "v": 24236000
+      "v": 24342364
      },
      "extended": false,
      "pullback_ok": false,
@@ -7208,7 +7210,7 @@
       "h": 379.5,
       "l": 364.0,
       "c": 365.5,
-      "v": 708000
+      "v": 777168
      },
      "extended": false,
      "pullback_ok": false,
@@ -7297,7 +7299,7 @@
       "h": 1430.0,
       "l": 1280.0,
       "c": 1395.0,
-      "v": 4575000
+      "v": 4694647
      },
      "extended": false,
      "pullback_ok": false,
@@ -7306,7 +7308,7 @@
       "depth": 100.0,
       "oversold": 0.0,
       "reversal": 70.0,
-      "mfturn": 60.6,
+      "mfturn": 61.2,
       "risk": 37.8
      },
      "dd126": 0.184,
@@ -7386,7 +7388,7 @@
       "h": 155.5,
       "l": 151.5,
       "c": 154.0,
-      "v": 1283000
+      "v": 1331590
      },
      "extended": false,
      "pullback_ok": false,
@@ -7474,7 +7476,7 @@
       "h": 575.0,
       "l": 545.0,
       "c": 555.0,
-      "v": 2259000
+      "v": 2326425
      },
      "extended": false,
      "pullback_ok": false,
@@ -7499,7 +7501,7 @@
      "signal": "watch",
      "signal_label": "觀察",
      "swap": {
-      "status": "provisional",
+      "status": "confirmed",
       "streak": 3,
       "need": 3,
       "gap": 19.7,
@@ -7562,7 +7564,7 @@
       "h": 95.3,
       "l": 92.0,
       "c": 93.6,
-      "v": 918000
+      "v": 942314
      },
      "extended": false,
      "pullback_ok": false,
@@ -7650,25 +7652,108 @@
       "h": 4070.0,
       "l": 3790.0,
       "c": 3970.0,
-      "v": 11663000
+      "v": 12208320
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 54.1,
+     "score": 54.3,
      "components": {
       "depth": 100.0,
       "oversold": 49.0,
       "reversal": 0.0,
-      "mfturn": 39.8,
+      "mfturn": 41.6,
       "risk": 38.0
      },
      "dd126": 0.249,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 48.6,
-     "score_chg": 5.5,
+     "score_chg": 5.7,
      "reasons": [
       "距半年高點 −25%"
+     ],
+     "alerts": [],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
+     "ticker": "1795",
+     "name": "美時",
+     "yahoo": "1795.TW",
+     "theme": "生技醫療",
+     "price": 165.0,
+     "prev_close": 167.5,
+     "chg_1d_pct": -1.49,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-02",
+     "spark": [
+      178.0,
+      180.0,
+      180.0,
+      178.0,
+      176.5,
+      177.5,
+      175.5,
+      177.5,
+      179.0,
+      177.0,
+      176.0,
+      177.5,
+      176.0,
+      182.5,
+      180.5,
+      183.5,
+      178.0,
+      180.0,
+      180.0,
+      181.0,
+      176.0,
+      175.0,
+      176.0,
+      172.5,
+      172.5,
+      173.5,
+      174.0,
+      172.5,
+      167.5,
+      165.0
+     ],
+     "exit": {
+      "atr": 3.96,
+      "trail": 171.61,
+      "hi22": 183.5,
+      "sma50": 179.83
+     },
+     "bar": {
+      "t": "2026-11-02",
+      "o": 166.5,
+      "h": 169.0,
+      "l": 165.0,
+      "c": 165.0,
+      "v": 716747
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 54.1,
+     "components": {
+      "depth": 100.0,
+      "oversold": 61.7,
+      "reversal": 0.0,
+      "mfturn": 0.0,
+      "risk": 12.8
+     },
+     "dd126": 0.284,
+     "new_low": true,
+     "entry_ok": false,
+     "score_prev": 50.0,
+     "score_chg": 4.1,
+     "reasons": [
+      "距半年高點 −28%",
+      "超賣",
+      "創 20 日新低"
      ],
      "alerts": [],
      "signal": "none",
@@ -7731,23 +7816,23 @@
       "h": 16165.0,
       "l": 15155.0,
       "c": 15625.0,
-      "v": 246000
+      "v": 278934
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 54.1,
+     "score": 53.8,
      "components": {
       "depth": 100.0,
       "oversold": 18.4,
       "reversal": 0.0,
-      "mfturn": 94.5,
+      "mfturn": 92.6,
       "risk": 43.3
      },
      "dd126": 0.253,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 61.7,
-     "score_chg": -7.6,
+     "score_chg": -7.9,
      "reasons": [
       "距半年高點 −25%",
       "資金回流"
@@ -7755,89 +7840,6 @@
      "alerts": [
       "跌破上升趨勢線"
      ],
-     "signal": "none",
-     "signal_label": "未達標",
-     "swap": null
-    },
-    {
-     "ticker": "1795",
-     "name": "美時",
-     "yahoo": "1795.TW",
-     "theme": "生技醫療",
-     "price": 165.0,
-     "prev_close": 167.5,
-     "chg_1d_pct": -1.49,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-02",
-     "spark": [
-      178.0,
-      180.0,
-      180.0,
-      178.0,
-      176.5,
-      177.5,
-      175.5,
-      177.5,
-      179.0,
-      177.0,
-      176.0,
-      177.5,
-      176.0,
-      182.5,
-      180.5,
-      183.5,
-      178.0,
-      180.0,
-      180.0,
-      181.0,
-      176.0,
-      175.0,
-      176.0,
-      172.5,
-      172.5,
-      173.5,
-      174.0,
-      172.5,
-      167.5,
-      165.0
-     ],
-     "exit": {
-      "atr": 3.96,
-      "trail": 171.61,
-      "hi22": 183.5,
-      "sma50": 179.83
-     },
-     "bar": {
-      "t": "2026-11-02",
-      "o": 166.5,
-      "h": 169.0,
-      "l": 165.0,
-      "c": 165.0,
-      "v": 681000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 54.1,
-     "components": {
-      "depth": 100.0,
-      "oversold": 61.7,
-      "reversal": 0.0,
-      "mfturn": 0.0,
-      "risk": 12.8
-     },
-     "dd126": 0.284,
-     "new_low": true,
-     "entry_ok": false,
-     "score_prev": 50.0,
-     "score_chg": 4.1,
-     "reasons": [
-      "距半年高點 −28%",
-      "超賣",
-      "創 20 日新低"
-     ],
-     "alerts": [],
      "signal": "none",
      "signal_label": "未達標",
      "swap": null
@@ -7898,7 +7900,7 @@
       "h": 111.0,
       "l": 107.5,
       "c": 110.0,
-      "v": 129476000
+      "v": 131534402
      },
      "extended": false,
      "pullback_ok": false,
@@ -7980,7 +7982,7 @@
       "h": 189.0,
       "l": 166.0,
       "c": 183.0,
-      "v": 7513000
+      "v": 7644696
      },
      "extended": false,
      "pullback_ok": false,
@@ -8062,7 +8064,7 @@
       "h": 223.0,
       "l": 207.0,
       "c": 219.5,
-      "v": 3807000
+      "v": 3872131
      },
      "extended": false,
      "pullback_ok": false,
@@ -8143,7 +8145,7 @@
       "h": 188.5,
       "l": 184.5,
       "c": 185.5,
-      "v": 622000
+      "v": 642324
      },
      "extended": false,
      "pullback_ok": false,
@@ -8224,7 +8226,7 @@
       "h": 692.0,
       "l": 645.0,
       "c": 674.0,
-      "v": 24145000
+      "v": 24596126
      },
      "extended": false,
      "pullback_ok": false,
@@ -8305,7 +8307,7 @@
       "h": 57.1,
       "l": 55.9,
       "c": 56.3,
-      "v": 538000
+      "v": 544093
      },
      "extended": false,
      "pullback_ok": false,
@@ -8387,7 +8389,7 @@
       "h": 252.0,
       "l": 242.5,
       "c": 251.0,
-      "v": 48224000
+      "v": 49704545
      },
      "extended": false,
      "pullback_ok": false,
@@ -8468,7 +8470,7 @@
       "h": 323.0,
       "l": 314.0,
       "c": 318.0,
-      "v": 7973000
+      "v": 8102108
      },
      "extended": false,
      "pullback_ok": false,
@@ -8549,7 +8551,7 @@
       "h": 47.1,
       "l": 45.35,
       "c": 46.8,
-      "v": 698000
+      "v": 710748
      },
      "extended": false,
      "pullback_ok": false,
@@ -8630,7 +8632,7 @@
       "h": 147.5,
       "l": 141.0,
       "c": 145.0,
-      "v": 16460000
+      "v": 16597816
      },
      "extended": false,
      "pullback_ok": false,
@@ -8711,7 +8713,7 @@
       "h": 9655.0,
       "l": 9270.0,
       "c": 9420.0,
-      "v": 352000
+      "v": 377093
      },
      "extended": false,
      "pullback_ok": false,
@@ -8792,7 +8794,7 @@
       "h": 1830.0,
       "l": 1765.0,
       "c": 1820.0,
-      "v": 3534000
+      "v": 3693513
      },
      "extended": false,
      "pullback_ok": false,
@@ -8873,7 +8875,7 @@
       "h": 1080.0,
       "l": 984.0,
       "c": 1060.0,
-      "v": 7291000
+      "v": 7427733
      },
      "extended": false,
      "pullback_ok": false,
@@ -8954,7 +8956,7 @@
       "h": 693.0,
       "l": 649.0,
       "c": 655.0,
-      "v": 2984000
+      "v": 3065613
      },
      "extended": false,
      "pullback_ok": false,
@@ -9038,7 +9040,7 @@
       "h": 422.0,
       "l": 392.0,
       "c": 415.0,
-      "v": 3893000
+      "v": 3951856
      },
      "extended": false,
      "pullback_ok": false,
@@ -9119,7 +9121,7 @@
       "h": 209.0,
       "l": 196.5,
       "c": 205.0,
-      "v": 15296000
+      "v": 15493652
      },
      "extended": false,
      "pullback_ok": false,
@@ -9200,7 +9202,7 @@
       "h": 1310.0,
       "l": 1215.0,
       "c": 1300.0,
-      "v": 932000
+      "v": 967711
      },
      "extended": false,
      "pullback_ok": false,
@@ -9282,7 +9284,7 @@
       "h": 925.0,
       "l": 904.0,
       "c": 912.0,
-      "v": 2370000
+      "v": 2426649
      },
      "extended": false,
      "pullback_ok": false,
@@ -9363,7 +9365,7 @@
       "h": 8.98,
       "l": 8.8,
       "c": 8.8,
-      "v": 111000
+      "v": 113534
      },
      "extended": false,
      "pullback_ok": false,
@@ -9446,7 +9448,7 @@
       "h": 70.4,
       "l": 68.9,
       "c": 68.9,
-      "v": 776000
+      "v": 785718
      },
      "extended": false,
      "pullback_ok": false,
@@ -9527,7 +9529,7 @@
       "h": 1365.0,
       "l": 1255.0,
       "c": 1355.0,
-      "v": 20961000
+      "v": 21880823
      },
      "extended": false,
      "pullback_ok": false,
@@ -9611,7 +9613,7 @@
       "h": 3105.0,
       "l": 2980.0,
       "c": 3060.0,
-      "v": 1923000
+      "v": 1998185
      },
      "extended": false,
      "pullback_ok": false,
@@ -9620,7 +9622,7 @@
       "depth": 100.0,
       "oversold": 0.0,
       "reversal": 0.0,
-      "mfturn": 12.3,
+      "mfturn": 12.9,
       "risk": 28.9
      },
      "dd126": 0.17,
@@ -9692,7 +9694,7 @@
       "h": 1635.0,
       "l": 1555.0,
       "c": 1615.0,
-      "v": 3525000
+      "v": 3645165
      },
      "extended": false,
      "pullback_ok": false,
@@ -9773,7 +9775,7 @@
       "h": 4835.0,
       "l": 4500.0,
       "c": 4705.0,
-      "v": 2928000
+      "v": 3056594
      },
      "extended": false,
      "pullback_ok": false,
@@ -9854,7 +9856,7 @@
       "h": 1020.0,
       "l": 940.0,
       "c": 997.0,
-      "v": 20360000
+      "v": 20722005
      },
      "extended": false,
      "pullback_ok": false,
@@ -9935,7 +9937,7 @@
       "h": 120.5,
       "l": 116.5,
       "c": 119.5,
-      "v": 9937000
+      "v": 9988471
      },
      "extended": false,
      "pullback_ok": false,
@@ -10017,23 +10019,23 @@
       "h": 2465.0,
       "l": 2290.0,
       "c": 2415.0,
-      "v": 3311000
+      "v": 3424225
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 38.4,
+     "score": 38.5,
      "components": {
       "depth": 100.0,
       "oversold": 4.4,
       "reversal": 0.0,
-      "mfturn": 19.8,
+      "mfturn": 20.4,
       "risk": 67.5
      },
      "dd126": 0.316,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 35.6,
-     "score_chg": 2.8,
+     "score_chg": 2.9,
      "reasons": [
       "距半年高點 −32%"
      ],
@@ -10098,7 +10100,7 @@
       "h": 1205.0,
       "l": 1170.0,
       "c": 1190.0,
-      "v": 1061000
+      "v": 1117899
      },
      "extended": false,
      "pullback_ok": false,
@@ -10179,7 +10181,7 @@
       "h": 7575.0,
       "l": 7115.0,
       "c": 7285.0,
-      "v": 2200000
+      "v": 2295372
      },
      "extended": false,
      "pullback_ok": false,
@@ -10262,7 +10264,7 @@
       "h": 73.9,
       "l": 70.2,
       "c": 73.1,
-      "v": 20004000
+      "v": 20125172
      },
      "extended": false,
      "pullback_ok": false,
@@ -10343,7 +10345,7 @@
       "h": 3465.0,
       "l": 3330.0,
       "c": 3395.0,
-      "v": 1125000
+      "v": 1200588
      },
      "extended": false,
      "pullback_ok": false,
@@ -10425,7 +10427,7 @@
       "h": 1280.0,
       "l": 1195.0,
       "c": 1265.0,
-      "v": 1498000
+      "v": 1547712
      },
      "extended": false,
      "pullback_ok": false,
@@ -10507,23 +10509,23 @@
       "h": 2345.0,
       "l": 2310.0,
       "c": 2330.0,
-      "v": 34199000
+      "v": 38832588
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 35.0,
+     "score": 34.9,
      "components": {
       "depth": 49.3,
       "oversold": 44.0,
       "reversal": 0.0,
-      "mfturn": 0.4,
+      "mfturn": 0.0,
       "risk": 5.4
      },
      "dd126": 0.099,
      "new_low": true,
      "entry_ok": false,
      "score_prev": 53.9,
-     "score_chg": -18.9,
+     "score_chg": -19.0,
      "reasons": [
       "距半年高點 −10%",
       "創 20 日新低"
@@ -10591,7 +10593,7 @@
       "h": 64.1,
       "l": 62.1,
       "c": 64.0,
-      "v": 15584000
+      "v": 15736081
      },
      "extended": false,
      "pullback_ok": true,
@@ -10673,7 +10675,7 @@
       "h": 450.0,
       "l": 423.0,
       "c": 426.0,
-      "v": 7668000
+      "v": 7819460
      },
      "extended": false,
      "pullback_ok": false,
@@ -10757,7 +10759,7 @@
       "h": 31.15,
       "l": 30.25,
       "c": 30.85,
-      "v": 26382000
+      "v": 26517314
      },
      "extended": true,
      "pullback_ok": false,
@@ -10841,28 +10843,30 @@
       "h": 2450.0,
       "l": 2345.0,
       "c": 2395.0,
-      "v": 1587000
+      "v": 1632174
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 31.2,
+     "score": 31.1,
      "components": {
       "depth": 31.2,
       "oversold": 25.9,
       "reversal": 0.0,
-      "mfturn": 69.7,
+      "mfturn": 69.1,
       "risk": 38.6
      },
      "dd126": 0.488,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 34.7,
-     "score_chg": -3.5,
+     "score_chg": -3.6,
      "reasons": [
       "距半年高點 −49%",
       "資金回流"
      ],
-     "alerts": [],
+     "alerts": [
+      "爆量下跌"
+     ],
      "signal": "none",
      "signal_label": "未達標",
      "swap": null
@@ -10923,7 +10927,7 @@
       "h": 228.5,
       "l": 223.5,
       "c": 225.5,
-      "v": 1381000
+      "v": 1401278
      },
      "extended": false,
      "pullback_ok": false,
@@ -11004,7 +11008,7 @@
       "h": 274.5,
       "l": 269.0,
       "c": 274.5,
-      "v": 12169000
+      "v": 12504764
      },
      "extended": true,
      "pullback_ok": false,
@@ -11088,7 +11092,7 @@
       "h": 26.0,
       "l": 25.7,
       "c": 25.85,
-      "v": 9322000
+      "v": 9345254
      },
      "extended": false,
      "pullback_ok": false,
@@ -11169,7 +11173,7 @@
       "h": 845.0,
       "l": 773.0,
       "c": 785.0,
-      "v": 4544000
+      "v": 4639137
      },
      "extended": false,
      "pullback_ok": false,
@@ -11250,7 +11254,7 @@
       "h": 161.5,
       "l": 157.5,
       "c": 159.5,
-      "v": 9639000
+      "v": 9714169
      },
      "extended": true,
      "pullback_ok": false,
@@ -11333,7 +11337,7 @@
       "h": 117.5,
       "l": 114.5,
       "c": 116.0,
-      "v": 27611000
+      "v": 27714550
      },
      "extended": false,
      "pullback_ok": false,
@@ -11414,7 +11418,7 @@
       "h": 770.0,
       "l": 731.0,
       "c": 760.0,
-      "v": 10013000
+      "v": 10390523
      },
      "extended": false,
      "pullback_ok": false,
@@ -11495,7 +11499,7 @@
       "h": 517.0,
       "l": 486.0,
       "c": 510.0,
-      "v": 1245000
+      "v": 1284899
      },
      "extended": false,
      "pullback_ok": false,
@@ -11577,7 +11581,7 @@
       "h": 81.9,
       "l": 80.1,
       "c": 80.6,
-      "v": 11733000
+      "v": 11890912
      },
      "extended": false,
      "pullback_ok": false,
@@ -11658,7 +11662,7 @@
       "h": 29.5,
       "l": 28.7,
       "c": 29.05,
-      "v": 22055000
+      "v": 22278278
      },
      "extended": false,
      "pullback_ok": false,
@@ -11741,7 +11745,7 @@
       "h": 464.5,
       "l": 439.0,
       "c": 458.0,
-      "v": 3839000
+      "v": 3935951
      },
      "extended": false,
      "pullback_ok": false,
@@ -11825,7 +11829,7 @@
       "h": 549.0,
       "l": 531.0,
       "c": 536.0,
-      "v": 283000
+      "v": 287258
      },
      "extended": false,
      "pullback_ok": false,
@@ -11906,7 +11910,7 @@
       "h": 38.3,
       "l": 37.1,
       "c": 37.25,
-      "v": 34302000
+      "v": 34499292
      },
      "extended": false,
      "pullback_ok": false,
@@ -11987,7 +11991,7 @@
       "h": 185.0,
       "l": 179.5,
       "c": 181.5,
-      "v": 18299000
+      "v": 18557198
      },
      "extended": false,
      "pullback_ok": false,
@@ -12068,7 +12072,7 @@
       "h": 49.6,
       "l": 48.35,
       "c": 48.7,
-      "v": 31199000
+      "v": 31402474
      },
      "extended": false,
      "pullback_ok": false,
@@ -12149,7 +12153,7 @@
       "h": 76.4,
       "l": 74.1,
       "c": 75.0,
-      "v": 46325000
+      "v": 46535285
      },
      "extended": false,
      "pullback_ok": false,
@@ -12230,7 +12234,7 @@
       "h": 4625.0,
       "l": 4350.0,
       "c": 4485.0,
-      "v": 421000
+      "v": 450546
      },
      "extended": false,
      "pullback_ok": false,
@@ -12311,7 +12315,7 @@
       "h": 587.0,
       "l": 556.0,
       "c": 571.0,
-      "v": 3744000
+      "v": 3794193
      },
      "extended": false,
      "pullback_ok": false,
@@ -12392,7 +12396,7 @@
       "h": 72.9,
       "l": 70.9,
       "c": 71.5,
-      "v": 20104000
+      "v": 20285536
      },
      "extended": false,
      "pullback_ok": false,
@@ -12473,7 +12477,7 @@
       "h": 19.4,
       "l": 19.0,
       "c": 19.4,
-      "v": 29550000
+      "v": 29651026
      },
      "extended": false,
      "pullback_ok": false,
@@ -12554,7 +12558,7 @@
       "h": 44.8,
       "l": 43.5,
       "c": 43.65,
-      "v": 20845000
+      "v": 21030737
      },
      "extended": false,
      "pullback_ok": false,
@@ -12637,7 +12641,7 @@
       "h": 55.9,
       "l": 53.8,
       "c": 54.1,
-      "v": 21891000
+      "v": 22028067
      },
      "extended": false,
      "pullback_ok": false,
@@ -12718,7 +12722,7 @@
       "h": 163.0,
       "l": 158.5,
       "c": 159.5,
-      "v": 19504000
+      "v": 19620996
      },
      "extended": false,
      "pullback_ok": false,
@@ -12799,7 +12803,7 @@
       "h": 46.75,
       "l": 45.6,
       "c": 45.8,
-      "v": 33917000
+      "v": 34120026
      },
      "extended": false,
      "pullback_ok": false,
@@ -12880,7 +12884,7 @@
       "h": 135.5,
       "l": 132.0,
       "c": 133.0,
-      "v": 9606000
+      "v": 9656790
      },
      "extended": false,
      "pullback_ok": false,
@@ -12961,7 +12965,7 @@
       "h": 51.0,
       "l": 49.5,
       "c": 49.6,
-      "v": 11730000
+      "v": 11825009
      },
      "extended": false,
      "pullback_ok": false,
