@@ -11,33 +11,33 @@
  "mode": "intraday",
  "mode_label": "盤中暫定",
  "market_session": "open",
- "generated_at": "2026-11-25T04:55:03Z",
- "generated_at_local": "2026-11-25 12:55 台北",
- "generated_at_et": "2026-11-24 23:55 ET",
- "price_time": "12:40",
+ "generated_at": "2026-11-25T05:00:03Z",
+ "generated_at_local": "2026-11-25 13:00 台北",
+ "generated_at_et": "2026-11-25 00:00 ET",
+ "price_time": "12:45",
  "data_date": "2026-11-25",
  "stale_after_minutes": 40,
  "benchmark": "0050",
  "benchmark_name": "元大台灣50",
  "benchmark_quote": {
-  "price": 90.1,
-  "chg_1d_pct": 3.56,
-  "sma50": 105.45,
-  "vs_sma50_pct": -14.6,
-  "sma200": 96.41,
-  "vs_sma200_pct": -6.5
+  "price": 90.5,
+  "chg_1d_pct": 4.02,
+  "sma50": 105.46,
+  "vs_sma50_pct": -14.2,
+  "sma200": 96.42,
+  "vs_sma200_pct": -6.1
  },
  "core": {
   "t": "0050",
   "name": "元大台灣50",
   "weight": 50,
   "quote": {
-   "price": 90.1,
-   "chg_1d_pct": 3.56,
-   "sma50": 105.45,
-   "vs_sma50_pct": -14.6,
-   "sma200": 96.41,
-   "vs_sma200_pct": -6.5
+   "price": 90.5,
+   "chg_1d_pct": 4.02,
+   "sma50": 105.46,
+   "vs_sma50_pct": -14.2,
+   "sma200": 96.42,
+   "vs_sma200_pct": -6.1
   }
  },
  "weights": {
@@ -218,17 +218,17 @@
    "name": "中華電",
    "yahoo": "2412.TW",
    "theme": "電信與電腦",
-   "score": 72.2,
+   "score": 76.1,
    "components": {
     "rs": 100.0,
-    "mf": 46.6,
+    "mf": 53.8,
     "trend": 100.0,
-    "rebound": 3.6,
+    "rebound": 17.4,
     "risk": 0.0
    },
-   "price": 164.5,
+   "price": 165.0,
    "prev_close": 164.5,
-   "chg_1d_pct": 0.0,
+   "chg_1d_pct": 0.3,
    "above_sma20": true,
    "above_sma50": true,
    "limit": null,
@@ -263,36 +263,37 @@
     162.5,
     164.5,
     164.5,
-    164.5
+    165.0
    ],
    "exit": {
     "atr": 5.18,
     "trail": 150.46,
     "hi22": 166.0,
-    "sma50": 153.77
+    "sma50": 153.78
    },
    "bar": {
     "t": "2026-11-25",
     "o": 163.5,
     "h": 167.0,
     "l": 163.0,
-    "c": 164.5,
-    "v": 41963000
+    "c": 165.0,
+    "v": 42703000
    },
    "extended": false,
-   "pullback_ok": false,
+   "pullback_ok": true,
    "entry_ok": false,
    "score_prev": 74.3,
-   "score_chg": -2.1,
+   "score_chg": 1.8,
    "reasons": [
     "相對大盤強勢",
-    "多頭排列"
+    "多頭排列",
+    "回檔到均線"
    ],
    "alerts": [
-    "爆量"
+    "爆量上漲"
    ],
-   "signal": "hold",
-   "signal_label": "續抱",
+   "signal": "strong",
+   "signal_label": "強勢續抱",
    "weakest": false,
    "source": "auto"
   },
@@ -301,17 +302,17 @@
    "name": "長榮",
    "yahoo": "2603.TW",
    "theme": "航運原物料",
-   "score": 70.2,
+   "score": 73.1,
    "components": {
-    "rs": 93.5,
-    "mf": 59.4,
+    "rs": 94.8,
+    "mf": 69.1,
     "trend": 60.0,
     "rebound": 55.0,
-    "risk": 29.1
+    "risk": 29.0
    },
-   "price": 252.0,
+   "price": 254.0,
    "prev_close": 257.0,
-   "chg_1d_pct": -1.95,
+   "chg_1d_pct": -1.17,
    "above_sma20": false,
    "above_sma50": true,
    "limit": null,
@@ -346,33 +347,32 @@
     233.0,
     234.5,
     257.0,
-    252.0
+    254.0
    ],
    "exit": {
     "atr": 12.32,
     "trail": 237.54,
     "hi22": 274.5,
-    "sma50": 250.53
+    "sma50": 250.57
    },
    "bar": {
     "t": "2026-11-25",
     "o": 250.0,
     "h": 256.5,
     "l": 244.5,
-    "c": 252.0,
-    "v": 21047000
+    "c": 254.0,
+    "v": 21453000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 78.8,
-   "score_chg": -8.6,
+   "score_chg": -5.7,
    "reasons": [
-    "相對大盤強勢"
+    "相對大盤強勢",
+    "資金流入"
    ],
-   "alerts": [
-    "跌破支撐區"
-   ],
+   "alerts": [],
    "signal": "hold",
    "signal_label": "續抱",
    "weakest": false,
@@ -383,9 +383,9 @@
    "name": "華南金",
    "yahoo": "2880.TW",
    "theme": "金融",
-   "score": 62.2,
+   "score": 61.8,
    "components": {
-    "rs": 98.7,
+    "rs": 97.4,
     "mf": 46.7,
     "trend": 40.0,
     "rebound": 40.0,
@@ -442,13 +442,13 @@
     "h": 46.5,
     "l": 42.75,
     "c": 42.75,
-    "v": 23967000
+    "v": 24064000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 70.4,
-   "score_chg": -8.2,
+   "score_chg": -8.6,
    "reasons": [
     "跌停",
     "相對大盤強勢",
@@ -471,7 +471,7 @@
    "score": 54.4,
    "components": {
     "rs": 92.2,
-    "mf": 26.6,
+    "mf": 26.5,
     "trend": 40.0,
     "rebound": 40.0,
     "risk": 39.0
@@ -527,7 +527,7 @@
     "h": 142.0,
     "l": 129.5,
     "c": 133.0,
-    "v": 27991000
+    "v": 28120000
    },
    "extended": false,
    "pullback_ok": false,
@@ -557,14 +557,14 @@
    "score": 77.5,
    "components": {
     "rs": 88.3,
-    "mf": 62.7,
+    "mf": 63.0,
     "trend": 80.0,
-    "rebound": 67.9,
+    "rebound": 67.4,
     "risk": 8.5
    },
-   "price": 79.5,
+   "price": 79.6,
    "prev_close": 77.4,
-   "chg_1d_pct": 2.71,
+   "chg_1d_pct": 2.84,
    "above_sma20": true,
    "above_sma50": true,
    "limit": null,
@@ -599,7 +599,7 @@
     75.0,
     75.5,
     77.4,
-    79.5
+    79.6
    ],
    "exit": {
     "atr": 2.85,
@@ -612,8 +612,8 @@
     "o": 75.9,
     "h": 80.0,
     "l": 75.7,
-    "c": 79.5,
-    "v": 24620000
+    "c": 79.6,
+    "v": 24982000
    },
    "extended": false,
    "pullback_ok": true,
@@ -647,14 +647,14 @@
    "score": 65.0,
    "components": {
     "rs": 81.8,
-    "mf": 50.4,
+    "mf": 50.5,
     "trend": 40.0,
     "rebound": 85.0,
     "risk": 29.0
    },
-   "price": 695.0,
+   "price": 696.0,
    "prev_close": 694.0,
-   "chg_1d_pct": 0.14,
+   "chg_1d_pct": 0.29,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -689,21 +689,21 @@
     668.0,
     666.0,
     694.0,
-    695.0
+    696.0
    ],
    "exit": {
     "atr": 45.43,
     "trail": 666.71,
     "hi22": 803.0,
-    "sma50": 745.96
+    "sma50": 745.98
    },
    "bar": {
     "t": "2026-11-25",
     "o": 686.0,
     "h": 705.0,
     "l": 661.0,
-    "c": 695.0,
-    "v": 4023000
+    "c": 696.0,
+    "v": 4051000
    },
    "extended": false,
    "pullback_ok": false,
@@ -721,103 +721,21 @@
    "swap": null
   },
   {
-   "ticker": "2207",
-   "name": "和泰車",
-   "yahoo": "2207.TW",
-   "theme": "民生消費",
-   "score": 60.7,
-   "components": {
-    "rs": 84.4,
-    "mf": 42.9,
-    "trend": 40.0,
-    "rebound": 55.0,
-    "risk": 15.4
-   },
-   "price": 523.0,
-   "prev_close": 533.0,
-   "chg_1d_pct": -1.88,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    542.0,
-    546.0,
-    548.0,
-    540.0,
-    532.0,
-    526.0,
-    530.0,
-    530.0,
-    551.0,
-    535.0,
-    532.0,
-    534.0,
-    536.0,
-    544.0,
-    534.0,
-    537.0,
-    528.0,
-    533.0,
-    508.0,
-    517.0,
-    521.0,
-    527.0,
-    526.0,
-    531.0,
-    538.0,
-    546.0,
-    516.0,
-    500.0,
-    533.0,
-    523.0
-   ],
-   "exit": {
-    "atr": 21.64,
-    "trail": 486.07,
-    "hi22": 551.0,
-    "sma50": 527.54
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 522.0,
-    "h": 526.0,
-    "l": 510.0,
-    "c": 523.0,
-    "v": 385000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 71.2,
-   "score_chg": -10.5,
-   "reasons": [
-    "相對大盤強勢",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "跌破支撐區"
-   ],
-   "signal": "watch",
-   "signal_label": "觀察",
-   "swap": null
-  },
-  {
    "ticker": "2886",
    "name": "兆豐金",
    "yahoo": "2886.TW",
    "theme": "金融",
-   "score": 59.8,
+   "score": 62.2,
    "components": {
     "rs": 96.1,
-    "mf": 37.2,
+    "mf": 37.5,
     "trend": 40.0,
-    "rebound": 40.0,
-    "risk": 23.4
+    "rebound": 55.0,
+    "risk": 23.0
    },
-   "price": 50.1,
+   "price": 50.3,
    "prev_close": 55.0,
-   "chg_1d_pct": -8.91,
+   "chg_1d_pct": -8.55,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -852,7 +770,7 @@
     51.8,
     50.0,
     55.0,
-    50.1
+    50.3
    ],
    "exit": {
     "atr": 2.88,
@@ -865,14 +783,14 @@
     "o": 52.8,
     "h": 53.7,
     "l": 49.5,
-    "c": 50.1,
-    "v": 70804000
+    "c": 50.3,
+    "v": 71886000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 70.3,
-   "score_chg": -10.5,
+   "score_chg": -8.1,
    "reasons": [
     "相對大盤強勢",
     "跌破 50 日線"
@@ -882,8 +800,90 @@
     "跌破支撐區",
     "爆量下跌"
    ],
-   "signal": "none",
-   "signal_label": "未達標",
+   "signal": "watch",
+   "signal_label": "觀察",
+   "swap": null
+  },
+  {
+   "ticker": "2207",
+   "name": "和泰車",
+   "yahoo": "2207.TW",
+   "theme": "民生消費",
+   "score": 60.3,
+   "components": {
+    "rs": 83.1,
+    "mf": 42.5,
+    "trend": 40.0,
+    "rebound": 55.0,
+    "risk": 15.5
+   },
+   "price": 522.0,
+   "prev_close": 533.0,
+   "chg_1d_pct": -2.06,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    542.0,
+    546.0,
+    548.0,
+    540.0,
+    532.0,
+    526.0,
+    530.0,
+    530.0,
+    551.0,
+    535.0,
+    532.0,
+    534.0,
+    536.0,
+    544.0,
+    534.0,
+    537.0,
+    528.0,
+    533.0,
+    508.0,
+    517.0,
+    521.0,
+    527.0,
+    526.0,
+    531.0,
+    538.0,
+    546.0,
+    516.0,
+    500.0,
+    533.0,
+    522.0
+   ],
+   "exit": {
+    "atr": 21.64,
+    "trail": 486.07,
+    "hi22": 551.0,
+    "sma50": 527.52
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 522.0,
+    "h": 526.0,
+    "l": 510.0,
+    "c": 522.0,
+    "v": 386000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 71.2,
+   "score_chg": -10.9,
+   "reasons": [
+    "相對大盤強勢",
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "跌破支撐區"
+   ],
+   "signal": "watch",
+   "signal_label": "觀察",
    "swap": null
   },
   {
@@ -891,17 +891,17 @@
    "name": "萬海",
    "yahoo": "2615.TW",
    "theme": "航運原物料",
-   "score": 57.5,
+   "score": 57.9,
    "components": {
     "rs": 72.7,
-    "mf": 36.7,
+    "mf": 37.8,
     "trend": 40.0,
-    "rebound": 83.5,
-    "risk": 40.5
+    "rebound": 85.0,
+    "risk": 41.1
    },
-   "price": 100.5,
+   "price": 101.5,
    "prev_close": 97.1,
-   "chg_1d_pct": 3.5,
+   "chg_1d_pct": 4.53,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -936,27 +936,27 @@
     95.0,
     96.1,
     97.1,
-    100.5
+    101.5
    ],
    "exit": {
     "atr": 6.54,
     "trail": 100.37,
     "hi22": 120.0,
-    "sma50": 113.1
+    "sma50": 113.12
    },
    "bar": {
     "t": "2026-11-25",
     "o": 95.8,
     "h": 103.5,
     "l": 95.5,
-    "c": 100.5,
-    "v": 22363000
+    "c": 101.5,
+    "v": 22634000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 46.2,
-   "score_chg": 11.3,
+   "score_chg": 11.7,
    "reasons": [
     "相對大盤強勢",
     "拉回止跌",
@@ -968,13 +968,96 @@
    "swap": null
   },
   {
+   "ticker": "2892",
+   "name": "第一金",
+   "yahoo": "2892.TW",
+   "theme": "金融",
+   "score": 56.2,
+   "components": {
+    "rs": 98.7,
+    "mf": 20.7,
+    "trend": 40.0,
+    "rebound": 40.0,
+    "risk": 25.7
+   },
+   "price": 37.45,
+   "prev_close": 39.8,
+   "chg_1d_pct": -5.9,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    40.65,
+    41.6,
+    41.5,
+    41.1,
+    40.75,
+    41.3,
+    42.35,
+    42.35,
+    43.15,
+    42.8,
+    44.45,
+    44.6,
+    43.65,
+    42.6,
+    42.45,
+    42.25,
+    40.95,
+    40.95,
+    41.05,
+    42.15,
+    42.7,
+    43.45,
+    42.35,
+    42.1,
+    41.0,
+    40.15,
+    37.6,
+    37.65,
+    39.8,
+    37.45
+   ],
+   "exit": {
+    "atr": 2.13,
+    "trail": 38.21,
+    "hi22": 44.6,
+    "sma50": 40.67
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 38.8,
+    "h": 39.15,
+    "l": 36.8,
+    "c": 37.45,
+    "v": 61109000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 65.9,
+   "score_chg": -9.7,
+   "reasons": [
+    "相對大盤強勢",
+    "資金流出",
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "跌破上升趨勢線"
+   ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "3045",
    "name": "台灣大",
    "yahoo": "3045.TW",
    "theme": "電信與電腦",
-   "score": 55.8,
+   "score": 55.4,
    "components": {
-    "rs": 87.0,
+    "rs": 85.7,
     "mf": 16.1,
     "trend": 40.0,
     "rebound": 55.0,
@@ -1031,13 +1114,13 @@
     "h": 126.0,
     "l": 123.0,
     "c": 124.0,
-    "v": 8650000
+    "v": 8874000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 58.5,
-   "score_chg": -2.7,
+   "score_chg": -3.1,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1045,89 +1128,6 @@
    ],
    "alerts": [
     "跌破支撐區"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "2892",
-   "name": "第一金",
-   "yahoo": "2892.TW",
-   "theme": "金融",
-   "score": 55.7,
-   "components": {
-    "rs": 97.4,
-    "mf": 20.5,
-    "trend": 40.0,
-    "rebound": 40.0,
-    "risk": 26.1
-   },
-   "price": 37.35,
-   "prev_close": 39.8,
-   "chg_1d_pct": -6.16,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    40.65,
-    41.6,
-    41.5,
-    41.1,
-    40.75,
-    41.3,
-    42.35,
-    42.35,
-    43.15,
-    42.8,
-    44.45,
-    44.6,
-    43.65,
-    42.6,
-    42.45,
-    42.25,
-    40.95,
-    40.95,
-    41.05,
-    42.15,
-    42.7,
-    43.45,
-    42.35,
-    42.1,
-    41.0,
-    40.15,
-    37.6,
-    37.65,
-    39.8,
-    37.35
-   ],
-   "exit": {
-    "atr": 2.13,
-    "trail": 38.21,
-    "hi22": 44.6,
-    "sma50": 40.67
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 38.8,
-    "h": 39.15,
-    "l": 36.8,
-    "c": 37.35,
-    "v": 59968000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 65.9,
-   "score_chg": -10.2,
-   "reasons": [
-    "相對大盤強勢",
-    "資金流出",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "跌破上升趨勢線"
    ],
    "signal": "none",
    "signal_label": "未達標",
@@ -1197,7 +1197,7 @@
     "h": 27.25,
     "l": 25.9,
     "c": 26.3,
-    "v": 17190000
+    "v": 17326000
    },
    "extended": false,
    "pullback_ok": false,
@@ -1225,14 +1225,14 @@
    "score": 54.5,
    "components": {
     "rs": 71.4,
-    "mf": 47.9,
+    "mf": 48.0,
     "trend": 40.0,
     "rebound": 40.0,
     "risk": 28.9
    },
-   "price": 55.7,
+   "price": 55.8,
    "prev_close": 56.3,
-   "chg_1d_pct": -1.07,
+   "chg_1d_pct": -0.89,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -1267,21 +1267,21 @@
     53.0,
     54.5,
     56.3,
-    55.7
+    55.8
    ],
    "exit": {
     "atr": 3.06,
     "trail": 54.81,
     "hi22": 64.0,
-    "sma50": 60.3
+    "sma50": 60.31
    },
    "bar": {
     "t": "2026-11-25",
     "o": 54.6,
     "h": 57.3,
     "l": 54.2,
-    "c": 55.7,
-    "v": 16609000
+    "c": 55.8,
+    "v": 16772000
    },
    "extended": false,
    "pullback_ok": false,
@@ -1292,9 +1292,7 @@
     "相對大盤強勢",
     "跌破 50 日線"
    ],
-   "alerts": [
-    "跌破支撐區"
-   ],
+   "alerts": [],
    "signal": "none",
    "signal_label": "未達標",
    "swap": null
@@ -1304,7 +1302,7 @@
    "name": "國泰金",
    "yahoo": "2882.TW",
    "theme": "金融",
-   "score": 54.1,
+   "score": 54.0,
    "components": {
     "rs": 89.6,
     "mf": 26.8,
@@ -1363,13 +1361,13 @@
     "h": 104.0,
     "l": 96.2,
     "c": 101.0,
-    "v": 40204000
+    "v": 41356000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 59.0,
-   "score_chg": -4.9,
+   "score_chg": -5.0,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1388,17 +1386,17 @@
    "name": "中信金",
    "yahoo": "2891.TW",
    "theme": "金融",
-   "score": 53.3,
+   "score": 53.7,
    "components": {
-    "rs": 83.1,
+    "rs": 84.4,
     "mf": 32.0,
     "trend": 40.0,
     "rebound": 40.0,
-    "risk": 36.7
+    "risk": 36.6
    },
-   "price": 66.2,
+   "price": 66.4,
    "prev_close": 69.9,
-   "chg_1d_pct": -5.29,
+   "chg_1d_pct": -5.01,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -1433,7 +1431,7 @@
     68.0,
     63.8,
     69.9,
-    66.2
+    66.4
    ],
    "exit": {
     "atr": 4.76,
@@ -1446,14 +1444,14 @@
     "o": 67.6,
     "h": 68.4,
     "l": 63.5,
-    "c": 66.2,
-    "v": 48327000
+    "c": 66.4,
+    "v": 50066000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 64.6,
-   "score_chg": -11.3,
+   "score_chg": -10.9,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1472,17 +1470,17 @@
    "name": "彰銀",
    "yahoo": "2801.TW",
    "theme": "金融",
-   "score": 53.2,
+   "score": 52.9,
    "components": {
-    "rs": 94.8,
-    "mf": 14.3,
+    "rs": 93.5,
+    "mf": 14.5,
     "trend": 40.0,
     "rebound": 40.0,
-    "risk": 27.8
+    "risk": 27.7
    },
-   "price": 25.4,
+   "price": 25.45,
    "prev_close": 26.8,
-   "chg_1d_pct": -5.22,
+   "chg_1d_pct": -5.04,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -1517,7 +1515,7 @@
     25.4,
     25.1,
     26.8,
-    25.4
+    25.45
    ],
    "exit": {
     "atr": 1.25,
@@ -1530,14 +1528,14 @@
     "o": 25.9,
     "h": 26.15,
     "l": 24.9,
-    "c": 25.4,
-    "v": 21621000
+    "c": 25.45,
+    "v": 21811000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 59.9,
-   "score_chg": -6.7,
+   "score_chg": -7.0,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1549,21 +1547,104 @@
    "swap": null
   },
   {
+   "ticker": "3017",
+   "name": "奇鋐",
+   "yahoo": "3017.TW",
+   "theme": "AI伺服器",
+   "score": 50.6,
+   "components": {
+    "rs": 64.9,
+    "mf": 52.2,
+    "trend": 40.0,
+    "rebound": 60.2,
+    "risk": 89.1
+   },
+   "price": 2605.0,
+   "prev_close": 2600.0,
+   "chg_1d_pct": 0.19,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    3315.0,
+    3085.0,
+    3315.0,
+    3320.0,
+    3325.0,
+    3235.0,
+    3145.0,
+    3145.0,
+    3130.0,
+    3215.0,
+    3105.0,
+    3095.0,
+    3060.0,
+    2935.0,
+    2820.0,
+    2565.0,
+    2310.0,
+    2540.0,
+    2790.0,
+    3040.0,
+    2775.0,
+    3040.0,
+    2740.0,
+    2470.0,
+    2715.0,
+    2445.0,
+    2205.0,
+    2365.0,
+    2600.0,
+    2605.0
+   ],
+   "exit": {
+    "atr": 281.07,
+    "trail": 2371.79,
+    "hi22": 3215.0,
+    "sma50": 3091.4
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 2475.0,
+    "h": 2705.0,
+    "l": 2360.0,
+    "c": 2605.0,
+    "v": 7756000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 43.1,
+   "score_chg": 7.5,
+   "reasons": [
+    "拉回止跌",
+    "波動大",
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "爆量上漲"
+   ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "2883",
    "name": "凱基金",
    "yahoo": "2883.TW",
    "theme": "金融",
-   "score": 48.9,
+   "score": 49.3,
    "components": {
-    "rs": 85.7,
-    "mf": 23.1,
+    "rs": 87.0,
+    "mf": 23.2,
     "trend": 40.0,
-    "rebound": 25.1,
-    "risk": 44.0
+    "rebound": 25.4,
+    "risk": 43.9
    },
-   "price": 30.1,
+   "price": 30.15,
    "prev_close": 32.25,
-   "chg_1d_pct": -6.67,
+   "chg_1d_pct": -6.51,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -1598,7 +1679,7 @@
     29.9,
     29.6,
     32.25,
-    30.1
+    30.15
    ],
    "exit": {
     "atr": 1.92,
@@ -1611,14 +1692,14 @@
     "o": 31.3,
     "h": 31.4,
     "l": 29.25,
-    "c": 30.1,
-    "v": 29942000
+    "c": 30.15,
+    "v": 30394000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 60.9,
-   "score_chg": -12.0,
+   "score_chg": -11.6,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1637,17 +1718,17 @@
    "name": "元大金",
    "yahoo": "2885.TW",
    "theme": "金融",
-   "score": 48.4,
+   "score": 48.8,
    "components": {
-    "rs": 76.6,
-    "mf": 19.8,
+    "rs": 77.9,
+    "mf": 20.1,
     "trend": 40.0,
     "rebound": 40.0,
-    "risk": 35.8
+    "risk": 35.6
    },
-   "price": 62.1,
+   "price": 62.5,
    "prev_close": 64.2,
-   "chg_1d_pct": -3.27,
+   "chg_1d_pct": -2.65,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -1682,7 +1763,7 @@
     59.3,
     58.4,
     64.2,
-    62.1
+    62.5
    ],
    "exit": {
     "atr": 3.87,
@@ -1695,14 +1776,14 @@
     "o": 63.7,
     "h": 63.7,
     "l": 59.1,
-    "c": 62.1,
-    "v": 25812000
+    "c": 62.5,
+    "v": 27899000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 52.6,
-   "score_chg": -4.2,
+   "score_chg": -3.8,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1720,17 +1801,17 @@
    "name": "玉山金",
    "yahoo": "2884.TW",
    "theme": "金融",
-   "score": 48.1,
+   "score": 48.2,
    "components": {
     "rs": 80.5,
-    "mf": 17.5,
+    "mf": 17.6,
     "trend": 40.0,
-    "rebound": 34.4,
-    "risk": 35.5
+    "rebound": 34.6,
+    "risk": 35.4
    },
-   "price": 38.75,
+   "price": 38.8,
    "prev_close": 41.2,
-   "chg_1d_pct": -5.95,
+   "chg_1d_pct": -5.83,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -1765,7 +1846,7 @@
     39.6,
     38.7,
     41.2,
-    38.75
+    38.8
    ],
    "exit": {
     "atr": 2.18,
@@ -1778,14 +1859,14 @@
     "o": 39.2,
     "h": 40.2,
     "l": 38.0,
-    "c": 38.75,
-    "v": 39268000
+    "c": 38.8,
+    "v": 39654000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 58.5,
-   "score_chg": -10.4,
+   "score_chg": -10.3,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1801,17 +1882,17 @@
    "name": "世芯-KY",
    "yahoo": "3661.TW",
    "theme": "半導體",
-   "score": 46.1,
+   "score": 46.2,
    "components": {
     "rs": 68.8,
-    "mf": 46.5,
+    "mf": 46.7,
     "trend": 20.0,
     "rebound": 55.0,
     "risk": 84.0
    },
-   "price": 3615.0,
+   "price": 3630.0,
    "prev_close": 3915.0,
-   "chg_1d_pct": -7.66,
+   "chg_1d_pct": -7.28,
    "above_sma20": true,
    "above_sma50": false,
    "limit": null,
@@ -1846,27 +1927,27 @@
     3240.0,
     3560.0,
     3915.0,
-    3615.0
+    3630.0
    ],
    "exit": {
     "atr": 353.57,
     "trail": 2959.29,
     "hi22": 4020.0,
-    "sma50": 3642.0
+    "sma50": 3642.3
    },
    "bar": {
     "t": "2026-11-25",
     "o": 3855.0,
     "h": 3970.0,
     "l": 3530.0,
-    "c": 3615.0,
-    "v": 4462000
+    "c": 3630.0,
+    "v": 4486000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 57.8,
-   "score_chg": -11.7,
+   "score_chg": -11.6,
    "reasons": [
     "空頭排列",
     "波動大",
@@ -1880,21 +1961,101 @@
    "swap": null
   },
   {
+   "ticker": "2395",
+   "name": "研華",
+   "yahoo": "2395.TW",
+   "theme": "電信與電腦",
+   "score": 44.8,
+   "components": {
+    "rs": 67.5,
+    "mf": 31.6,
+    "trend": 40.0,
+    "rebound": 27.4,
+    "risk": 54.8
+   },
+   "price": 557.0,
+   "prev_close": 589.0,
+   "chg_1d_pct": -5.43,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    714.0,
+    698.0,
+    685.0,
+    679.0,
+    684.0,
+    683.0,
+    670.0,
+    670.0,
+    687.0,
+    689.0,
+    673.0,
+    680.0,
+    655.0,
+    620.0,
+    629.0,
+    596.0,
+    552.0,
+    583.0,
+    593.0,
+    612.0,
+    603.0,
+    608.0,
+    580.0,
+    564.0,
+    589.0,
+    554.0,
+    520.0,
+    536.0,
+    589.0,
+    557.0
+   ],
+   "exit": {
+    "atr": 41.07,
+    "trail": 565.79,
+    "hi22": 689.0,
+    "sma50": 659.12
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 580.0,
+    "h": 581.0,
+    "l": 531.0,
+    "c": 557.0,
+    "v": 2810000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 52.4,
+   "score_chg": -7.6,
+   "reasons": [
+    "資金流出",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "9904",
    "name": "寶成",
    "yahoo": "9904.TW",
    "theme": "民生消費",
-   "score": 44.7,
+   "score": 44.8,
    "components": {
     "rs": 75.3,
-    "mf": 30.2,
+    "mf": 30.4,
     "trend": 0.0,
     "rebound": 40.0,
     "risk": 14.3
    },
-   "price": 25.05,
+   "price": 25.1,
    "prev_close": 25.5,
-   "chg_1d_pct": -1.76,
+   "chg_1d_pct": -1.57,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -1929,7 +2090,7 @@
     24.2,
     23.95,
     25.5,
-    25.05
+    25.1
    ],
    "exit": {
     "atr": 0.9321,
@@ -1942,14 +2103,14 @@
     "o": 24.95,
     "h": 25.25,
     "l": 24.65,
-    "c": 25.05,
-    "v": 12908000
+    "c": 25.1,
+    "v": 13062000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 51.9,
-   "score_chg": -7.2,
+   "score_chg": -7.1,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -1964,13 +2125,97 @@
    "swap": null
   },
   {
+   "ticker": "6446",
+   "name": "藥華藥",
+   "yahoo": "6446.TW",
+   "theme": "生技醫療",
+   "score": 44.1,
+   "components": {
+    "rs": 74.0,
+    "mf": 32.7,
+    "trend": 40.0,
+    "rebound": 9.2,
+    "risk": 56.9
+   },
+   "price": 1085.0,
+   "prev_close": 1150.0,
+   "chg_1d_pct": -5.65,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    1190.0,
+    1205.0,
+    1245.0,
+    1175.0,
+    1155.0,
+    1175.0,
+    1160.0,
+    1160.0,
+    1190.0,
+    1200.0,
+    1240.0,
+    1190.0,
+    1190.0,
+    1225.0,
+    1250.0,
+    1185.0,
+    1270.0,
+    1370.0,
+    1280.0,
+    1335.0,
+    1365.0,
+    1380.0,
+    1295.0,
+    1280.0,
+    1245.0,
+    1205.0,
+    1100.0,
+    1120.0,
+    1150.0,
+    1085.0
+   ],
+   "exit": {
+    "atr": 101.07,
+    "trail": 1076.79,
+    "hi22": 1380.0,
+    "sma50": 1207.4
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 1120.0,
+    "h": 1150.0,
+    "l": 1045.0,
+    "c": 1085.0,
+    "v": 2802000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 54.9,
+   "score_chg": -10.8,
+   "reasons": [
+    "相對大盤強勢",
+    "資金流出",
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "跌破上升趨勢線",
+    "跌破支撐區"
+   ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "2454",
    "name": "聯發科",
    "yahoo": "2454.TW",
    "theme": "半導體",
-   "score": 44.2,
+   "score": 43.8,
    "components": {
-    "rs": 67.5,
+    "rs": 66.2,
     "mf": 48.1,
     "trend": 40.0,
     "rebound": 10.6,
@@ -2027,13 +2272,13 @@
     "h": 3955.0,
     "l": 3645.0,
     "c": 3645.0,
-    "v": 21465000
+    "v": 21488000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 58.0,
-   "score_chg": -13.8,
+   "score_chg": -14.2,
    "reasons": [
     "跌停",
     "波動大",
@@ -2047,101 +2292,21 @@
    "swap": null
   },
   {
-   "ticker": "2395",
-   "name": "研華",
-   "yahoo": "2395.TW",
-   "theme": "電信與電腦",
-   "score": 44.2,
-   "components": {
-    "rs": 66.2,
-    "mf": 31.4,
-    "trend": 40.0,
-    "rebound": 26.7,
-    "risk": 54.9
-   },
-   "price": 555.0,
-   "prev_close": 589.0,
-   "chg_1d_pct": -5.77,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    714.0,
-    698.0,
-    685.0,
-    679.0,
-    684.0,
-    683.0,
-    670.0,
-    670.0,
-    687.0,
-    689.0,
-    673.0,
-    680.0,
-    655.0,
-    620.0,
-    629.0,
-    596.0,
-    552.0,
-    583.0,
-    593.0,
-    612.0,
-    603.0,
-    608.0,
-    580.0,
-    564.0,
-    589.0,
-    554.0,
-    520.0,
-    536.0,
-    589.0,
-    555.0
-   ],
-   "exit": {
-    "atr": 41.07,
-    "trail": 565.79,
-    "hi22": 689.0,
-    "sma50": 659.08
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 580.0,
-    "h": 581.0,
-    "l": 531.0,
-    "c": 555.0,
-    "v": 2783000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 52.4,
-   "score_chg": -8.2,
-   "reasons": [
-    "資金流出",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "2890",
    "name": "永豐金",
    "yahoo": "2890.TW",
    "theme": "金融",
-   "score": 43.9,
+   "score": 43.4,
    "components": {
-    "rs": 77.9,
-    "mf": 4.4,
+    "rs": 76.6,
+    "mf": 4.1,
     "trend": 40.0,
-    "rebound": 36.8,
-    "risk": 40.7
+    "rebound": 36.6,
+    "risk": 40.8
    },
-   "price": 36.65,
+   "price": 36.6,
    "prev_close": 40.35,
-   "chg_1d_pct": -9.17,
+   "chg_1d_pct": -9.29,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -2176,7 +2341,7 @@
     36.0,
     36.7,
     40.35,
-    36.65
+    36.6
    ],
    "exit": {
     "atr": 2.38,
@@ -2189,14 +2354,14 @@
     "o": 39.35,
     "h": 39.35,
     "l": 36.35,
-    "c": 36.65,
-    "v": 72172000
+    "c": 36.6,
+    "v": 73165000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 54.6,
-   "score_chg": -10.7,
+   "score_chg": -11.2,
    "reasons": [
     "相對大盤強勢",
     "資金流出",
@@ -2204,91 +2369,8 @@
    ],
    "alerts": [
     "跌破上升趨勢線",
-    "跌破支撐區"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "6446",
-   "name": "藥華藥",
-   "yahoo": "6446.TW",
-   "theme": "生技醫療",
-   "score": 43.6,
-   "components": {
-    "rs": 74.0,
-    "mf": 32.4,
-    "trend": 40.0,
-    "rebound": 7.5,
-    "risk": 58.0
-   },
-   "price": 1075.0,
-   "prev_close": 1150.0,
-   "chg_1d_pct": -6.52,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    1190.0,
-    1205.0,
-    1245.0,
-    1175.0,
-    1155.0,
-    1175.0,
-    1160.0,
-    1160.0,
-    1190.0,
-    1200.0,
-    1240.0,
-    1190.0,
-    1190.0,
-    1225.0,
-    1250.0,
-    1185.0,
-    1270.0,
-    1370.0,
-    1280.0,
-    1335.0,
-    1365.0,
-    1380.0,
-    1295.0,
-    1280.0,
-    1245.0,
-    1205.0,
-    1100.0,
-    1120.0,
-    1150.0,
-    1075.0
-   ],
-   "exit": {
-    "atr": 101.07,
-    "trail": 1076.79,
-    "hi22": 1380.0,
-    "sma50": 1207.2
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 1120.0,
-    "h": 1150.0,
-    "l": 1045.0,
-    "c": 1075.0,
-    "v": 2767000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 54.9,
-   "score_chg": -11.3,
-   "reasons": [
-    "相對大盤強勢",
-    "資金流出",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "跌破上升趨勢線",
-    "跌破支撐區"
+    "跌破支撐區",
+    "爆量下跌"
    ],
    "signal": "none",
    "signal_label": "未達標",
@@ -2299,17 +2381,17 @@
    "name": "華碩",
    "yahoo": "2357.TW",
    "theme": "電信與電腦",
-   "score": 42.9,
+   "score": 43.1,
    "components": {
     "rs": 63.6,
-    "mf": 23.8,
+    "mf": 24.1,
     "trend": 40.0,
-    "rebound": 26.2,
-    "risk": 41.3
+    "rebound": 27.0,
+    "risk": 41.1
    },
-   "price": 767.0,
+   "price": 770.0,
    "prev_close": 821.0,
-   "chg_1d_pct": -6.58,
+   "chg_1d_pct": -6.21,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -2344,33 +2426,119 @@
     756.0,
     758.0,
     821.0,
-    767.0
+    770.0
    ],
    "exit": {
     "atr": 50.86,
     "trail": 835.43,
     "hi22": 988.0,
-    "sma50": 920.78
+    "sma50": 920.84
    },
    "bar": {
     "t": "2026-11-25",
     "o": 790.0,
     "h": 797.0,
     "l": 742.0,
-    "c": 767.0,
-    "v": 3419000
+    "c": 770.0,
+    "v": 3445000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 53.8,
-   "score_chg": -10.9,
+   "score_chg": -10.7,
    "reasons": [
     "資金流出",
     "跌破 50 日線"
    ],
    "alerts": [
     "跌破上升趨勢線"
+   ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "2368",
+   "name": "金像電",
+   "yahoo": "2368.TW",
+   "theme": "AI伺服器",
+   "score": 42.3,
+   "components": {
+    "rs": 51.9,
+    "mf": 67.2,
+    "trend": 0.0,
+    "rebound": 62.2,
+    "risk": 94.1
+   },
+   "price": 918.0,
+   "prev_close": 860.0,
+   "chg_1d_pct": 6.74,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    1260.0,
+    1190.0,
+    1245.0,
+    1250.0,
+    1185.0,
+    1195.0,
+    1115.0,
+    1115.0,
+    1080.0,
+    1185.0,
+    1115.0,
+    1020.0,
+    1060.0,
+    970.0,
+    964.0,
+    868.0,
+    813.0,
+    894.0,
+    983.0,
+    1050.0,
+    975.0,
+    1030.0,
+    927.0,
+    835.0,
+    877.0,
+    790.0,
+    711.0,
+    782.0,
+    860.0,
+    918.0
+   ],
+   "exit": {
+    "atr": 95.57,
+    "trail": 898.29,
+    "hi22": 1185.0,
+    "sma50": 1048.52
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 846.0,
+    "h": 921.0,
+    "l": 827.0,
+    "c": 918.0,
+    "v": 25515000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 27.4,
+   "score_chg": 14.9,
+   "reasons": [
+    "資金流入",
+    "空頭排列",
+    "拉回止跌",
+    "波動大",
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "突破壓力區",
+    "爆量上漲"
    ],
    "signal": "none",
    "signal_label": "未達標",
@@ -2440,7 +2608,7 @@
     "h": 162.0,
     "l": 144.0,
     "c": 144.0,
-    "v": 6611000
+    "v": 6617000
    },
    "extended": false,
    "pullback_ok": false,
@@ -2461,88 +2629,6 @@
    "swap": null
   },
   {
-   "ticker": "3017",
-   "name": "奇鋐",
-   "yahoo": "3017.TW",
-   "theme": "AI伺服器",
-   "score": 42.0,
-   "components": {
-    "rs": 64.9,
-    "mf": 45.2,
-    "trend": 40.0,
-    "rebound": 14.5,
-    "risk": 89.1
-   },
-   "price": 2595.0,
-   "prev_close": 2600.0,
-   "chg_1d_pct": -0.19,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    3315.0,
-    3085.0,
-    3315.0,
-    3320.0,
-    3325.0,
-    3235.0,
-    3145.0,
-    3145.0,
-    3130.0,
-    3215.0,
-    3105.0,
-    3095.0,
-    3060.0,
-    2935.0,
-    2820.0,
-    2565.0,
-    2310.0,
-    2540.0,
-    2790.0,
-    3040.0,
-    2775.0,
-    3040.0,
-    2740.0,
-    2470.0,
-    2715.0,
-    2445.0,
-    2205.0,
-    2365.0,
-    2600.0,
-    2595.0
-   ],
-   "exit": {
-    "atr": 281.07,
-    "trail": 2371.79,
-    "hi22": 3215.0,
-    "sma50": 3091.2
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 2475.0,
-    "h": 2705.0,
-    "l": 2360.0,
-    "c": 2595.0,
-    "v": 7703000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 43.1,
-   "score_chg": -1.1,
-   "reasons": [
-    "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "爆量下跌"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "1301",
    "name": "台塑",
    "yahoo": "1301.TW",
@@ -2553,11 +2639,11 @@
     "mf": 26.0,
     "trend": 40.0,
     "rebound": 0.0,
-    "risk": 62.9
+    "risk": 62.7
    },
-   "price": 56.9,
+   "price": 57.2,
    "prev_close": 60.9,
-   "chg_1d_pct": -6.57,
+   "chg_1d_pct": -6.08,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -2592,7 +2678,7 @@
     56.1,
     56.8,
     60.9,
-    56.9
+    57.2
    ],
    "exit": {
     "atr": 4.81,
@@ -2605,8 +2691,8 @@
     "o": 58.9,
     "h": 60.2,
     "l": 55.5,
-    "c": 56.9,
-    "v": 23696000
+    "c": 57.2,
+    "v": 23919000
    },
    "extended": false,
    "pullback_ok": false,
@@ -2627,187 +2713,21 @@
    "swap": null
   },
   {
-   "ticker": "2368",
-   "name": "金像電",
-   "yahoo": "2368.TW",
-   "theme": "AI伺服器",
-   "score": 41.1,
-   "components": {
-    "rs": 50.6,
-    "mf": 65.4,
-    "trend": 0.0,
-    "rebound": 59.7,
-    "risk": 94.1
-   },
-   "price": 906.0,
-   "prev_close": 860.0,
-   "chg_1d_pct": 5.35,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    1260.0,
-    1190.0,
-    1245.0,
-    1250.0,
-    1185.0,
-    1195.0,
-    1115.0,
-    1115.0,
-    1080.0,
-    1185.0,
-    1115.0,
-    1020.0,
-    1060.0,
-    970.0,
-    964.0,
-    868.0,
-    813.0,
-    894.0,
-    983.0,
-    1050.0,
-    975.0,
-    1030.0,
-    927.0,
-    835.0,
-    877.0,
-    790.0,
-    711.0,
-    782.0,
-    860.0,
-    906.0
-   ],
-   "exit": {
-    "atr": 95.57,
-    "trail": 898.29,
-    "hi22": 1185.0,
-    "sma50": 1048.28
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 846.0,
-    "h": 921.0,
-    "l": 827.0,
-    "c": 906.0,
-    "v": 24999000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 27.4,
-   "score_chg": 13.7,
-   "reasons": [
-    "資金流入",
-    "空頭排列",
-    "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "突破壓力區",
-    "爆量上漲"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "3231",
-   "name": "緯創",
-   "yahoo": "3231.TW",
-   "theme": "AI伺服器",
-   "score": 40.3,
-   "components": {
-    "rs": 62.3,
-    "mf": 28.5,
-    "trend": 20.0,
-    "rebound": 33.4,
-    "risk": 45.9
-   },
-   "price": 153.5,
-   "prev_close": 163.0,
-   "chg_1d_pct": -5.83,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    187.0,
-    176.0,
-    182.5,
-    180.0,
-    189.0,
-    195.0,
-    190.0,
-    190.0,
-    190.5,
-    194.5,
-    188.5,
-    183.5,
-    181.5,
-    176.5,
-    176.0,
-    168.5,
-    160.0,
-    168.5,
-    171.0,
-    174.5,
-    170.0,
-    171.0,
-    159.0,
-    157.0,
-    162.0,
-    156.0,
-    147.0,
-    148.5,
-    163.0,
-    153.5
-   ],
-   "exit": {
-    "atr": 11.0,
-    "trail": 161.5,
-    "hi22": 194.5,
-    "sma50": 178.45
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 156.5,
-    "h": 158.0,
-    "l": 148.0,
-    "c": 153.5,
-    "v": 27343000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 51.1,
-   "score_chg": -10.8,
-   "reasons": [
-    "資金流出",
-    "空頭排列",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "4147",
    "name": "中裕",
    "yahoo": "4147.TWO",
    "theme": "生技醫療",
-   "score": 40.3,
+   "score": 40.9,
    "components": {
-    "rs": 61.0,
-    "mf": 30.1,
+    "rs": 62.3,
+    "mf": 30.3,
     "trend": 20.0,
-    "rebound": 33.4,
+    "rebound": 34.2,
     "risk": 45.4
    },
-   "price": 52.8,
+   "price": 53.0,
    "prev_close": 53.1,
-   "chg_1d_pct": -0.56,
+   "chg_1d_pct": -0.19,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -2842,7 +2762,7 @@
     51.3,
     50.9,
     53.1,
-    52.8
+    53.0
    ],
    "exit": {
     "atr": 4.0,
@@ -2855,14 +2775,95 @@
     "o": 52.6,
     "h": 55.9,
     "l": 51.8,
-    "c": 52.8,
-    "v": 886000
+    "c": 53.0,
+    "v": 892000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 43.7,
-   "score_chg": -3.4,
+   "score_chg": -2.8,
+   "reasons": [
+    "資金流出",
+    "空頭排列",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "3231",
+   "name": "緯創",
+   "yahoo": "3231.TW",
+   "theme": "AI伺服器",
+   "score": 40.0,
+   "components": {
+    "rs": 61.0,
+    "mf": 28.7,
+    "trend": 20.0,
+    "rebound": 34.1,
+    "risk": 45.7
+   },
+   "price": 154.0,
+   "prev_close": 163.0,
+   "chg_1d_pct": -5.52,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    187.0,
+    176.0,
+    182.5,
+    180.0,
+    189.0,
+    195.0,
+    190.0,
+    190.0,
+    190.5,
+    194.5,
+    188.5,
+    183.5,
+    181.5,
+    176.5,
+    176.0,
+    168.5,
+    160.0,
+    168.5,
+    171.0,
+    174.5,
+    170.0,
+    171.0,
+    159.0,
+    157.0,
+    162.0,
+    156.0,
+    147.0,
+    148.5,
+    163.0,
+    154.0
+   ],
+   "exit": {
+    "atr": 11.0,
+    "trail": 161.5,
+    "hi22": 194.5,
+    "sma50": 178.46
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 156.5,
+    "h": 158.0,
+    "l": 148.0,
+    "c": 154.0,
+    "v": 27777000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 51.1,
+   "score_chg": -11.1,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -2881,14 +2882,14 @@
    "score": 39.4,
    "components": {
     "rs": 70.1,
-    "mf": 14.0,
+    "mf": 14.1,
     "trend": 0.0,
     "rebound": 40.0,
     "risk": 11.2
    },
-   "price": 204.5,
+   "price": 205.0,
    "prev_close": 207.0,
-   "chg_1d_pct": -1.21,
+   "chg_1d_pct": -0.97,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -2923,21 +2924,21 @@
     204.0,
     199.5,
     207.0,
-    204.5
+    205.0
    ],
    "exit": {
     "atr": 5.25,
     "trail": 209.75,
     "hi22": 225.5,
-    "sma50": 215.99
+    "sma50": 216.0
    },
    "bar": {
     "t": "2026-11-25",
     "o": 202.5,
-    "h": 205.0,
+    "h": 205.5,
     "l": 200.0,
-    "c": 204.5,
-    "v": 2939000
+    "c": 205.0,
+    "v": 2986000
    },
    "extended": false,
    "pullback_ok": false,
@@ -2962,17 +2963,17 @@
    "name": "台積電",
    "yahoo": "2330.TW",
    "theme": "半導體",
-   "score": 38.5,
+   "score": 38.6,
    "components": {
     "rs": 59.7,
-    "mf": 18.2,
+    "mf": 18.7,
     "trend": 20.0,
     "rebound": 40.0,
-    "risk": 39.5
+    "risk": 39.4
    },
-   "price": 2140.0,
+   "price": 2150.0,
    "prev_close": 2230.0,
-   "chg_1d_pct": -4.04,
+   "chg_1d_pct": -3.59,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -3007,27 +3008,27 @@
     2000.0,
     2030.0,
     2230.0,
-    2140.0
+    2150.0
    ],
    "exit": {
     "atr": 120.71,
     "trail": 2062.86,
     "hi22": 2425.0,
-    "sma50": 2370.9
+    "sma50": 2371.1
    },
    "bar": {
     "t": "2026-11-25",
     "o": 2150.0,
     "h": 2170.0,
     "l": 2020.0,
-    "c": 2140.0,
-    "v": 65559000
+    "c": 2150.0,
+    "v": 66542000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 47.4,
-   "score_chg": -8.9,
+   "score_chg": -8.8,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -3045,17 +3046,17 @@
    "name": "智邦",
    "yahoo": "2345.TW",
    "theme": "光通訊",
-   "score": 34.8,
+   "score": 35.2,
    "components": {
     "rs": 33.8,
-    "mf": 46.3,
+    "mf": 47.0,
     "trend": 20.0,
-    "rebound": 51.9,
-    "risk": 87.2
+    "rebound": 53.7,
+    "risk": 87.3
    },
-   "price": 1490.0,
+   "price": 1505.0,
    "prev_close": 1485.0,
-   "chg_1d_pct": 0.34,
+   "chg_1d_pct": 1.35,
    "above_sma20": true,
    "above_sma50": false,
    "limit": null,
@@ -3090,34 +3091,35 @@
     1230.0,
     1350.0,
     1485.0,
-    1490.0
+    1505.0
    ],
    "exit": {
     "atr": 138.21,
     "trail": 1400.36,
     "hi22": 1815.0,
-    "sma50": 1731.7
+    "sma50": 1732.0
    },
    "bar": {
     "t": "2026-11-25",
     "o": 1485.0,
     "h": 1545.0,
     "l": 1355.0,
-    "c": 1490.0,
-    "v": 8961000
+    "c": 1505.0,
+    "v": 9076000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 27.9,
-   "score_chg": 6.9,
+   "score_chg": 7.3,
    "reasons": [
     "空頭排列",
     "波動大",
     "跌破 50 日線"
    ],
    "alerts": [
-    "突破下降趨勢線"
+    "突破下降趨勢線",
+    "突破壓力區"
    ],
    "signal": "none",
    "signal_label": "未達標",
@@ -3187,7 +3189,7 @@
     "h": 214.0,
     "l": 204.0,
     "c": 207.5,
-    "v": 81116000
+    "v": 81452000
    },
    "extended": false,
    "pullback_ok": false,
@@ -3212,17 +3214,17 @@
    "name": "中鋼",
    "yahoo": "2002.TW",
    "theme": "航運原物料",
-   "score": 34.0,
+   "score": 34.4,
    "components": {
-    "rs": 57.1,
+    "rs": 58.4,
     "mf": 8.9,
     "trend": 0.0,
     "rebound": 40.0,
-    "risk": 13.5
+    "risk": 13.3
    },
-   "price": 17.0,
+   "price": 17.05,
    "prev_close": 17.55,
-   "chg_1d_pct": -3.13,
+   "chg_1d_pct": -2.85,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -3257,7 +3259,7 @@
     17.1,
     16.85,
     17.55,
-    17.0
+    17.05
    ],
    "exit": {
     "atr": 0.5,
@@ -3270,14 +3272,95 @@
     "o": 17.15,
     "h": 17.3,
     "l": 16.85,
-    "c": 17.0,
-    "v": 34026000
+    "c": 17.05,
+    "v": 34129000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 40.0,
-   "score_chg": -6.0,
+   "score_chg": -5.6,
+   "reasons": [
+    "資金流出",
+    "空頭排列",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "1513",
+   "name": "中興電",
+   "yahoo": "1513.TW",
+   "theme": "重電",
+   "score": 33.6,
+   "components": {
+    "rs": 50.6,
+    "mf": 29.3,
+    "trend": 0.0,
+    "rebound": 34.7,
+    "risk": 41.3
+   },
+   "price": 133.0,
+   "prev_close": 140.5,
+   "chg_1d_pct": -5.34,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    168.5,
+    165.0,
+    165.0,
+    162.0,
+    161.0,
+    162.0,
+    160.0,
+    160.0,
+    159.0,
+    159.0,
+    157.0,
+    153.0,
+    154.0,
+    148.0,
+    146.5,
+    143.5,
+    138.5,
+    145.0,
+    146.5,
+    151.5,
+    145.5,
+    146.5,
+    141.0,
+    141.5,
+    143.5,
+    138.5,
+    127.5,
+    132.5,
+    140.5,
+    133.0
+   ],
+   "exit": {
+    "atr": 8.46,
+    "trail": 133.61,
+    "hi22": 159.0,
+    "sma50": 156.32
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 136.0,
+    "h": 137.0,
+    "l": 129.0,
+    "c": 133.0,
+    "v": 1887000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 38.5,
+   "score_chg": -4.9,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -3293,9 +3376,9 @@
    "name": "創意",
    "yahoo": "3443.TW",
    "theme": "半導體",
-   "score": 33.9,
+   "score": 33.5,
    "components": {
-    "rs": 58.4,
+    "rs": 57.1,
     "mf": 29.4,
     "trend": 40.0,
     "rebound": 0.0,
@@ -3358,92 +3441,11 @@
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 39.3,
-   "score_chg": -5.4,
+   "score_chg": -5.8,
    "reasons": [
     "跌停",
     "資金流出",
     "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "1513",
-   "name": "中興電",
-   "yahoo": "1513.TW",
-   "theme": "重電",
-   "score": 33.8,
-   "components": {
-    "rs": 51.9,
-    "mf": 29.1,
-    "trend": 0.0,
-    "rebound": 33.9,
-    "risk": 41.5
-   },
-   "price": 132.5,
-   "prev_close": 140.5,
-   "chg_1d_pct": -5.69,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    168.5,
-    165.0,
-    165.0,
-    162.0,
-    161.0,
-    162.0,
-    160.0,
-    160.0,
-    159.0,
-    159.0,
-    157.0,
-    153.0,
-    154.0,
-    148.0,
-    146.5,
-    143.5,
-    138.5,
-    145.0,
-    146.5,
-    151.5,
-    145.5,
-    146.5,
-    141.0,
-    141.5,
-    143.5,
-    138.5,
-    127.5,
-    132.5,
-    140.5,
-    132.5
-   ],
-   "exit": {
-    "atr": 8.46,
-    "trail": 133.61,
-    "hi22": 159.0,
-    "sma50": 156.31
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 136.0,
-    "h": 137.0,
-    "l": 129.0,
-    "c": 132.5,
-    "v": 1879000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 38.5,
-   "score_chg": -4.7,
-   "reasons": [
-    "資金流出",
-    "空頭排列",
     "跌破 50 日線"
    ],
    "alerts": [],
@@ -3515,7 +3517,7 @@
     "h": 1320.0,
     "l": 1250.0,
     "c": 1255.0,
-    "v": 453000
+    "v": 457000
    },
    "extended": false,
    "pullback_ok": false,
@@ -3533,105 +3535,21 @@
    "swap": null
   },
   {
-   "ticker": "2059",
-   "name": "川湖",
-   "yahoo": "2059.TW",
-   "theme": "AI伺服器",
-   "score": 31.0,
-   "components": {
-    "rs": 44.2,
-    "mf": 23.4,
-    "trend": 20.0,
-    "rebound": 45.0,
-    "risk": 88.3
-   },
-   "price": 6565.0,
-   "prev_close": 6200.0,
-   "chg_1d_pct": 5.89,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    10005.0,
-    9720.0,
-    9955.0,
-    9920.0,
-    10100.0,
-    10080.0,
-    9755.0,
-    9755.0,
-    9810.0,
-    10150.0,
-    9880.0,
-    9650.0,
-    9420.0,
-    9240.0,
-    8600.0,
-    7995.0,
-    7565.0,
-    8010.0,
-    8565.0,
-    8730.0,
-    8165.0,
-    7880.0,
-    7125.0,
-    6565.0,
-    6520.0,
-    5940.0,
-    5350.0,
-    5640.0,
-    6200.0,
-    6565.0
-   ],
-   "exit": {
-    "atr": 677.5,
-    "trail": 8117.5,
-    "hi22": 10150.0,
-    "sma50": 9866.7
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 6235.0,
-    "h": 6740.0,
-    "l": 6015.0,
-    "c": 6565.0,
-    "v": 1380000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 20.6,
-   "score_chg": 10.4,
-   "reasons": [
-    "資金流出",
-    "空頭排列",
-    "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "爆量上漲"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "3034",
    "name": "聯詠",
    "yahoo": "3034.TW",
    "theme": "半導體",
-   "score": 30.8,
+   "score": 30.9,
    "components": {
     "rs": 45.5,
-    "mf": 19.5,
+    "mf": 19.6,
     "trend": 20.0,
-    "rebound": 14.3,
-    "risk": 38.8
+    "rebound": 14.8,
+    "risk": 38.7
    },
-   "price": 421.5,
+   "price": 422.5,
    "prev_close": 435.5,
-   "chg_1d_pct": -3.21,
+   "chg_1d_pct": -2.99,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -3666,27 +3584,27 @@
     416.5,
     431.0,
     435.5,
-    421.5
+    422.5
    ],
    "exit": {
     "atr": 28.21,
     "trail": 514.36,
     "hi22": 599.0,
-    "sma50": 528.07
+    "sma50": 528.09
    },
    "bar": {
     "t": "2026-11-25",
     "o": 426.5,
     "h": 434.0,
     "l": 406.0,
-    "c": 421.5,
-    "v": 3383000
+    "c": 422.5,
+    "v": 3428000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 35.8,
-   "score_chg": -5.0,
+   "score_chg": -4.9,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -3698,21 +3616,105 @@
    "swap": null
   },
   {
+   "ticker": "2059",
+   "name": "川湖",
+   "yahoo": "2059.TW",
+   "theme": "AI伺服器",
+   "score": 30.7,
+   "components": {
+    "rs": 42.9,
+    "mf": 23.6,
+    "trend": 20.0,
+    "rebound": 45.0,
+    "risk": 88.4
+   },
+   "price": 6575.0,
+   "prev_close": 6200.0,
+   "chg_1d_pct": 6.05,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    10005.0,
+    9720.0,
+    9955.0,
+    9920.0,
+    10100.0,
+    10080.0,
+    9755.0,
+    9755.0,
+    9810.0,
+    10150.0,
+    9880.0,
+    9650.0,
+    9420.0,
+    9240.0,
+    8600.0,
+    7995.0,
+    7565.0,
+    8010.0,
+    8565.0,
+    8730.0,
+    8165.0,
+    7880.0,
+    7125.0,
+    6565.0,
+    6520.0,
+    5940.0,
+    5350.0,
+    5640.0,
+    6200.0,
+    6575.0
+   ],
+   "exit": {
+    "atr": 677.5,
+    "trail": 8117.5,
+    "hi22": 10150.0,
+    "sma50": 9866.9
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 6235.0,
+    "h": 6740.0,
+    "l": 6015.0,
+    "c": 6575.0,
+    "v": 1390000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 20.6,
+   "score_chg": 10.1,
+   "reasons": [
+    "資金流出",
+    "空頭排列",
+    "波動大",
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "爆量上漲"
+   ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "2382",
    "name": "廣達",
    "yahoo": "2382.TW",
    "theme": "AI伺服器",
-   "score": 29.8,
+   "score": 29.9,
    "components": {
     "rs": 49.4,
-    "mf": 21.0,
+    "mf": 21.1,
     "trend": 0.0,
-    "rebound": 27.7,
-    "risk": 44.0
+    "rebound": 28.1,
+    "risk": 43.8
    },
-   "price": 262.0,
+   "price": 262.5,
    "prev_close": 282.5,
-   "chg_1d_pct": -7.26,
+   "chg_1d_pct": -7.08,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -3747,27 +3749,27 @@
     252.0,
     257.0,
     282.5,
-    262.0
+    262.5
    ],
    "exit": {
     "atr": 15.61,
     "trail": 283.18,
     "hi22": 330.0,
-    "sma50": 312.86
+    "sma50": 312.87
    },
    "bar": {
     "t": "2026-11-25",
     "o": 270.0,
     "h": 273.5,
     "l": 254.5,
-    "c": 262.0,
-    "v": 17406000
+    "c": 262.5,
+    "v": 17576000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 40.9,
-   "score_chg": -11.1,
+   "score_chg": -11.0,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -3789,7 +3791,7 @@
    "score": 28.9,
    "components": {
     "rs": 48.1,
-    "mf": 11.0,
+    "mf": 10.9,
     "trend": 0.0,
     "rebound": 34.6,
     "risk": 34.7
@@ -3845,7 +3847,7 @@
     "h": 57.6,
     "l": 54.4,
     "c": 56.3,
-    "v": 1840000
+    "v": 1869000
    },
    "extended": false,
    "pullback_ok": false,
@@ -3867,17 +3869,17 @@
    "name": "日月光投控",
    "yahoo": "3711.TW",
    "theme": "半導體",
-   "score": 28.7,
+   "score": 28.8,
    "components": {
     "rs": 46.8,
-    "mf": 33.8,
+    "mf": 33.9,
     "trend": 20.0,
-    "rebound": 0.8,
-    "risk": 79.1
+    "rebound": 1.1,
+    "risk": 79.0
    },
-   "price": 497.5,
+   "price": 498.5,
    "prev_close": 530.0,
-   "chg_1d_pct": -6.13,
+   "chg_1d_pct": -5.94,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -3912,27 +3914,27 @@
     457.0,
     482.0,
     530.0,
-    497.5
+    498.5
    ],
    "exit": {
     "atr": 47.29,
     "trail": 553.14,
     "hi22": 695.0,
-    "sma50": 637.71
+    "sma50": 637.73
    },
    "bar": {
     "t": "2026-11-25",
     "o": 500.0,
     "h": 521.0,
     "l": 477.0,
-    "c": 497.5,
-    "v": 32379000
+    "c": 498.5,
+    "v": 32686000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 35.4,
-   "score_chg": -6.7,
+   "score_chg": -6.6,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -3948,21 +3950,103 @@
    "swap": null
   },
   {
+   "ticker": "2383",
+   "name": "台光電",
+   "yahoo": "2383.TW",
+   "theme": "AI伺服器",
+   "score": 27.8,
+   "components": {
+    "rs": 22.1,
+    "mf": 39.9,
+    "trend": 20.0,
+    "rebound": 45.0,
+    "risk": 95.4
+   },
+   "price": 3425.0,
+   "prev_close": 3395.0,
+   "chg_1d_pct": 0.88,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    5520.0,
+    5120.0,
+    5165.0,
+    5125.0,
+    4945.0,
+    4990.0,
+    5070.0,
+    5070.0,
+    4750.0,
+    5025.0,
+    5010.0,
+    4675.0,
+    4705.0,
+    4395.0,
+    4555.0,
+    4100.0,
+    3820.0,
+    4070.0,
+    4365.0,
+    4500.0,
+    4105.0,
+    4215.0,
+    3795.0,
+    3540.0,
+    3465.0,
+    3120.0,
+    2810.0,
+    3090.0,
+    3395.0,
+    3425.0
+   ],
+   "exit": {
+    "atr": 396.07,
+    "trail": 3836.79,
+    "hi22": 5025.0,
+    "sma50": 4712.2
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 3235.0,
+    "h": 3590.0,
+    "l": 3100.0,
+    "c": 3425.0,
+    "v": 7821000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 24.3,
+   "score_chg": 3.5,
+   "reasons": [
+    "相對大盤弱勢",
+    "空頭排列",
+    "波動大",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "5347",
    "name": "世界先進",
    "yahoo": "5347.TWO",
    "theme": "半導體",
-   "score": 26.3,
+   "score": 26.4,
    "components": {
     "rs": 35.1,
-    "mf": 39.3,
+    "mf": 39.5,
     "trend": 20.0,
     "rebound": 0.0,
-    "risk": 80.1
+    "risk": 80.0
    },
-   "price": 114.5,
+   "price": 115.0,
    "prev_close": 121.0,
-   "chg_1d_pct": -5.37,
+   "chg_1d_pct": -4.96,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -3997,27 +4081,27 @@
     106.5,
     110.0,
     121.0,
-    114.5
+    115.0
    ],
    "exit": {
     "atr": 10.18,
     "trail": 136.96,
     "hi22": 167.5,
-    "sma50": 154.28
+    "sma50": 154.29
    },
    "bar": {
     "t": "2026-11-25",
     "o": 117.5,
     "h": 119.5,
     "l": 109.0,
-    "c": 114.5,
-    "v": 16238000
+    "c": 115.0,
+    "v": 16432000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 29.7,
-   "score_chg": -3.4,
+   "score_chg": -3.3,
    "reasons": [
     "空頭排列",
     "波動大",
@@ -4033,17 +4117,17 @@
    "name": "華新",
    "yahoo": "1605.TW",
    "theme": "重電",
-   "score": 25.9,
+   "score": 26.1,
    "components": {
     "rs": 39.0,
-    "mf": 18.6,
+    "mf": 18.9,
     "trend": 20.0,
-    "rebound": 11.8,
-    "risk": 61.7
+    "rebound": 12.4,
+    "risk": 61.5
    },
-   "price": 28.25,
+   "price": 28.35,
    "prev_close": 30.9,
-   "chg_1d_pct": -8.58,
+   "chg_1d_pct": -8.25,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -4078,7 +4162,7 @@
     26.85,
     28.1,
     30.9,
-    28.25
+    28.35
    ],
    "exit": {
     "atr": 2.12,
@@ -4091,14 +4175,14 @@
     "o": 29.2,
     "h": 29.5,
     "l": 27.85,
-    "c": 28.25,
-    "v": 25542000
+    "c": 28.35,
+    "v": 25709000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 35.4,
-   "score_chg": -9.5,
+   "score_chg": -9.3,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -4117,17 +4201,17 @@
    "name": "力旺",
    "yahoo": "3529.TWO",
    "theme": "半導體",
-   "score": 25.0,
+   "score": 25.9,
    "components": {
-    "rs": 29.9,
-    "mf": 58.5,
+    "rs": 32.5,
+    "mf": 58.8,
     "trend": 0.0,
     "rebound": 0.0,
-    "risk": 85.6
+    "risk": 85.3
    },
-   "price": 1865.0,
+   "price": 1880.0,
    "prev_close": 2025.0,
-   "chg_1d_pct": -7.9,
+   "chg_1d_pct": -7.16,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -4162,29 +4246,28 @@
     1800.0,
     1895.0,
     2025.0,
-    1865.0
+    1880.0
    ],
    "exit": {
     "atr": 202.86,
     "trail": 2046.43,
     "hi22": 2655.0,
-    "sma50": 2574.6
+    "sma50": 2574.9
    },
    "bar": {
     "t": "2026-11-25",
     "o": 1845.0,
     "h": 2030.0,
     "l": 1825.0,
-    "c": 1865.0,
-    "v": 1349000
+    "c": 1880.0,
+    "v": 1355000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 33.4,
-   "score_chg": -8.4,
+   "score_chg": -7.5,
    "reasons": [
-    "相對大盤弱勢",
     "空頭排列",
     "波動大",
     "跌破 50 日線"
@@ -4260,7 +4343,7 @@
     "h": 1480.0,
     "l": 1360.0,
     "c": 1450.0,
-    "v": 4587000
+    "v": 4621000
    },
    "extended": false,
    "pullback_ok": false,
@@ -4285,17 +4368,17 @@
    "name": "合一",
    "yahoo": "4743.TWO",
    "theme": "生技醫療",
-   "score": 22.9,
+   "score": 23.1,
    "components": {
     "rs": 40.3,
-    "mf": 12.2,
+    "mf": 12.3,
     "trend": 0.0,
-    "rebound": 23.7,
+    "rebound": 24.3,
     "risk": 57.4
    },
-   "price": 37.1,
+   "price": 37.2,
    "prev_close": 38.55,
-   "chg_1d_pct": -3.76,
+   "chg_1d_pct": -3.5,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -4330,27 +4413,27 @@
     35.55,
     35.35,
     38.55,
-    37.1
+    37.2
    ],
    "exit": {
     "atr": 3.07,
     "trail": 41.0,
     "hi22": 50.2,
-    "sma50": 45.5
+    "sma50": 45.51
    },
    "bar": {
     "t": "2026-11-25",
     "o": 37.2,
     "h": 39.45,
     "l": 36.2,
-    "c": 37.1,
-    "v": 1457000
+    "c": 37.2,
+    "v": 1473000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 29.7,
-   "score_chg": -6.8,
+   "score_chg": -6.6,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -4366,17 +4449,17 @@
    "name": "士電",
    "yahoo": "1503.TW",
    "theme": "重電",
-   "score": 22.2,
+   "score": 22.8,
    "components": {
-    "rs": 42.9,
-    "mf": 9.2,
+    "rs": 44.2,
+    "mf": 9.4,
     "trend": 0.0,
-    "rebound": 18.7,
-    "risk": 57.4
+    "rebound": 19.3,
+    "risk": 57.3
    },
-   "price": 153.0,
+   "price": 153.5,
    "prev_close": 161.5,
-   "chg_1d_pct": -5.26,
+   "chg_1d_pct": -4.95,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -4411,27 +4494,27 @@
     144.0,
     147.0,
     161.5,
-    153.0
+    153.5
    ],
    "exit": {
     "atr": 11.29,
     "trail": 157.64,
     "hi22": 191.5,
-    "sma50": 184.91
+    "sma50": 184.92
    },
    "bar": {
     "t": "2026-11-25",
     "o": 155.5,
     "h": 157.0,
     "l": 146.5,
-    "c": 153.0,
-    "v": 1207000
+    "c": 153.5,
+    "v": 1221000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 28.4,
-   "score_chg": -6.2,
+   "score_chg": -5.6,
    "reasons": [
     "資金流出",
     "空頭排列",
@@ -4447,17 +4530,17 @@
    "name": "技嘉",
    "yahoo": "2376.TW",
    "theme": "AI伺服器",
-   "score": 21.8,
+   "score": 22.1,
    "components": {
     "rs": 41.6,
-    "mf": 0.8,
+    "mf": 1.2,
     "trend": 20.0,
-    "rebound": 4.8,
-    "risk": 55.7
+    "rebound": 5.8,
+    "risk": 55.4
    },
-   "price": 259.5,
+   "price": 261.0,
    "prev_close": 278.0,
-   "chg_1d_pct": -6.65,
+   "chg_1d_pct": -6.12,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -4492,30 +4575,112 @@
     248.0,
     253.0,
     278.0,
-    259.5
+    261.0
    ],
    "exit": {
     "atr": 18.29,
     "trail": 307.64,
     "hi22": 362.5,
-    "sma50": 333.47
+    "sma50": 333.5
    },
    "bar": {
     "t": "2026-11-25",
     "o": 270.0,
     "h": 272.0,
     "l": 250.5,
-    "c": 259.5,
-    "v": 9124000
+    "c": 261.0,
+    "v": 9226000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 29.6,
-   "score_chg": -7.8,
+   "score_chg": -7.5,
    "reasons": [
     "資金流出",
     "空頭排列",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "3324",
+   "name": "雙鴻",
+   "yahoo": "3324.TWO",
+   "theme": "AI伺服器",
+   "score": 21.6,
+   "components": {
+    "rs": 37.7,
+    "mf": 24.4,
+    "trend": 20.0,
+    "rebound": 0.0,
+    "risk": 98.5
+   },
+   "price": 810.0,
+   "prev_close": 854.0,
+   "chg_1d_pct": -5.15,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    1490.0,
+    1410.0,
+    1425.0,
+    1380.0,
+    1395.0,
+    1375.0,
+    1360.0,
+    1360.0,
+    1335.0,
+    1435.0,
+    1465.0,
+    1330.0,
+    1395.0,
+    1320.0,
+    1300.0,
+    1170.0,
+    1055.0,
+    1150.0,
+    1235.0,
+    1300.0,
+    1170.0,
+    1140.0,
+    1030.0,
+    927.0,
+    979.0,
+    882.0,
+    794.0,
+    777.0,
+    854.0,
+    810.0
+   ],
+   "exit": {
+    "atr": 104.71,
+    "trail": 1150.86,
+    "hi22": 1465.0,
+    "sma50": 1319.06
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 825.0,
+    "h": 892.0,
+    "l": 769.0,
+    "c": 810.0,
+    "v": 5133000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 27.5,
+   "score_chg": -5.9,
+   "reasons": [
+    "資金流出",
+    "空頭排列",
+    "波動大",
     "跌破 50 日線"
    ],
    "alerts": [],
@@ -4528,9 +4693,9 @@
    "name": "聯電",
    "yahoo": "2303.TW",
    "theme": "半導體",
-   "score": 21.5,
+   "score": 21.2,
    "components": {
-    "rs": 28.6,
+    "rs": 27.3,
     "mf": 31.1,
     "trend": 20.0,
     "rebound": 0.0,
@@ -4587,13 +4752,13 @@
     "h": 91.0,
     "l": 87.4,
     "c": 87.4,
-    "v": 192013000
+    "v": 192320000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 29.4,
-   "score_chg": -7.9,
+   "score_chg": -8.2,
    "reasons": [
     "跌停",
     "相對大盤弱勢",
@@ -4610,97 +4775,13 @@
    "swap": null
   },
   {
-   "ticker": "3324",
-   "name": "雙鴻",
-   "yahoo": "3324.TWO",
-   "theme": "AI伺服器",
-   "score": 21.5,
-   "components": {
-    "rs": 37.7,
-    "mf": 24.3,
-    "trend": 20.0,
-    "rebound": 0.0,
-    "risk": 98.5
-   },
-   "price": 807.0,
-   "prev_close": 854.0,
-   "chg_1d_pct": -5.5,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    1490.0,
-    1410.0,
-    1425.0,
-    1380.0,
-    1395.0,
-    1375.0,
-    1360.0,
-    1360.0,
-    1335.0,
-    1435.0,
-    1465.0,
-    1330.0,
-    1395.0,
-    1320.0,
-    1300.0,
-    1170.0,
-    1055.0,
-    1150.0,
-    1235.0,
-    1300.0,
-    1170.0,
-    1140.0,
-    1030.0,
-    927.0,
-    979.0,
-    882.0,
-    794.0,
-    777.0,
-    854.0,
-    807.0
-   ],
-   "exit": {
-    "atr": 104.71,
-    "trail": 1150.86,
-    "hi22": 1465.0,
-    "sma50": 1319.0
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 825.0,
-    "h": 892.0,
-    "l": 769.0,
-    "c": 807.0,
-    "v": 5100000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 27.5,
-   "score_chg": -6.0,
-   "reasons": [
-    "資金流出",
-    "空頭排列",
-    "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "跌破支撐區"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "6285",
    "name": "啟碁",
    "yahoo": "6285.TW",
    "theme": "低軌衛星",
-   "score": 20.9,
+   "score": 19.8,
    "components": {
-    "rs": 32.5,
+    "rs": 28.6,
     "mf": 34.8,
     "trend": 0.0,
     "rebound": 4.3,
@@ -4757,265 +4838,19 @@
     "h": 193.5,
     "l": 175.5,
     "c": 175.5,
-    "v": 9699000
+    "v": 9712000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 31.3,
-   "score_chg": -10.4,
+   "score_chg": -11.5,
    "reasons": [
     "跌停",
-    "資金流出",
-    "空頭排列",
-    "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "2383",
-   "name": "台光電",
-   "yahoo": "2383.TW",
-   "theme": "AI伺服器",
-   "score": 19.1,
-   "components": {
-    "rs": 20.8,
-    "mf": 33.8,
-    "trend": 20.0,
-    "rebound": 0.0,
-    "risk": 95.3
-   },
-   "price": 3390.0,
-   "prev_close": 3395.0,
-   "chg_1d_pct": -0.15,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    5520.0,
-    5120.0,
-    5165.0,
-    5125.0,
-    4945.0,
-    4990.0,
-    5070.0,
-    5070.0,
-    4750.0,
-    5025.0,
-    5010.0,
-    4675.0,
-    4705.0,
-    4395.0,
-    4555.0,
-    4100.0,
-    3820.0,
-    4070.0,
-    4365.0,
-    4500.0,
-    4105.0,
-    4215.0,
-    3795.0,
-    3540.0,
-    3465.0,
-    3120.0,
-    2810.0,
-    3090.0,
-    3395.0,
-    3390.0
-   ],
-   "exit": {
-    "atr": 396.07,
-    "trail": 3836.79,
-    "hi22": 5025.0,
-    "sma50": 4711.5
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 3235.0,
-    "h": 3590.0,
-    "l": 3100.0,
-    "c": 3390.0,
-    "v": 7724000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 24.3,
-   "score_chg": -5.2,
-   "reasons": [
     "相對大盤弱勢",
     "資金流出",
     "空頭排列",
     "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "2408",
-   "name": "南亞科",
-   "yahoo": "2408.TW",
-   "theme": "半導體",
-   "score": 17.8,
-   "components": {
-    "rs": 26.0,
-    "mf": 20.0,
-    "trend": 20.0,
-    "rebound": 0.0,
-    "risk": 89.8
-   },
-   "price": 280.5,
-   "prev_close": 309.0,
-   "chg_1d_pct": -9.22,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    480.5,
-    439.5,
-    447.5,
-    436.0,
-    422.0,
-    436.5,
-    414.0,
-    414.0,
-    441.0,
-    477.0,
-    477.0,
-    454.5,
-    456.5,
-    411.0,
-    399.5,
-    360.0,
-    343.5,
-    370.0,
-    383.0,
-    394.0,
-    379.5,
-    377.0,
-    340.0,
-    329.0,
-    325.0,
-    293.5,
-    264.5,
-    281.0,
-    309.0,
-    280.5
-   ],
-   "exit": {
-    "atr": 32.11,
-    "trail": 380.68,
-    "hi22": 477.0,
-    "sma50": 435.8
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 290.0,
-    "h": 294.5,
-    "l": 278.5,
-    "c": 280.5,
-    "v": 40764000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 23.1,
-   "score_chg": -5.3,
-   "reasons": [
-    "相對大盤弱勢",
-    "資金流出",
-    "空頭排列",
-    "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
-   "ticker": "1760",
-   "name": "寶齡富錦",
-   "yahoo": "1760.TW",
-   "theme": "生技醫療",
-   "score": 16.9,
-   "components": {
-    "rs": 31.2,
-    "mf": 0.0,
-    "trend": 0.0,
-    "rebound": 10.1,
-    "risk": 39.5
-   },
-   "price": 40.3,
-   "prev_close": 41.45,
-   "chg_1d_pct": -2.77,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    54.0,
-    53.8,
-    54.1,
-    53.2,
-    52.8,
-    52.5,
-    51.7,
-    51.7,
-    51.9,
-    52.0,
-    51.8,
-    50.0,
-    50.2,
-    48.65,
-    49.45,
-    48.95,
-    48.95,
-    49.3,
-    49.35,
-    47.7,
-    47.4,
-    47.55,
-    45.65,
-    45.6,
-    44.05,
-    42.1,
-    39.65,
-    40.0,
-    41.45,
-    40.3
-   ],
-   "exit": {
-    "atr": 2.04,
-    "trail": 45.87,
-    "hi22": 52.0,
-    "sma50": 50.78
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 41.1,
-    "h": 41.8,
-    "l": 40.0,
-    "c": 40.3,
-    "v": 89000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 21.0,
-   "score_chg": -4.1,
-   "reasons": [
-    "資金流出",
-    "空頭排列",
     "跌破 50 日線"
    ],
    "alerts": [],
@@ -5028,17 +4863,17 @@
    "name": "群聯",
    "yahoo": "8299.TWO",
    "theme": "半導體",
-   "score": 16.8,
+   "score": 18.5,
    "components": {
-    "rs": 27.3,
-    "mf": 20.9,
+    "rs": 29.9,
+    "mf": 22.7,
     "trend": 0.0,
-    "rebound": 8.5,
-    "risk": 78.6
+    "rebound": 11.5,
+    "risk": 78.3
    },
-   "price": 1510.0,
+   "price": 1535.0,
    "prev_close": 1595.0,
-   "chg_1d_pct": -5.33,
+   "chg_1d_pct": -3.76,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5073,32 +4908,196 @@
     1320.0,
     1450.0,
     1595.0,
-    1510.0
+    1535.0
    ],
    "exit": {
     "atr": 135.71,
     "trail": 1642.86,
     "hi22": 2050.0,
-    "sma50": 1859.5
+    "sma50": 1860.0
    },
    "bar": {
     "t": "2026-11-25",
     "o": 1510.0,
     "h": 1575.0,
     "l": 1470.0,
-    "c": 1510.0,
-    "v": 6808000
+    "c": 1535.0,
+    "v": 6880000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 25.1,
-   "score_chg": -8.3,
+   "score_chg": -6.6,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
     "空頭排列",
     "波動大",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "2408",
+   "name": "南亞科",
+   "yahoo": "2408.TW",
+   "theme": "半導體",
+   "score": 17.9,
+   "components": {
+    "rs": 26.0,
+    "mf": 20.1,
+    "trend": 20.0,
+    "rebound": 0.0,
+    "risk": 89.7
+   },
+   "price": 281.0,
+   "prev_close": 309.0,
+   "chg_1d_pct": -9.06,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    480.5,
+    439.5,
+    447.5,
+    436.0,
+    422.0,
+    436.5,
+    414.0,
+    414.0,
+    441.0,
+    477.0,
+    477.0,
+    454.5,
+    456.5,
+    411.0,
+    399.5,
+    360.0,
+    343.5,
+    370.0,
+    383.0,
+    394.0,
+    379.5,
+    377.0,
+    340.0,
+    329.0,
+    325.0,
+    293.5,
+    264.5,
+    281.0,
+    309.0,
+    281.0
+   ],
+   "exit": {
+    "atr": 32.11,
+    "trail": 380.68,
+    "hi22": 477.0,
+    "sma50": 435.81
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 290.0,
+    "h": 294.5,
+    "l": 278.5,
+    "c": 281.0,
+    "v": 40900000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 23.1,
+   "score_chg": -5.2,
+   "reasons": [
+    "相對大盤弱勢",
+    "資金流出",
+    "空頭排列",
+    "波動大",
+    "跌破 50 日線"
+   ],
+   "alerts": [],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
+   "ticker": "1760",
+   "name": "寶齡富錦",
+   "yahoo": "1760.TW",
+   "theme": "生技醫療",
+   "score": 17.1,
+   "components": {
+    "rs": 31.2,
+    "mf": 0.0,
+    "trend": 0.0,
+    "rebound": 11.2,
+    "risk": 39.3
+   },
+   "price": 40.55,
+   "prev_close": 41.45,
+   "chg_1d_pct": -2.17,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    54.0,
+    53.8,
+    54.1,
+    53.2,
+    52.8,
+    52.5,
+    51.7,
+    51.7,
+    51.9,
+    52.0,
+    51.8,
+    50.0,
+    50.2,
+    48.65,
+    49.45,
+    48.95,
+    48.95,
+    49.3,
+    49.35,
+    47.7,
+    47.4,
+    47.55,
+    45.65,
+    45.6,
+    44.05,
+    42.1,
+    39.65,
+    40.0,
+    41.45,
+    40.55
+   ],
+   "exit": {
+    "atr": 2.04,
+    "trail": 45.87,
+    "hi22": 52.0,
+    "sma50": 50.78
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 41.1,
+    "h": 41.8,
+    "l": 40.0,
+    "c": 40.55,
+    "v": 93000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 21.0,
+   "score_chg": -3.9,
+   "reasons": [
+    "資金流出",
+    "空頭排列",
     "跌破 50 日線"
    ],
    "alerts": [],
@@ -5194,17 +5193,17 @@
    "name": "聯鈞",
    "yahoo": "3450.TW",
    "theme": "光通訊",
-   "score": 16.4,
+   "score": 16.5,
    "components": {
     "rs": 14.3,
-    "mf": 30.4,
+    "mf": 30.5,
     "trend": 20.0,
     "rebound": 0.0,
     "risk": 94.6
    },
-   "price": 278.0,
+   "price": 279.0,
    "prev_close": 284.0,
-   "chg_1d_pct": -2.11,
+   "chg_1d_pct": -1.76,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5239,27 +5238,27 @@
     257.0,
     258.5,
     284.0,
-    278.0
+    279.0
    ],
    "exit": {
     "atr": 31.07,
     "trail": 348.29,
     "hi22": 441.5,
-    "sma50": 434.02
+    "sma50": 434.04
    },
    "bar": {
     "t": "2026-11-25",
     "o": 270.0,
     "h": 300.0,
     "l": 265.5,
-    "c": 278.0,
-    "v": 6907000
+    "c": 279.0,
+    "v": 6945000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 19.9,
-   "score_chg": -3.5,
+   "score_chg": -3.4,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -5277,9 +5276,9 @@
    "name": "華通",
    "yahoo": "2313.TW",
    "theme": "低軌衛星",
-   "score": 16.3,
+   "score": 16.0,
    "components": {
-    "rs": 22.1,
+    "rs": 20.8,
     "mf": 30.9,
     "trend": 0.0,
     "rebound": 0.0,
@@ -5336,13 +5335,13 @@
     "h": 169.0,
     "l": 153.0,
     "c": 153.0,
-    "v": 20096000
+    "v": 20139000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 22.3,
-   "score_chg": -6.0,
+   "score_chg": -6.3,
    "reasons": [
     "跌停",
     "相對大盤弱勢",
@@ -5357,106 +5356,21 @@
    "swap": null
   },
   {
-   "ticker": "6488",
-   "name": "環球晶",
-   "yahoo": "6488.TWO",
-   "theme": "半導體",
-   "score": 14.3,
-   "components": {
-    "rs": 10.4,
-    "mf": 26.7,
-    "trend": 20.0,
-    "rebound": 0.0,
-    "risk": 95.4
-   },
-   "price": 478.5,
-   "prev_close": 506.0,
-   "chg_1d_pct": -5.43,
-   "above_sma20": false,
-   "above_sma50": false,
-   "limit": null,
-   "data_date": "2026-11-25",
-   "spark": [
-    1020.0,
-    923.0,
-    902.0,
-    882.0,
-    844.0,
-    880.0,
-    826.0,
-    826.0,
-    814.0,
-    849.0,
-    814.0,
-    756.0,
-    760.0,
-    685.0,
-    619.0,
-    564.0,
-    512.0,
-    563.0,
-    612.0,
-    635.0,
-    622.0,
-    630.0,
-    577.0,
-    546.0,
-    544.0,
-    490.0,
-    441.5,
-    460.5,
-    506.0,
-    478.5
-   ],
-   "exit": {
-    "atr": 51.89,
-    "trail": 693.32,
-    "hi22": 849.0,
-    "sma50": 820.11
-   },
-   "bar": {
-    "t": "2026-11-25",
-    "o": 479.0,
-    "h": 510.0,
-    "l": 455.5,
-    "c": 478.5,
-    "v": 7874000
-   },
-   "extended": false,
-   "pullback_ok": false,
-   "entry_ok": false,
-   "score_prev": 17.7,
-   "score_chg": -3.4,
-   "reasons": [
-    "相對大盤弱勢",
-    "資金流出",
-    "空頭排列",
-    "波動大",
-    "跌破 50 日線"
-   ],
-   "alerts": [
-    "跌破支撐區"
-   ],
-   "signal": "none",
-   "signal_label": "未達標",
-   "swap": null
-  },
-  {
    "ticker": "6442",
    "name": "光聖",
    "yahoo": "6442.TW",
    "theme": "光通訊",
-   "score": 14.3,
+   "score": 14.4,
    "components": {
     "rs": 15.6,
-    "mf": 37.1,
+    "mf": 37.3,
     "trend": 0.0,
     "rebound": 0.0,
-    "risk": 96.3
+    "risk": 96.2
    },
-   "price": 925.0,
+   "price": 930.0,
    "prev_close": 979.0,
-   "chg_1d_pct": -5.52,
+   "chg_1d_pct": -5.01,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5491,27 +5405,27 @@
     864.0,
     890.0,
     979.0,
-    925.0
+    930.0
    ],
    "exit": {
     "atr": 108.93,
     "trail": 1078.21,
     "hi22": 1405.0,
-    "sma50": 1363.32
+    "sma50": 1363.42
    },
    "bar": {
     "t": "2026-11-25",
     "o": 919.0,
     "h": 1015.0,
     "l": 887.0,
-    "c": 925.0,
-    "v": 2698000
+    "c": 930.0,
+    "v": 2709000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 18.7,
-   "score_chg": -4.4,
+   "score_chg": -4.3,
    "reasons": [
     "相對大盤弱勢",
     "空頭排列",
@@ -5524,21 +5438,106 @@
    "swap": null
   },
   {
+   "ticker": "6488",
+   "name": "環球晶",
+   "yahoo": "6488.TWO",
+   "theme": "半導體",
+   "score": 14.3,
+   "components": {
+    "rs": 10.4,
+    "mf": 26.7,
+    "trend": 20.0,
+    "rebound": 0.0,
+    "risk": 95.3
+   },
+   "price": 482.0,
+   "prev_close": 506.0,
+   "chg_1d_pct": -4.74,
+   "above_sma20": false,
+   "above_sma50": false,
+   "limit": null,
+   "data_date": "2026-11-25",
+   "spark": [
+    1020.0,
+    923.0,
+    902.0,
+    882.0,
+    844.0,
+    880.0,
+    826.0,
+    826.0,
+    814.0,
+    849.0,
+    814.0,
+    756.0,
+    760.0,
+    685.0,
+    619.0,
+    564.0,
+    512.0,
+    563.0,
+    612.0,
+    635.0,
+    622.0,
+    630.0,
+    577.0,
+    546.0,
+    544.0,
+    490.0,
+    441.5,
+    460.5,
+    506.0,
+    482.0
+   ],
+   "exit": {
+    "atr": 51.89,
+    "trail": 693.32,
+    "hi22": 849.0,
+    "sma50": 820.18
+   },
+   "bar": {
+    "t": "2026-11-25",
+    "o": 479.0,
+    "h": 510.0,
+    "l": 455.5,
+    "c": 482.0,
+    "v": 7920000
+   },
+   "extended": false,
+   "pullback_ok": false,
+   "entry_ok": false,
+   "score_prev": 17.7,
+   "score_chg": -3.4,
+   "reasons": [
+    "相對大盤弱勢",
+    "資金流出",
+    "空頭排列",
+    "波動大",
+    "跌破 50 日線"
+   ],
+   "alerts": [
+    "跌破支撐區"
+   ],
+   "signal": "none",
+   "signal_label": "未達標",
+   "swap": null
+  },
+  {
    "ticker": "3037",
    "name": "欣興",
    "yahoo": "3037.TW",
    "theme": "AI伺服器",
-   "score": 13.9,
+   "score": 14.1,
    "components": {
     "rs": 11.7,
-    "mf": 23.5,
+    "mf": 24.1,
     "trend": 20.0,
     "rebound": 0.0,
-    "risk": 94.7
+    "risk": 94.6
    },
-   "price": 582.0,
+   "price": 589.0,
    "prev_close": 613.0,
-   "chg_1d_pct": -5.06,
+   "chg_1d_pct": -3.92,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5573,27 +5572,27 @@
     537.0,
     558.0,
     613.0,
-    582.0
+    589.0
    ],
    "exit": {
     "atr": 73.54,
     "trail": 879.39,
     "hi22": 1100.0,
-    "sma50": 979.72
+    "sma50": 979.86
    },
    "bar": {
     "t": "2026-11-25",
     "o": 570.0,
     "h": 640.0,
     "l": 555.0,
-    "c": 582.0,
-    "v": 41959000
+    "c": 589.0,
+    "v": 42298000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 17.9,
-   "score_chg": -4.0,
+   "score_chg": -3.8,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -5611,17 +5610,17 @@
    "name": "英業達",
    "yahoo": "2356.TW",
    "theme": "AI伺服器",
-   "score": 13.8,
+   "score": 13.9,
    "components": {
     "rs": 18.2,
     "mf": 3.4,
     "trend": 20.0,
     "rebound": 0.0,
-    "risk": 64.6
+    "risk": 64.5
    },
-   "price": 39.2,
+   "price": 39.3,
    "prev_close": 42.2,
-   "chg_1d_pct": -7.11,
+   "chg_1d_pct": -6.87,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5656,7 +5655,7 @@
     39.25,
     38.75,
     42.2,
-    39.2
+    39.3
    ],
    "exit": {
     "atr": 3.44,
@@ -5669,14 +5668,14 @@
     "o": 39.5,
     "h": 40.15,
     "l": 38.0,
-    "c": 39.2,
-    "v": 28076000
+    "c": 39.3,
+    "v": 28293000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 19.3,
-   "score_chg": -5.5,
+   "score_chg": -5.4,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -5698,14 +5697,14 @@
    "score": 13.4,
    "components": {
     "rs": 6.5,
-    "mf": 43.6,
+    "mf": 43.4,
     "trend": 0.0,
     "rebound": 0.0,
-    "risk": 94.3
+    "risk": 94.4
    },
-   "price": 3085.0,
+   "price": 3075.0,
    "prev_close": 3220.0,
-   "chg_1d_pct": -4.19,
+   "chg_1d_pct": -4.5,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5740,21 +5739,21 @@
     2885.0,
     2930.0,
     3220.0,
-    3085.0
+    3075.0
    ],
    "exit": {
     "atr": 366.43,
     "trail": 3835.71,
     "hi22": 4935.0,
-    "sma50": 4899.5
+    "sma50": 4899.3
    },
    "bar": {
     "t": "2026-11-25",
     "o": 3060.0,
     "h": 3315.0,
     "l": 2900.0,
-    "c": 3085.0,
-    "v": 695000
+    "c": 3075.0,
+    "v": 704000
    },
    "extended": false,
    "pullback_ok": false,
@@ -5783,11 +5782,11 @@
     "mf": 22.0,
     "trend": 0.0,
     "rebound": 0.0,
-    "risk": 79.6
+    "risk": 79.4
    },
-   "price": 435.0,
+   "price": 437.0,
    "prev_close": 467.5,
-   "chg_1d_pct": -6.95,
+   "chg_1d_pct": -6.52,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5822,21 +5821,21 @@
     421.5,
     425.0,
     467.5,
-    435.0
+    437.0
    ],
    "exit": {
     "atr": 40.89,
     "trail": 469.32,
     "hi22": 592.0,
-    "sma50": 601.48
+    "sma50": 601.52
    },
    "bar": {
     "t": "2026-11-25",
     "o": 457.5,
     "h": 470.0,
     "l": 421.0,
-    "c": 435.0,
-    "v": 1064000
+    "c": 437.0,
+    "v": 1071000
    },
    "extended": false,
    "pullback_ok": false,
@@ -5866,11 +5865,11 @@
     "mf": 11.5,
     "trend": 0.0,
     "rebound": 0.0,
-    "risk": 66.2
+    "risk": 66.1
    },
-   "price": 272.5,
+   "price": 274.0,
    "prev_close": 284.0,
-   "chg_1d_pct": -4.05,
+   "chg_1d_pct": -3.52,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5905,21 +5904,21 @@
     280.0,
     272.5,
     284.0,
-    272.5
+    274.0
    ],
    "exit": {
     "atr": 27.57,
     "trail": 326.29,
     "hi22": 409.0,
-    "sma50": 393.67
+    "sma50": 393.7
    },
    "bar": {
     "t": "2026-11-25",
     "o": 277.0,
     "h": 292.5,
     "l": 265.0,
-    "c": 272.5,
-    "v": 1089000
+    "c": 274.0,
+    "v": 1094000
    },
    "extended": false,
    "pullback_ok": false,
@@ -5942,17 +5941,17 @@
    "name": "亞力",
    "yahoo": "1514.TW",
    "theme": "重電",
-   "score": 12.2,
+   "score": 12.4,
    "components": {
     "rs": 24.7,
     "mf": 0.3,
     "trend": 0.0,
-    "rebound": 7.5,
-    "risk": 63.5
+    "rebound": 8.3,
+    "risk": 63.4
    },
-   "price": 71.2,
+   "price": 71.5,
    "prev_close": 76.4,
-   "chg_1d_pct": -6.81,
+   "chg_1d_pct": -6.41,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -5987,7 +5986,7 @@
     66.8,
     69.5,
     76.4,
-    71.2
+    71.5
    ],
    "exit": {
     "atr": 5.57,
@@ -6000,14 +5999,14 @@
     "o": 75.3,
     "h": 75.3,
     "l": 69.0,
-    "c": 71.2,
-    "v": 852000
+    "c": 71.5,
+    "v": 868000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 21.0,
-   "score_chg": -8.8,
+   "score_chg": -8.6,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -6024,17 +6023,17 @@
    "name": "波若威",
    "yahoo": "3163.TWO",
    "theme": "光通訊",
-   "score": 11.7,
+   "score": 11.8,
    "components": {
     "rs": 5.2,
-    "mf": 38.5,
+    "mf": 39.0,
     "trend": 0.0,
     "rebound": 0.0,
     "risk": 95.0
    },
-   "price": 351.5,
+   "price": 352.5,
    "prev_close": 354.0,
-   "chg_1d_pct": -0.71,
+   "chg_1d_pct": -0.42,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -6069,27 +6068,27 @@
     342.0,
     322.0,
     354.0,
-    351.5
+    352.5
    ],
    "exit": {
     "atr": 40.29,
     "trail": 448.14,
     "hi22": 569.0,
-    "sma50": 557.49
+    "sma50": 557.51
    },
    "bar": {
     "t": "2026-11-25",
     "o": 343.0,
     "h": 389.0,
     "l": 343.0,
-    "c": 351.5,
-    "v": 9914000
+    "c": 352.5,
+    "v": 9964000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 13.9,
-   "score_chg": -2.2,
+   "score_chg": -2.1,
    "reasons": [
     "相對大盤弱勢",
     "空頭排列",
@@ -6108,17 +6107,17 @@
    "name": "台達電",
    "yahoo": "2308.TW",
    "theme": "重電",
-   "score": 10.3,
+   "score": 10.5,
    "components": {
     "rs": 16.9,
-    "mf": 18.8,
+    "mf": 19.4,
     "trend": 0.0,
     "rebound": 0.0,
     "risk": 94.4
    },
-   "price": 1055.0,
+   "price": 1065.0,
    "prev_close": 1085.0,
-   "chg_1d_pct": -2.76,
+   "chg_1d_pct": -1.84,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -6153,27 +6152,27 @@
     900.0,
     990.0,
     1085.0,
-    1055.0
+    1065.0
    ],
    "exit": {
     "atr": 105.21,
     "trail": 1234.36,
     "hi22": 1550.0,
-    "sma50": 1524.9
+    "sma50": 1525.1
    },
    "bar": {
     "t": "2026-11-25",
     "o": 1095.0,
     "h": 1115.0,
     "l": 989.0,
-    "c": 1055.0,
-    "v": 35251000
+    "c": 1065.0,
+    "v": 35645000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 14.2,
-   "score_chg": -3.9,
+   "score_chg": -3.7,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -6181,7 +6180,9 @@
     "波動大",
     "跌破 50 日線"
    ],
-   "alerts": [],
+   "alerts": [
+    "突破下降趨勢線"
+   ],
    "signal": "none",
    "signal_label": "未達標",
    "swap": null
@@ -6191,17 +6192,17 @@
    "name": "聯亞",
    "yahoo": "3081.TWO",
    "theme": "光通訊",
-   "score": 8.3,
+   "score": 8.2,
    "components": {
     "rs": 9.1,
-    "mf": 4.7,
+    "mf": 4.6,
     "trend": 20.0,
     "rebound": 0.0,
-    "risk": 96.5
+    "risk": 96.7
    },
-   "price": 1450.0,
+   "price": 1435.0,
    "prev_close": 1525.0,
-   "chg_1d_pct": -4.92,
+   "chg_1d_pct": -5.9,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -6236,27 +6237,27 @@
     1365.0,
     1390.0,
     1525.0,
-    1450.0
+    1435.0
    ],
    "exit": {
     "atr": 177.14,
     "trail": 2048.57,
     "hi22": 2580.0,
-    "sma50": 2405.4
+    "sma50": 2405.1
    },
    "bar": {
     "t": "2026-11-25",
     "o": 1470.0,
     "h": 1525.0,
     "l": 1375.0,
-    "c": 1450.0,
-    "v": 927000
+    "c": 1435.0,
+    "v": 930000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 13.8,
-   "score_chg": -5.5,
+   "score_chg": -5.6,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -6264,7 +6265,9 @@
     "波動大",
     "跌破 50 日線"
    ],
-   "alerts": [],
+   "alerts": [
+    "跌破支撐區"
+   ],
    "signal": "none",
    "signal_label": "未達標",
    "swap": null
@@ -6282,9 +6285,9 @@
     "rebound": 0.0,
     "risk": 70.2
    },
-   "price": 99.6,
+   "price": 99.9,
    "prev_close": 103.0,
-   "chg_1d_pct": -3.3,
+   "chg_1d_pct": -3.01,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -6319,7 +6322,7 @@
     101.5,
     99.3,
     103.0,
-    99.6
+    99.9
    ],
    "exit": {
     "atr": 9.34,
@@ -6332,8 +6335,8 @@
     "o": 99.5,
     "h": 107.0,
     "l": 98.7,
-    "c": 99.6,
-    "v": 2132000
+    "c": 99.9,
+    "v": 2155000
    },
    "extended": false,
    "pullback_ok": false,
@@ -6357,17 +6360,17 @@
    "name": "華星光",
    "yahoo": "4979.TWO",
    "theme": "光通訊",
-   "score": 5.0,
+   "score": 5.1,
    "components": {
     "rs": 3.9,
-    "mf": 13.0,
+    "mf": 13.5,
     "trend": 0.0,
     "rebound": 0.0,
-    "risk": 94.1
+    "risk": 94.0
    },
-   "price": 265.0,
+   "price": 267.5,
    "prev_close": 280.5,
-   "chg_1d_pct": -5.53,
+   "chg_1d_pct": -4.63,
    "above_sma20": false,
    "above_sma50": false,
    "limit": null,
@@ -6402,27 +6405,27 @@
     266.0,
     255.0,
     280.5,
-    265.0
+    267.5
    ],
    "exit": {
     "atr": 32.32,
     "trail": 391.54,
     "hi22": 488.5,
-    "sma50": 466.61
+    "sma50": 466.66
    },
    "bar": {
     "t": "2026-11-25",
     "o": 264.0,
     "h": 299.0,
     "l": 253.0,
-    "c": 265.0,
-    "v": 10944000
+    "c": 267.5,
+    "v": 10988000
    },
    "extended": false,
    "pullback_ok": false,
    "entry_ok": false,
    "score_prev": 9.8,
-   "score_chg": -4.8,
+   "score_chg": -4.7,
    "reasons": [
     "相對大盤弱勢",
     "資金流出",
@@ -6499,7 +6502,7 @@
     "h": 279.5,
     "l": 245.0,
     "c": 245.5,
-    "v": 1176000
+    "v": 1180000
    },
    "extended": false,
    "pullback_ok": false,
@@ -6582,7 +6585,7 @@
     "h": 2.35,
     "l": 2.35,
     "c": 2.35,
-    "v": 154000
+    "v": 162000
    },
    "extended": false,
    "pullback_ok": false,
@@ -6665,7 +6668,7 @@
     {
      "in": "2382",
      "out": "6472",
-     "gap": 31.8,
+     "gap": 31.3,
      "streak": 4,
      "need": 3,
      "status": "confirmed"
@@ -6673,31 +6676,7 @@
     {
      "in": "2330",
      "out": "6472",
-     "gap": 31.1,
-     "streak": 4,
-     "need": 3,
-     "status": "confirmed"
-    },
-    {
-     "in": "2395",
-     "out": "6472",
-     "gap": 29.3,
-     "streak": 4,
-     "need": 3,
-     "status": "confirmed"
-    },
-    {
-     "in": "2885",
-     "out": "6472",
-     "gap": 29.2,
-     "streak": 4,
-     "need": 3,
-     "status": "confirmed"
-    },
-    {
-     "in": "1605",
-     "out": "6472",
-     "gap": 26.7,
+     "gap": 30.6,
      "streak": 4,
      "need": 3,
      "status": "confirmed"
@@ -6705,7 +6684,23 @@
     {
      "in": "2376",
      "out": "6472",
-     "gap": 23.1,
+     "gap": 29.4,
+     "streak": 4,
+     "need": 3,
+     "status": "confirmed"
+    },
+    {
+     "in": "2395",
+     "out": "6472",
+     "gap": 28.8,
+     "streak": 4,
+     "need": 3,
+     "status": "confirmed"
+    },
+    {
+     "in": "2885",
+     "out": "6472",
+     "gap": 28.7,
      "streak": 4,
      "need": 3,
      "status": "confirmed"
@@ -6713,7 +6708,23 @@
     {
      "in": "3231",
      "out": "6472",
-     "gap": 21.2,
+     "gap": 27.4,
+     "streak": 4,
+     "need": 3,
+     "status": "confirmed"
+    },
+    {
+     "in": "1605",
+     "out": "6472",
+     "gap": 26.2,
+     "streak": 4,
+     "need": 3,
+     "status": "confirmed"
+    },
+    {
+     "in": "1503",
+     "out": "6472",
+     "gap": 17.7,
      "streak": 4,
      "need": 3,
      "status": "confirmed"
@@ -6881,9 +6892,9 @@
      "name": "中興電",
      "yahoo": "1513.TW",
      "theme": "重電",
-     "price": 132.5,
+     "price": 133.0,
      "prev_close": 140.5,
-     "chg_1d_pct": -5.69,
+     "chg_1d_pct": -5.34,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -6918,21 +6929,21 @@
       127.5,
       132.5,
       140.5,
-      132.5
+      133.0
      ],
      "exit": {
       "atr": 8.46,
       "trail": 133.61,
       "hi22": 159.0,
-      "sma50": 156.31
+      "sma50": 156.32
      },
      "bar": {
       "t": "2026-11-25",
       "o": 136.0,
       "h": 137.0,
       "l": 129.0,
-      "c": 132.5,
-      "v": 1879000
+      "c": 133.0,
+      "v": 1887000
      },
      "extended": false,
      "pullback_ok": false,
@@ -6941,16 +6952,16 @@
       "depth": 100.0,
       "oversold": 94.9,
       "reversal": 70.0,
-      "mfturn": 84.2,
-      "risk": 41.5
+      "mfturn": 84.1,
+      "risk": 41.3
      },
-     "dd126": 0.266,
+     "dd126": 0.263,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 94.9,
      "score_chg": -9.1,
      "reasons": [
-      "距半年高點 −27%",
+      "距半年高點 −26%",
       "超賣",
       "止跌訊號",
       "資金回流"
@@ -6966,9 +6977,9 @@
      "name": "華碩",
      "yahoo": "2357.TW",
      "theme": "電信與電腦",
-     "price": 767.0,
+     "price": 770.0,
      "prev_close": 821.0,
-     "chg_1d_pct": -6.58,
+     "chg_1d_pct": -6.21,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7003,21 +7014,21 @@
       756.0,
       758.0,
       821.0,
-      767.0
+      770.0
      ],
      "exit": {
       "atr": 50.86,
       "trail": 835.43,
       "hi22": 988.0,
-      "sma50": 920.78
+      "sma50": 920.84
      },
      "bar": {
       "t": "2026-11-25",
       "o": 790.0,
       "h": 797.0,
       "l": 742.0,
-      "c": 767.0,
-      "v": 3419000
+      "c": 770.0,
+      "v": 3445000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7026,10 +7037,10 @@
       "depth": 100.0,
       "oversold": 95.4,
       "reversal": 30.0,
-      "mfturn": 67.5,
-      "risk": 41.3
+      "mfturn": 67.4,
+      "risk": 41.1
      },
-     "dd126": 0.252,
+     "dd126": 0.249,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 95.0,
@@ -7103,7 +7114,7 @@
       "h": 3955.0,
       "l": 3645.0,
       "c": 3645.0,
-      "v": 21465000
+      "v": 21488000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7139,9 +7150,9 @@
      "name": "保瑞",
      "yahoo": "6472.TW",
      "theme": "生技醫療",
-     "price": 272.5,
+     "price": 274.0,
      "prev_close": 284.0,
-     "chg_1d_pct": -4.05,
+     "chg_1d_pct": -3.52,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7176,37 +7187,37 @@
       280.0,
       272.5,
       284.0,
-      272.5
+      274.0
      ],
      "exit": {
       "atr": 27.57,
       "trail": 326.29,
       "hi22": 409.0,
-      "sma50": 393.67
+      "sma50": 393.7
      },
      "bar": {
       "t": "2026-11-25",
       "o": 277.0,
       "h": 292.5,
       "l": 265.0,
-      "c": 272.5,
-      "v": 1089000
+      "c": 274.0,
+      "v": 1094000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 53.1,
+     "score": 53.6,
      "components": {
-      "depth": 64.9,
+      "depth": 66.5,
       "oversold": 100.0,
       "reversal": 30.0,
       "mfturn": 0.0,
-      "risk": 66.2
+      "risk": 66.1
      },
-     "dd126": 0.42,
+     "dd126": 0.417,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 65.9,
-     "score_chg": -12.8,
+     "score_chg": -12.3,
      "reasons": [
       "距半年高點 −42%",
       "超賣"
@@ -7224,9 +7235,9 @@
      "name": "廣達",
      "yahoo": "2382.TW",
      "theme": "AI伺服器",
-     "price": 262.0,
+     "price": 262.5,
      "prev_close": 282.5,
-     "chg_1d_pct": -7.26,
+     "chg_1d_pct": -7.08,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7261,21 +7272,21 @@
       252.0,
       257.0,
       282.5,
-      262.0
+      262.5
      ],
      "exit": {
       "atr": 15.61,
       "trail": 283.18,
       "hi22": 330.0,
-      "sma50": 312.86
+      "sma50": 312.87
      },
      "bar": {
       "t": "2026-11-25",
       "o": 270.0,
       "h": 273.5,
       "l": 254.5,
-      "c": 262.0,
-      "v": 17406000
+      "c": 262.5,
+      "v": 17576000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7284,10 +7295,10 @@
       "depth": 100.0,
       "oversold": 100.0,
       "reversal": 70.0,
-      "mfturn": 70.8,
-      "risk": 44.0
+      "mfturn": 70.7,
+      "risk": 43.8
      },
-     "dd126": 0.345,
+     "dd126": 0.344,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 91.8,
@@ -7308,7 +7319,7 @@
       "status": "confirmed",
       "streak": 4,
       "need": 3,
-      "gap": 31.8,
+      "gap": 31.3,
       "out": "6472"
      }
     },
@@ -7317,9 +7328,9 @@
      "name": "台積電",
      "yahoo": "2330.TW",
      "theme": "半導體",
-     "price": 2140.0,
+     "price": 2150.0,
      "prev_close": 2230.0,
-     "chg_1d_pct": -4.04,
+     "chg_1d_pct": -3.59,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7354,21 +7365,21 @@
       2000.0,
       2030.0,
       2230.0,
-      2140.0
+      2150.0
      ],
      "exit": {
       "atr": 120.71,
       "trail": 2062.86,
       "hi22": 2425.0,
-      "sma50": 2370.9
+      "sma50": 2371.1
      },
      "bar": {
       "t": "2026-11-25",
       "o": 2150.0,
       "h": 2170.0,
       "l": 2020.0,
-      "c": 2140.0,
-      "v": 65559000
+      "c": 2150.0,
+      "v": 66542000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7377,10 +7388,10 @@
       "depth": 100.0,
       "oversold": 81.4,
       "reversal": 100.0,
-      "mfturn": 43.5,
-      "risk": 39.5
+      "mfturn": 43.2,
+      "risk": 39.4
      },
-     "dd126": 0.172,
+     "dd126": 0.168,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 84.6,
@@ -7399,7 +7410,96 @@
       "status": "confirmed",
       "streak": 4,
       "need": 3,
-      "gap": 31.1,
+      "gap": 30.6,
+      "out": "6472"
+     }
+    },
+    {
+     "ticker": "2376",
+     "name": "技嘉",
+     "yahoo": "2376.TW",
+     "theme": "AI伺服器",
+     "price": 261.0,
+     "prev_close": 278.0,
+     "chg_1d_pct": -6.12,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      356.0,
+      347.0,
+      357.5,
+      352.0,
+      355.0,
+      358.5,
+      349.0,
+      349.0,
+      357.5,
+      362.5,
+      343.0,
+      336.0,
+      339.5,
+      327.0,
+      324.5,
+      313.0,
+      298.0,
+      309.5,
+      304.5,
+      305.0,
+      289.5,
+      284.0,
+      277.5,
+      274.5,
+      276.5,
+      260.0,
+      248.0,
+      253.0,
+      278.0,
+      261.0
+     ],
+     "exit": {
+      "atr": 18.29,
+      "trail": 307.64,
+      "hi22": 362.5,
+      "sma50": 333.5
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 270.0,
+      "h": 272.0,
+      "l": 250.5,
+      "c": 261.0,
+      "v": 9226000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 83.0,
+     "components": {
+      "depth": 100.0,
+      "oversold": 100.0,
+      "reversal": 100.0,
+      "mfturn": 14.9,
+      "risk": 55.4
+     },
+     "dd126": 0.343,
+     "new_low": false,
+     "entry_ok": true,
+     "score_prev": 88.4,
+     "score_chg": -5.4,
+     "reasons": [
+      "距半年高點 −34%",
+      "超賣",
+      "止跌訊號"
+     ],
+     "alerts": [],
+     "signal": "swap_in",
+     "signal_label": "換股候選",
+     "swap": {
+      "status": "confirmed",
+      "streak": 4,
+      "need": 3,
+      "gap": 29.4,
       "out": "6472"
      }
     },
@@ -7408,9 +7508,9 @@
      "name": "研華",
      "yahoo": "2395.TW",
      "theme": "電信與電腦",
-     "price": 555.0,
+     "price": 557.0,
      "prev_close": 589.0,
-     "chg_1d_pct": -5.77,
+     "chg_1d_pct": -5.43,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7445,21 +7545,21 @@
       520.0,
       536.0,
       589.0,
-      555.0
+      557.0
      ],
      "exit": {
       "atr": 41.07,
       "trail": 565.79,
       "hi22": 689.0,
-      "sma50": 659.08
+      "sma50": 659.12
      },
      "bar": {
       "t": "2026-11-25",
       "o": 580.0,
       "h": 581.0,
       "l": 531.0,
-      "c": 555.0,
-      "v": 2783000
+      "c": 557.0,
+      "v": 2810000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7468,10 +7568,10 @@
       "depth": 100.0,
       "oversold": 66.2,
       "reversal": 100.0,
-      "mfturn": 66.8,
-      "risk": 54.9
+      "mfturn": 66.6,
+      "risk": 54.8
      },
-     "dd126": 0.25,
+     "dd126": 0.247,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 86.3,
@@ -7489,7 +7589,7 @@
       "status": "confirmed",
       "streak": 4,
       "need": 3,
-      "gap": 29.3,
+      "gap": 28.8,
       "out": "6472"
      }
     },
@@ -7498,9 +7598,9 @@
      "name": "元大金",
      "yahoo": "2885.TW",
      "theme": "金融",
-     "price": 62.1,
+     "price": 62.5,
      "prev_close": 64.2,
-     "chg_1d_pct": -3.27,
+     "chg_1d_pct": -2.65,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7535,7 +7635,7 @@
       59.3,
       58.4,
       64.2,
-      62.1
+      62.5
      ],
      "exit": {
       "atr": 3.87,
@@ -7548,8 +7648,8 @@
       "o": 63.7,
       "h": 63.7,
       "l": 59.1,
-      "c": 62.1,
-      "v": 25812000
+      "c": 62.5,
+      "v": 27899000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7559,9 +7659,9 @@
       "oversold": 97.2,
       "reversal": 100.0,
       "mfturn": 0.0,
-      "risk": 35.8
+      "risk": 35.6
      },
-     "dd126": 0.154,
+     "dd126": 0.149,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 82.3,
@@ -7580,7 +7680,97 @@
       "status": "confirmed",
       "streak": 4,
       "need": 3,
-      "gap": 29.2,
+      "gap": 28.7,
+      "out": "6472"
+     }
+    },
+    {
+     "ticker": "3231",
+     "name": "緯創",
+     "yahoo": "3231.TW",
+     "theme": "AI伺服器",
+     "price": 154.0,
+     "prev_close": 163.0,
+     "chg_1d_pct": -5.52,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      187.0,
+      176.0,
+      182.5,
+      180.0,
+      189.0,
+      195.0,
+      190.0,
+      190.0,
+      190.5,
+      194.5,
+      188.5,
+      183.5,
+      181.5,
+      176.5,
+      176.0,
+      168.5,
+      160.0,
+      168.5,
+      171.0,
+      174.5,
+      170.0,
+      171.0,
+      159.0,
+      157.0,
+      162.0,
+      156.0,
+      147.0,
+      148.5,
+      163.0,
+      154.0
+     ],
+     "exit": {
+      "atr": 11.0,
+      "trail": 161.5,
+      "hi22": 194.5,
+      "sma50": 178.46
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 156.5,
+      "h": 158.0,
+      "l": 148.0,
+      "c": 154.0,
+      "v": 27777000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 81.0,
+     "components": {
+      "depth": 100.0,
+      "oversold": 62.2,
+      "reversal": 100.0,
+      "mfturn": 56.4,
+      "risk": 45.7
+     },
+     "dd126": 0.222,
+     "new_low": false,
+     "entry_ok": true,
+     "score_prev": 84.9,
+     "score_chg": -3.9,
+     "reasons": [
+      "距半年高點 −22%",
+      "超賣",
+      "止跌訊號",
+      "資金回流"
+     ],
+     "alerts": [],
+     "signal": "swap_in",
+     "signal_label": "換股候選",
+     "swap": {
+      "status": "confirmed",
+      "streak": 4,
+      "need": 3,
+      "gap": 27.4,
       "out": "6472"
      }
     },
@@ -7589,9 +7779,9 @@
      "name": "聯詠",
      "yahoo": "3034.TW",
      "theme": "半導體",
-     "price": 421.5,
+     "price": 422.5,
      "prev_close": 435.5,
-     "chg_1d_pct": -3.21,
+     "chg_1d_pct": -2.99,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7626,21 +7816,21 @@
       416.5,
       431.0,
       435.5,
-      421.5
+      422.5
      ],
      "exit": {
       "atr": 28.21,
       "trail": 514.36,
       "hi22": 599.0,
-      "sma50": 528.07
+      "sma50": 528.09
      },
      "bar": {
       "t": "2026-11-25",
       "o": 426.5,
       "h": 434.0,
       "l": 406.0,
-      "c": 421.5,
-      "v": 3383000
+      "c": 422.5,
+      "v": 3428000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7650,9 +7840,9 @@
       "oversold": 100.0,
       "reversal": 30.0,
       "mfturn": 100.0,
-      "risk": 38.8
+      "risk": 38.7
      },
-     "dd126": 0.296,
+     "dd126": 0.295,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 89.4,
@@ -7669,7 +7859,7 @@
       "status": "confirmed",
       "streak": 4,
       "need": 3,
-      "gap": 27.3,
+      "gap": 26.8,
       "out": "6472"
      }
     },
@@ -7678,9 +7868,9 @@
      "name": "華新",
      "yahoo": "1605.TW",
      "theme": "重電",
-     "price": 28.25,
+     "price": 28.35,
      "prev_close": 30.9,
-     "chg_1d_pct": -8.58,
+     "chg_1d_pct": -8.25,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7715,7 +7905,7 @@
       26.85,
       28.1,
       30.9,
-      28.25
+      28.35
      ],
      "exit": {
       "atr": 2.12,
@@ -7728,8 +7918,8 @@
       "o": 29.2,
       "h": 29.5,
       "l": 27.85,
-      "c": 28.25,
-      "v": 25542000
+      "c": 28.35,
+      "v": 25709000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7738,10 +7928,10 @@
       "depth": 100.0,
       "oversold": 100.0,
       "reversal": 70.0,
-      "mfturn": 46.0,
-      "risk": 61.7
+      "mfturn": 45.9,
+      "risk": 61.5
      },
-     "dd126": 0.329,
+     "dd126": 0.326,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 84.6,
@@ -7761,7 +7951,7 @@
       "status": "confirmed",
       "streak": 4,
       "need": 3,
-      "gap": 26.7,
+      "gap": 26.2,
       "out": "6472"
      }
     },
@@ -7821,7 +8011,7 @@
       "h": 104.0,
       "l": 96.2,
       "c": 101.0,
-      "v": 40204000
+      "v": 41356000
      },
      "extended": false,
      "pullback_ok": false,
@@ -7853,96 +8043,7 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 24.3,
-      "out": "6472"
-     }
-    },
-    {
-     "ticker": "2376",
-     "name": "技嘉",
-     "yahoo": "2376.TW",
-     "theme": "AI伺服器",
-     "price": 259.5,
-     "prev_close": 278.0,
-     "chg_1d_pct": -6.65,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      356.0,
-      347.0,
-      357.5,
-      352.0,
-      355.0,
-      358.5,
-      349.0,
-      349.0,
-      357.5,
-      362.5,
-      343.0,
-      336.0,
-      339.5,
-      327.0,
-      324.5,
-      313.0,
-      298.0,
-      309.5,
-      304.5,
-      305.0,
-      289.5,
-      284.0,
-      277.5,
-      274.5,
-      276.5,
-      260.0,
-      248.0,
-      253.0,
-      278.0,
-      259.5
-     ],
-     "exit": {
-      "atr": 18.29,
-      "trail": 307.64,
-      "hi22": 362.5,
-      "sma50": 333.47
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 270.0,
-      "h": 272.0,
-      "l": 250.5,
-      "c": 259.5,
-      "v": 9124000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 76.2,
-     "components": {
-      "depth": 100.0,
-      "oversold": 100.0,
-      "reversal": 70.0,
-      "mfturn": 15.0,
-      "risk": 55.7
-     },
-     "dd126": 0.347,
-     "new_low": false,
-     "entry_ok": true,
-     "score_prev": 88.4,
-     "score_chg": -12.2,
-     "reasons": [
-      "距半年高點 −35%",
-      "超賣",
-      "止跌訊號"
-     ],
-     "alerts": [],
-     "signal": "swap_in",
-     "signal_label": "換股候選",
-     "swap": {
-      "status": "confirmed",
-      "streak": 4,
-      "need": 3,
-      "gap": 23.1,
+      "gap": 23.8,
       "out": "6472"
      }
     },
@@ -7951,9 +8052,9 @@
      "name": "陽明",
      "yahoo": "2609.TW",
      "theme": "航運原物料",
-     "price": 55.7,
+     "price": 55.8,
      "prev_close": 56.3,
-     "chg_1d_pct": -1.07,
+     "chg_1d_pct": -0.89,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -7988,21 +8089,21 @@
       53.0,
       54.5,
       56.3,
-      55.7
+      55.8
      ],
      "exit": {
       "atr": 3.06,
       "trail": 54.81,
       "hi22": 64.0,
-      "sma50": 60.3
+      "sma50": 60.31
      },
      "bar": {
       "t": "2026-11-25",
       "o": 54.6,
       "h": 57.3,
       "l": 54.2,
-      "c": 55.7,
-      "v": 16609000
+      "c": 55.8,
+      "v": 16772000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8014,7 +8115,7 @@
       "mfturn": 0.0,
       "risk": 28.9
      },
-     "dd126": 0.143,
+     "dd126": 0.142,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 68.2,
@@ -8024,16 +8125,14 @@
       "超賣",
       "止跌訊號"
      ],
-     "alerts": [
-      "跌破支撐區"
-     ],
+     "alerts": [],
      "signal": "buy",
      "signal_label": "可進場",
      "swap": {
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 21.8,
+      "gap": 21.3,
       "out": "6472"
      }
     },
@@ -8042,9 +8141,9 @@
      "name": "萬海",
      "yahoo": "2615.TW",
      "theme": "航運原物料",
-     "price": 100.5,
+     "price": 101.5,
      "prev_close": 97.1,
-     "chg_1d_pct": 3.5,
+     "chg_1d_pct": 4.53,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8079,21 +8178,21 @@
       95.0,
       96.1,
       97.1,
-      100.5
+      101.5
      ],
      "exit": {
       "atr": 6.54,
       "trail": 100.37,
       "hi22": 120.0,
-      "sma50": 113.1
+      "sma50": 113.12
      },
      "bar": {
       "t": "2026-11-25",
       "o": 95.8,
       "h": 103.5,
       "l": 95.5,
-      "c": 100.5,
-      "v": 22363000
+      "c": 101.5,
+      "v": 22634000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8102,16 +8201,16 @@
       "depth": 100.0,
       "oversold": 53.1,
       "reversal": 100.0,
-      "mfturn": 19.6,
-      "risk": 40.5
+      "mfturn": 20.0,
+      "risk": 41.1
      },
-     "dd126": 0.206,
+     "dd126": 0.198,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 50.6,
      "score_chg": 23.9,
      "reasons": [
-      "距半年高點 −21%",
+      "距半年高點 −20%",
       "止跌訊號"
      ],
      "alerts": [],
@@ -8121,97 +8220,7 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 21.4,
-      "out": "6472"
-     }
-    },
-    {
-     "ticker": "3231",
-     "name": "緯創",
-     "yahoo": "3231.TW",
-     "theme": "AI伺服器",
-     "price": 153.5,
-     "prev_close": 163.0,
-     "chg_1d_pct": -5.83,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      187.0,
-      176.0,
-      182.5,
-      180.0,
-      189.0,
-      195.0,
-      190.0,
-      190.0,
-      190.5,
-      194.5,
-      188.5,
-      183.5,
-      181.5,
-      176.5,
-      176.0,
-      168.5,
-      160.0,
-      168.5,
-      171.0,
-      174.5,
-      170.0,
-      171.0,
-      159.0,
-      157.0,
-      162.0,
-      156.0,
-      147.0,
-      148.5,
-      163.0,
-      153.5
-     ],
-     "exit": {
-      "atr": 11.0,
-      "trail": 161.5,
-      "hi22": 194.5,
-      "sma50": 178.45
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 156.5,
-      "h": 158.0,
-      "l": 148.0,
-      "c": 153.5,
-      "v": 27343000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 74.3,
-     "components": {
-      "depth": 100.0,
-      "oversold": 62.2,
-      "reversal": 70.0,
-      "mfturn": 56.7,
-      "risk": 45.9
-     },
-     "dd126": 0.225,
-     "new_low": false,
-     "entry_ok": true,
-     "score_prev": 84.9,
-     "score_chg": -10.6,
-     "reasons": [
-      "距半年高點 −22%",
-      "超賣",
-      "止跌訊號",
-      "資金回流"
-     ],
-     "alerts": [],
-     "signal": "swap_in",
-     "signal_label": "換股候選",
-     "swap": {
-      "status": "confirmed",
-      "streak": 4,
-      "need": 3,
-      "gap": 21.2,
+      "gap": 20.9,
       "out": "6472"
      }
     },
@@ -8220,9 +8229,9 @@
      "name": "日月光投控",
      "yahoo": "3711.TW",
      "theme": "半導體",
-     "price": 497.5,
+     "price": 498.5,
      "prev_close": 530.0,
-     "chg_1d_pct": -6.13,
+     "chg_1d_pct": -5.94,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8257,21 +8266,21 @@
       457.0,
       482.0,
       530.0,
-      497.5
+      498.5
      ],
      "exit": {
       "atr": 47.29,
       "trail": 553.14,
       "hi22": 695.0,
-      "sma50": 637.71
+      "sma50": 637.73
      },
      "bar": {
       "t": "2026-11-25",
       "o": 500.0,
       "h": 521.0,
       "l": 477.0,
-      "c": 497.5,
-      "v": 32379000
+      "c": 498.5,
+      "v": 32686000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8280,10 +8289,10 @@
       "depth": 100.0,
       "oversold": 59.1,
       "reversal": 100.0,
-      "mfturn": 31.1,
-      "risk": 79.1
+      "mfturn": 30.9,
+      "risk": 79.0
      },
-     "dd126": 0.347,
+     "dd126": 0.346,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 74.7,
@@ -8303,7 +8312,96 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 20.5,
+      "gap": 20.0,
+      "out": "6472"
+     }
+    },
+    {
+     "ticker": "1503",
+     "name": "士電",
+     "yahoo": "1503.TW",
+     "theme": "重電",
+     "price": 153.5,
+     "prev_close": 161.5,
+     "chg_1d_pct": -4.95,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      203.0,
+      197.0,
+      198.5,
+      194.0,
+      191.0,
+      192.0,
+      192.0,
+      192.0,
+      191.5,
+      191.0,
+      188.0,
+      185.5,
+      185.5,
+      177.0,
+      173.5,
+      168.5,
+      159.0,
+      174.5,
+      170.5,
+      173.5,
+      168.0,
+      170.0,
+      164.0,
+      163.0,
+      165.5,
+      159.5,
+      144.0,
+      147.0,
+      161.5,
+      153.5
+     ],
+     "exit": {
+      "atr": 11.29,
+      "trail": 157.64,
+      "hi22": 191.5,
+      "sma50": 184.92
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 155.5,
+      "h": 157.0,
+      "l": 146.5,
+      "c": 153.5,
+      "v": 1221000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 71.3,
+     "components": {
+      "depth": 68.3,
+      "oversold": 99.2,
+      "reversal": 100.0,
+      "mfturn": 5.0,
+      "risk": 57.3
+     },
+     "dd126": 0.413,
+     "new_low": false,
+     "entry_ok": true,
+     "score_prev": 81.2,
+     "score_chg": -9.9,
+     "reasons": [
+      "距半年高點 −41%",
+      "超賣",
+      "止跌訊號"
+     ],
+     "alerts": [],
+     "signal": "swap_in",
+     "signal_label": "換股候選",
+     "swap": {
+      "status": "confirmed",
+      "streak": 4,
+      "need": 3,
+      "gap": 17.7,
       "out": "6472"
      }
     },
@@ -8312,9 +8410,9 @@
      "name": "瑞昱",
      "yahoo": "2379.TW",
      "theme": "半導體",
-     "price": 695.0,
+     "price": 696.0,
      "prev_close": 694.0,
-     "chg_1d_pct": 0.14,
+     "chg_1d_pct": 0.29,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8349,21 +8447,21 @@
       668.0,
       666.0,
       694.0,
-      695.0
+      696.0
      ],
      "exit": {
       "atr": 45.43,
       "trail": 666.71,
       "hi22": 803.0,
-      "sma50": 745.96
+      "sma50": 745.98
      },
      "bar": {
       "t": "2026-11-25",
       "o": 686.0,
       "h": 705.0,
       "l": 661.0,
-      "c": 695.0,
-      "v": 4023000
+      "c": 696.0,
+      "v": 4051000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8375,7 +8473,7 @@
       "mfturn": 0.0,
       "risk": 29.0
      },
-     "dd126": 0.2,
+     "dd126": 0.199,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 56.4,
@@ -8391,94 +8489,6 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 16.8,
-      "out": "6472"
-     }
-    },
-    {
-     "ticker": "2002",
-     "name": "中鋼",
-     "yahoo": "2002.TW",
-     "theme": "航運原物料",
-     "price": 17.0,
-     "prev_close": 17.55,
-     "chg_1d_pct": -3.13,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      19.5,
-      19.25,
-      19.55,
-      19.5,
-      19.6,
-      19.6,
-      19.55,
-      19.55,
-      19.75,
-      19.75,
-      19.45,
-      19.25,
-      19.4,
-      19.35,
-      19.15,
-      18.95,
-      18.55,
-      18.55,
-      18.65,
-      18.8,
-      18.6,
-      18.4,
-      18.0,
-      17.95,
-      17.95,
-      17.6,
-      17.1,
-      16.85,
-      17.55,
-      17.0
-     ],
-     "exit": {
-      "atr": 0.5,
-      "trail": 18.25,
-      "hi22": 19.75,
-      "sma50": 18.8
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 17.15,
-      "h": 17.3,
-      "l": 16.85,
-      "c": 17.0,
-      "v": 34026000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 69.4,
-     "components": {
-      "depth": 100.0,
-      "oversold": 100.0,
-      "reversal": 30.0,
-      "mfturn": 0.0,
-      "risk": 13.5
-     },
-     "dd126": 0.139,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 85.2,
-     "score_chg": -15.8,
-     "reasons": [
-      "距半年高點 −14%",
-      "超賣"
-     ],
-     "alerts": [],
-     "signal": "watch",
-     "signal_label": "觀察",
-     "swap": {
-      "status": "confirmed",
-      "streak": 4,
-      "need": 3,
       "gap": 16.3,
       "out": "6472"
      }
@@ -8488,9 +8498,9 @@
      "name": "世界先進",
      "yahoo": "5347.TWO",
      "theme": "半導體",
-     "price": 114.5,
+     "price": 115.0,
      "prev_close": 121.0,
-     "chg_1d_pct": -5.37,
+     "chg_1d_pct": -4.96,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8525,39 +8535,39 @@
       106.5,
       110.0,
       121.0,
-      114.5
+      115.0
      ],
      "exit": {
       "atr": 10.18,
       "trail": 136.96,
       "hi22": 167.5,
-      "sma50": 154.28
+      "sma50": 154.29
      },
      "bar": {
       "t": "2026-11-25",
       "o": 117.5,
       "h": 119.5,
       "l": 109.0,
-      "c": 114.5,
-      "v": 16238000
+      "c": 115.0,
+      "v": 16432000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 69.2,
+     "score": 69.6,
      "components": {
-      "depth": 41.4,
+      "depth": 42.5,
       "oversold": 80.8,
       "reversal": 100.0,
       "mfturn": 100.0,
-      "risk": 80.1
+      "risk": 80.0
      },
-     "dd126": 0.467,
+     "dd126": 0.465,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 73.9,
-     "score_chg": -4.7,
+     "score_chg": -4.3,
      "reasons": [
-      "距半年高點 −47%",
+      "距半年高點 −46%",
       "超賣",
       "止跌訊號",
       "資金回流",
@@ -8570,7 +8580,95 @@
       "status": "building",
       "streak": 1,
       "need": 3,
-      "gap": 16.1,
+      "gap": 16.0,
+      "out": "6472"
+     }
+    },
+    {
+     "ticker": "2002",
+     "name": "中鋼",
+     "yahoo": "2002.TW",
+     "theme": "航運原物料",
+     "price": 17.05,
+     "prev_close": 17.55,
+     "chg_1d_pct": -2.85,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      19.5,
+      19.25,
+      19.55,
+      19.5,
+      19.6,
+      19.6,
+      19.55,
+      19.55,
+      19.75,
+      19.75,
+      19.45,
+      19.25,
+      19.4,
+      19.35,
+      19.15,
+      18.95,
+      18.55,
+      18.55,
+      18.65,
+      18.8,
+      18.6,
+      18.4,
+      18.0,
+      17.95,
+      17.95,
+      17.6,
+      17.1,
+      16.85,
+      17.55,
+      17.05
+     ],
+     "exit": {
+      "atr": 0.5,
+      "trail": 18.25,
+      "hi22": 19.75,
+      "sma50": 18.8
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 17.15,
+      "h": 17.3,
+      "l": 16.85,
+      "c": 17.05,
+      "v": 34129000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 69.4,
+     "components": {
+      "depth": 100.0,
+      "oversold": 100.0,
+      "reversal": 30.0,
+      "mfturn": 0.0,
+      "risk": 13.3
+     },
+     "dd126": 0.137,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 85.2,
+     "score_chg": -15.8,
+     "reasons": [
+      "距半年高點 −14%",
+      "超賣"
+     ],
+     "alerts": [],
+     "signal": "watch",
+     "signal_label": "觀察",
+     "swap": {
+      "status": "confirmed",
+      "streak": 4,
+      "need": 3,
+      "gap": 15.8,
       "out": "6472"
      }
     },
@@ -8579,9 +8677,9 @@
      "name": "統一超",
      "yahoo": "2912.TW",
      "theme": "民生消費",
-     "price": 204.5,
+     "price": 205.0,
      "prev_close": 207.0,
-     "chg_1d_pct": -1.21,
+     "chg_1d_pct": -0.97,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8616,21 +8714,21 @@
       204.0,
       199.5,
       207.0,
-      204.5
+      205.0
      ],
      "exit": {
       "atr": 5.25,
       "trail": 209.75,
       "hi22": 225.5,
-      "sma50": 215.99
+      "sma50": 216.0
      },
      "bar": {
       "t": "2026-11-25",
       "o": 202.5,
-      "h": 205.0,
+      "h": 205.5,
       "l": 200.0,
-      "c": 204.5,
-      "v": 2939000
+      "c": 205.0,
+      "v": 2986000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8642,13 +8740,13 @@
       "mfturn": 0.0,
       "risk": 11.2
      },
-     "dd126": 0.136,
+     "dd126": 0.134,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 83.7,
      "score_chg": -15.7,
      "reasons": [
-      "距半年高點 −14%",
+      "距半年高點 −13%",
       "超賣"
      ],
      "alerts": [
@@ -8663,9 +8761,9 @@
      "name": "玉山金",
      "yahoo": "2884.TW",
      "theme": "金融",
-     "price": 38.75,
+     "price": 38.8,
      "prev_close": 41.2,
-     "chg_1d_pct": -5.95,
+     "chg_1d_pct": -5.83,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8700,7 +8798,7 @@
       39.6,
       38.7,
       41.2,
-      38.75
+      38.8
      ],
      "exit": {
       "atr": 2.18,
@@ -8713,8 +8811,8 @@
       "o": 39.2,
       "h": 40.2,
       "l": 38.0,
-      "c": 38.75,
-      "v": 39268000
+      "c": 38.8,
+      "v": 39654000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8724,9 +8822,9 @@
       "oversold": 100.0,
       "reversal": 30.0,
       "mfturn": 0.0,
-      "risk": 35.5
+      "risk": 35.4
      },
-     "dd126": 0.221,
+     "dd126": 0.22,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 83.1,
@@ -8745,9 +8843,9 @@
      "name": "中信金",
      "yahoo": "2891.TW",
      "theme": "金融",
-     "price": 66.2,
+     "price": 66.4,
      "prev_close": 69.9,
-     "chg_1d_pct": -5.29,
+     "chg_1d_pct": -5.01,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8782,7 +8880,7 @@
       68.0,
       63.8,
       69.9,
-      66.2
+      66.4
      ],
      "exit": {
       "atr": 4.76,
@@ -8795,8 +8893,8 @@
       "o": 67.6,
       "h": 68.4,
       "l": 63.5,
-      "c": 66.2,
-      "v": 48327000
+      "c": 66.4,
+      "v": 50066000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8806,9 +8904,9 @@
       "oversold": 59.0,
       "reversal": 70.0,
       "mfturn": 0.0,
-      "risk": 36.7
+      "risk": 36.6
      },
-     "dd126": 0.159,
+     "dd126": 0.156,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 67.0,
@@ -8830,9 +8928,9 @@
      "name": "永豐金",
      "yahoo": "2890.TW",
      "theme": "金融",
-     "price": 36.65,
+     "price": 36.6,
      "prev_close": 40.35,
-     "chg_1d_pct": -9.17,
+     "chg_1d_pct": -9.29,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8867,7 +8965,7 @@
       36.0,
       36.7,
       40.35,
-      36.65
+      36.6
      ],
      "exit": {
       "atr": 2.38,
@@ -8880,8 +8978,8 @@
       "o": 39.35,
       "h": 39.35,
       "l": 36.35,
-      "c": 36.65,
-      "v": 72172000
+      "c": 36.6,
+      "v": 73165000
      },
      "extended": false,
      "pullback_ok": false,
@@ -8891,9 +8989,9 @@
       "oversold": 100.0,
       "reversal": 30.0,
       "mfturn": 0.0,
-      "risk": 40.7
+      "risk": 40.8
      },
-     "dd126": 0.212,
+     "dd126": 0.213,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 82.9,
@@ -8904,7 +9002,8 @@
      ],
      "alerts": [
       "跌破上升趨勢線",
-      "跌破支撐區"
+      "跌破支撐區",
+      "爆量下跌"
      ],
      "signal": "watch",
      "signal_label": "觀察",
@@ -8915,9 +9014,9 @@
      "name": "合一",
      "yahoo": "4743.TWO",
      "theme": "生技醫療",
-     "price": 37.1,
+     "price": 37.2,
      "prev_close": 38.55,
-     "chg_1d_pct": -3.76,
+     "chg_1d_pct": -3.5,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -8952,37 +9051,37 @@
       35.55,
       35.35,
       38.55,
-      37.1
+      37.2
      ],
      "exit": {
       "atr": 3.07,
       "trail": 41.0,
       "hi22": 50.2,
-      "sma50": 45.5
+      "sma50": 45.51
      },
      "bar": {
       "t": "2026-11-25",
       "o": 37.2,
       "h": 39.45,
       "l": 36.2,
-      "c": 37.1,
-      "v": 1457000
+      "c": 37.2,
+      "v": 1473000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 66.4,
+     "score": 66.7,
      "components": {
-      "depth": 85.7,
+      "depth": 86.6,
       "oversold": 86.2,
       "reversal": 70.0,
       "mfturn": 0.0,
       "risk": 57.4
      },
-     "dd126": 0.379,
+     "dd126": 0.377,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 77.0,
-     "score_chg": -10.6,
+     "score_chg": -10.3,
      "reasons": [
       "距半年高點 −38%",
       "超賣",
@@ -8998,9 +9097,9 @@
      "name": "凱基金",
      "yahoo": "2883.TW",
      "theme": "金融",
-     "price": 30.1,
+     "price": 30.15,
      "prev_close": 32.25,
-     "chg_1d_pct": -6.67,
+     "chg_1d_pct": -6.51,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -9035,7 +9134,7 @@
       29.9,
       29.6,
       32.25,
-      30.1
+      30.15
      ],
      "exit": {
       "atr": 1.92,
@@ -9048,8 +9147,8 @@
       "o": 31.3,
       "h": 31.4,
       "l": 29.25,
-      "c": 30.1,
-      "v": 29942000
+      "c": 30.15,
+      "v": 30394000
      },
      "extended": false,
      "pullback_ok": false,
@@ -9059,9 +9158,9 @@
       "oversold": 98.9,
       "reversal": 30.0,
       "mfturn": 0.0,
-      "risk": 44.0
+      "risk": 43.9
      },
-     "dd126": 0.256,
+     "dd126": 0.255,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 83.9,
@@ -9083,9 +9182,9 @@
      "name": "中裕",
      "yahoo": "4147.TWO",
      "theme": "生技醫療",
-     "price": 52.8,
+     "price": 53.0,
      "prev_close": 53.1,
-     "chg_1d_pct": -0.56,
+     "chg_1d_pct": -0.19,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -9120,7 +9219,7 @@
       51.3,
       50.9,
       53.1,
-      52.8
+      53.0
      ],
      "exit": {
       "atr": 4.0,
@@ -9133,8 +9232,8 @@
       "o": 52.6,
       "h": 55.9,
       "l": 51.8,
-      "c": 52.8,
-      "v": 886000
+      "c": 53.0,
+      "v": 892000
      },
      "extended": false,
      "pullback_ok": false,
@@ -9146,7 +9245,7 @@
       "mfturn": 0.0,
       "risk": 45.4
      },
-     "dd126": 0.273,
+     "dd126": 0.27,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 58.5,
@@ -9165,9 +9264,9 @@
      "name": "奇鋐",
      "yahoo": "3017.TW",
      "theme": "AI伺服器",
-     "price": 2595.0,
+     "price": 2605.0,
      "prev_close": 2600.0,
-     "chg_1d_pct": -0.19,
+     "chg_1d_pct": 0.19,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -9202,21 +9301,21 @@
       2205.0,
       2365.0,
       2600.0,
-      2595.0
+      2605.0
      ],
      "exit": {
       "atr": 281.07,
       "trail": 2371.79,
       "hi22": 3215.0,
-      "sma50": 3091.2
+      "sma50": 3091.4
      },
      "bar": {
       "t": "2026-11-25",
       "o": 2475.0,
       "h": 2705.0,
       "l": 2360.0,
-      "c": 2595.0,
-      "v": 7703000
+      "c": 2605.0,
+      "v": 7756000
      },
      "extended": false,
      "pullback_ok": false,
@@ -9225,21 +9324,21 @@
       "depth": 100.0,
       "oversold": 22.8,
       "reversal": 100.0,
-      "mfturn": 35.6,
+      "mfturn": 35.3,
       "risk": 89.1
      },
-     "dd126": 0.296,
+     "dd126": 0.293,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 73.0,
      "score_chg": -8.0,
      "reasons": [
-      "距半年高點 −30%",
+      "距半年高點 −29%",
       "止跌訊號",
       "波動大"
      ],
      "alerts": [
-      "爆量下跌"
+      "爆量上漲"
      ],
      "signal": "buy",
      "signal_label": "可進場",
@@ -9301,23 +9400,23 @@
       "h": 1480.0,
       "l": 1360.0,
       "c": 1450.0,
-      "v": 4587000
+      "v": 4621000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 64.7,
+     "score": 64.6,
      "components": {
       "depth": 52.2,
       "oversold": 90.6,
       "reversal": 100.0,
-      "mfturn": 22.7,
+      "mfturn": 22.6,
       "risk": 77.6
      },
      "dd126": 0.446,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 71.4,
-     "score_chg": -6.7,
+     "score_chg": -6.8,
      "reasons": [
       "距半年高點 −45%",
       "超賣",
@@ -9332,96 +9431,13 @@
      "swap": null
     },
     {
-     "ticker": "1503",
-     "name": "士電",
-     "yahoo": "1503.TW",
-     "theme": "重電",
-     "price": 153.0,
-     "prev_close": 161.5,
-     "chg_1d_pct": -5.26,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      203.0,
-      197.0,
-      198.5,
-      194.0,
-      191.0,
-      192.0,
-      192.0,
-      192.0,
-      191.5,
-      191.0,
-      188.0,
-      185.5,
-      185.5,
-      177.0,
-      173.5,
-      168.5,
-      159.0,
-      174.5,
-      170.5,
-      173.5,
-      168.0,
-      170.0,
-      164.0,
-      163.0,
-      165.5,
-      159.5,
-      144.0,
-      147.0,
-      161.5,
-      153.0
-     ],
-     "exit": {
-      "atr": 11.29,
-      "trail": 157.64,
-      "hi22": 191.5,
-      "sma50": 184.91
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 155.5,
-      "h": 157.0,
-      "l": 146.5,
-      "c": 153.0,
-      "v": 1207000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 64.2,
-     "components": {
-      "depth": 67.4,
-      "oversold": 99.2,
-      "reversal": 70.0,
-      "mfturn": 5.1,
-      "risk": 57.4
-     },
-     "dd126": 0.415,
-     "new_low": false,
-     "entry_ok": true,
-     "score_prev": 81.2,
-     "score_chg": -17.0,
-     "reasons": [
-      "距半年高點 −42%",
-      "超賣",
-      "止跌訊號"
-     ],
-     "alerts": [],
-     "signal": "buy",
-     "signal_label": "可進場",
-     "swap": null
-    },
-    {
      "ticker": "2801",
      "name": "彰銀",
      "yahoo": "2801.TW",
      "theme": "金融",
-     "price": 25.4,
+     "price": 25.45,
      "prev_close": 26.8,
-     "chg_1d_pct": -5.22,
+     "chg_1d_pct": -5.04,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -9456,7 +9472,7 @@
       25.4,
       25.1,
       26.8,
-      25.4
+      25.45
      ],
      "exit": {
       "atr": 1.25,
@@ -9469,8 +9485,8 @@
       "o": 25.9,
       "h": 26.15,
       "l": 24.9,
-      "c": 25.4,
-      "v": 21621000
+      "c": 25.45,
+      "v": 21811000
      },
      "extended": false,
      "pullback_ok": false,
@@ -9480,9 +9496,9 @@
       "oversold": 81.8,
       "reversal": 30.0,
       "mfturn": 0.0,
-      "risk": 27.8
+      "risk": 27.7
      },
-     "dd126": 0.177,
+     "dd126": 0.175,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 79.8,
@@ -9552,7 +9568,7 @@
       "h": 142.0,
       "l": 129.5,
       "c": 133.0,
-      "v": 27991000
+      "v": 28120000
      },
      "extended": false,
      "pullback_ok": false,
@@ -9578,6 +9594,177 @@
      ],
      "signal": "watch",
      "signal_label": "觀察",
+     "swap": null
+    },
+    {
+     "ticker": "8299",
+     "name": "群聯",
+     "yahoo": "8299.TWO",
+     "theme": "半導體",
+     "price": 1535.0,
+     "prev_close": 1595.0,
+     "chg_1d_pct": -3.76,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      1965.0,
+      1830.0,
+      1890.0,
+      1845.0,
+      1845.0,
+      1930.0,
+      1880.0,
+      1880.0,
+      1910.0,
+      2040.0,
+      2050.0,
+      1930.0,
+      1875.0,
+      1690.0,
+      1710.0,
+      1560.0,
+      1500.0,
+      1650.0,
+      1675.0,
+      1730.0,
+      1635.0,
+      1640.0,
+      1515.0,
+      1535.0,
+      1520.0,
+      1455.0,
+      1320.0,
+      1450.0,
+      1595.0,
+      1535.0
+     ],
+     "exit": {
+      "atr": 135.71,
+      "trail": 1642.86,
+      "hi22": 2050.0,
+      "sma50": 1860.0
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 1510.0,
+      "h": 1575.0,
+      "l": 1470.0,
+      "c": 1535.0,
+      "v": 6880000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 63.0,
+     "components": {
+      "depth": 49.2,
+      "oversold": 82.8,
+      "reversal": 100.0,
+      "mfturn": 31.2,
+      "risk": 78.3
+     },
+     "dd126": 0.452,
+     "new_low": false,
+     "entry_ok": true,
+     "score_prev": 67.8,
+     "score_chg": -4.8,
+     "reasons": [
+      "距半年高點 −45%",
+      "超賣",
+      "止跌訊號",
+      "波動大"
+     ],
+     "alerts": [],
+     "signal": "buy",
+     "signal_label": "可進場",
+     "swap": null
+    },
+    {
+     "ticker": "2345",
+     "name": "智邦",
+     "yahoo": "2345.TW",
+     "theme": "光通訊",
+     "price": 1505.0,
+     "prev_close": 1485.0,
+     "chg_1d_pct": 1.35,
+     "above_sma20": true,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      2050.0,
+      1950.0,
+      1980.0,
+      2005.0,
+      1970.0,
+      1815.0,
+      1775.0,
+      1775.0,
+      1760.0,
+      1815.0,
+      1755.0,
+      1615.0,
+      1615.0,
+      1495.0,
+      1480.0,
+      1380.0,
+      1280.0,
+      1405.0,
+      1545.0,
+      1575.0,
+      1525.0,
+      1520.0,
+      1380.0,
+      1330.0,
+      1420.0,
+      1350.0,
+      1230.0,
+      1350.0,
+      1485.0,
+      1505.0
+     ],
+     "exit": {
+      "atr": 138.21,
+      "trail": 1400.36,
+      "hi22": 1815.0,
+      "sma50": 1732.0
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 1485.0,
+      "h": 1545.0,
+      "l": 1355.0,
+      "c": 1505.0,
+      "v": 9076000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 62.7,
+     "components": {
+      "depth": 50.8,
+      "oversold": 55.2,
+      "reversal": 100.0,
+      "mfturn": 77.8,
+      "risk": 87.3
+     },
+     "dd126": 0.448,
+     "new_low": false,
+     "entry_ok": true,
+     "score_prev": 64.5,
+     "score_chg": -1.8,
+     "reasons": [
+      "距半年高點 −45%",
+      "止跌訊號",
+      "資金回流",
+      "波動大"
+     ],
+     "alerts": [
+      "突破下降趨勢線",
+      "突破壓力區"
+     ],
+     "signal": "buy",
+     "signal_label": "可進場",
      "swap": null
     },
     {
@@ -9636,7 +9823,7 @@
       "h": 214.0,
       "l": 204.0,
       "c": 207.5,
-      "v": 81116000
+      "v": 81452000
      },
      "extended": false,
      "pullback_ok": false,
@@ -9645,7 +9832,7 @@
       "depth": 100.0,
       "oversold": 76.1,
       "reversal": 30.0,
-      "mfturn": 5.1,
+      "mfturn": 5.0,
       "risk": 40.4
      },
      "dd126": 0.308,
@@ -9666,183 +9853,13 @@
      "swap": null
     },
     {
-     "ticker": "2345",
-     "name": "智邦",
-     "yahoo": "2345.TW",
-     "theme": "光通訊",
-     "price": 1490.0,
-     "prev_close": 1485.0,
-     "chg_1d_pct": 0.34,
-     "above_sma20": true,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      2050.0,
-      1950.0,
-      1980.0,
-      2005.0,
-      1970.0,
-      1815.0,
-      1775.0,
-      1775.0,
-      1760.0,
-      1815.0,
-      1755.0,
-      1615.0,
-      1615.0,
-      1495.0,
-      1480.0,
-      1380.0,
-      1280.0,
-      1405.0,
-      1545.0,
-      1575.0,
-      1525.0,
-      1520.0,
-      1380.0,
-      1330.0,
-      1420.0,
-      1350.0,
-      1230.0,
-      1350.0,
-      1485.0,
-      1490.0
-     ],
-     "exit": {
-      "atr": 138.21,
-      "trail": 1400.36,
-      "hi22": 1815.0,
-      "sma50": 1731.7
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 1485.0,
-      "h": 1545.0,
-      "l": 1355.0,
-      "c": 1490.0,
-      "v": 8961000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 61.9,
-     "components": {
-      "depth": 48.1,
-      "oversold": 55.2,
-      "reversal": 100.0,
-      "mfturn": 78.3,
-      "risk": 87.2
-     },
-     "dd126": 0.454,
-     "new_low": false,
-     "entry_ok": true,
-     "score_prev": 64.5,
-     "score_chg": -2.6,
-     "reasons": [
-      "距半年高點 −45%",
-      "止跌訊號",
-      "資金回流",
-      "波動大"
-     ],
-     "alerts": [
-      "突破下降趨勢線"
-     ],
-     "signal": "buy",
-     "signal_label": "可進場",
-     "swap": null
-    },
-    {
-     "ticker": "8299",
-     "name": "群聯",
-     "yahoo": "8299.TWO",
-     "theme": "半導體",
-     "price": 1510.0,
-     "prev_close": 1595.0,
-     "chg_1d_pct": -5.33,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      1965.0,
-      1830.0,
-      1890.0,
-      1845.0,
-      1845.0,
-      1930.0,
-      1880.0,
-      1880.0,
-      1910.0,
-      2040.0,
-      2050.0,
-      1930.0,
-      1875.0,
-      1690.0,
-      1710.0,
-      1560.0,
-      1500.0,
-      1650.0,
-      1675.0,
-      1730.0,
-      1635.0,
-      1640.0,
-      1515.0,
-      1535.0,
-      1520.0,
-      1455.0,
-      1320.0,
-      1450.0,
-      1595.0,
-      1510.0
-     ],
-     "exit": {
-      "atr": 135.71,
-      "trail": 1642.86,
-      "hi22": 2050.0,
-      "sma50": 1859.5
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 1510.0,
-      "h": 1575.0,
-      "l": 1470.0,
-      "c": 1510.0,
-      "v": 6808000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 61.6,
-     "components": {
-      "depth": 44.7,
-      "oversold": 82.8,
-      "reversal": 100.0,
-      "mfturn": 31.5,
-      "risk": 78.6
-     },
-     "dd126": 0.461,
-     "new_low": false,
-     "entry_ok": true,
-     "score_prev": 67.8,
-     "score_chg": -6.2,
-     "reasons": [
-      "距半年高點 −46%",
-      "超賣",
-      "止跌訊號",
-      "波動大"
-     ],
-     "alerts": [],
-     "signal": "buy",
-     "signal_label": "可進場",
-     "swap": null
-    },
-    {
      "ticker": "1760",
      "name": "寶齡富錦",
      "yahoo": "1760.TW",
      "theme": "生技醫療",
-     "price": 40.3,
+     "price": 40.55,
      "prev_close": 41.45,
-     "chg_1d_pct": -2.77,
+     "chg_1d_pct": -2.17,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -9877,7 +9894,7 @@
       39.65,
       40.0,
       41.45,
-      40.3
+      40.55
      ],
      "exit": {
       "atr": 2.04,
@@ -9890,26 +9907,26 @@
       "o": 41.1,
       "h": 41.8,
       "l": 40.0,
-      "c": 40.3,
-      "v": 89000
+      "c": 40.55,
+      "v": 93000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 60.7,
+     "score": 61.4,
      "components": {
-      "depth": 80.8,
+      "depth": 82.7,
       "oversold": 100.0,
       "reversal": 30.0,
       "mfturn": 0.0,
-      "risk": 39.5
+      "risk": 39.3
      },
-     "dd126": 0.388,
+     "dd126": 0.385,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 79.3,
-     "score_chg": -18.6,
+     "score_chg": -17.9,
      "reasons": [
-      "距半年高點 −39%",
+      "距半年高點 −38%",
       "超賣"
      ],
      "alerts": [],
@@ -9973,7 +9990,7 @@
       "h": 57.6,
       "l": 54.4,
       "c": 56.3,
-      "v": 1840000
+      "v": 1869000
      },
      "extended": false,
      "pullback_ok": false,
@@ -10004,9 +10021,9 @@
      "name": "川湖",
      "yahoo": "2059.TW",
      "theme": "AI伺服器",
-     "price": 6565.0,
+     "price": 6575.0,
      "prev_close": 6200.0,
-     "chg_1d_pct": 5.89,
+     "chg_1d_pct": 6.05,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -10041,37 +10058,37 @@
       5350.0,
       5640.0,
       6200.0,
-      6565.0
+      6575.0
      ],
      "exit": {
       "atr": 677.5,
       "trail": 8117.5,
       "hi22": 10150.0,
-      "sma50": 9866.7
+      "sma50": 9866.9
      },
      "bar": {
       "t": "2026-11-25",
       "o": 6235.0,
       "h": 6740.0,
       "l": 6015.0,
-      "c": 6565.0,
-      "v": 1380000
+      "c": 6575.0,
+      "v": 1390000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 60.3,
+     "score": 60.4,
      "components": {
-      "depth": 2.0,
+      "depth": 2.4,
       "oversold": 100.0,
       "reversal": 100.0,
       "mfturn": 100.0,
-      "risk": 88.3
+      "risk": 88.4
      },
-     "dd126": 0.546,
+     "dd126": 0.545,
      "new_low": false,
      "entry_ok": true,
      "score_prev": 53.2,
-     "score_chg": 7.1,
+     "score_chg": 7.2,
      "reasons": [
       "距半年高點 −55%",
       "超賣",
@@ -10087,13 +10104,97 @@
      "swap": null
     },
     {
+     "ticker": "2383",
+     "name": "台光電",
+     "yahoo": "2383.TW",
+     "theme": "AI伺服器",
+     "price": 3425.0,
+     "prev_close": 3395.0,
+     "chg_1d_pct": 0.88,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      5520.0,
+      5120.0,
+      5165.0,
+      5125.0,
+      4945.0,
+      4990.0,
+      5070.0,
+      5070.0,
+      4750.0,
+      5025.0,
+      5010.0,
+      4675.0,
+      4705.0,
+      4395.0,
+      4555.0,
+      4100.0,
+      3820.0,
+      4070.0,
+      4365.0,
+      4500.0,
+      4105.0,
+      4215.0,
+      3795.0,
+      3540.0,
+      3465.0,
+      3120.0,
+      2810.0,
+      3090.0,
+      3395.0,
+      3425.0
+     ],
+     "exit": {
+      "atr": 396.07,
+      "trail": 3836.79,
+      "hi22": 5025.0,
+      "sma50": 4712.2
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 3235.0,
+      "h": 3590.0,
+      "l": 3100.0,
+      "c": 3425.0,
+      "v": 7821000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 59.2,
+     "components": {
+      "depth": 45.9,
+      "oversold": 96.9,
+      "reversal": 100.0,
+      "mfturn": 0.0,
+      "risk": 95.4
+     },
+     "dd126": 0.458,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 58.3,
+     "score_chg": 0.9,
+     "reasons": [
+      "距半年高點 −46%",
+      "超賣",
+      "止跌訊號",
+      "波動大"
+     ],
+     "alerts": [],
+     "signal": "watch",
+     "signal_label": "觀察",
+     "swap": null
+    },
+    {
      "ticker": "2408",
      "name": "南亞科",
      "yahoo": "2408.TW",
      "theme": "半導體",
-     "price": 280.5,
+     "price": 281.0,
      "prev_close": 309.0,
-     "chg_1d_pct": -9.22,
+     "chg_1d_pct": -9.06,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -10128,37 +10229,37 @@
       264.5,
       281.0,
       309.0,
-      280.5
+      281.0
      ],
      "exit": {
       "atr": 32.11,
       "trail": 380.68,
       "hi22": 477.0,
-      "sma50": 435.8
+      "sma50": 435.81
      },
      "bar": {
       "t": "2026-11-25",
       "o": 290.0,
       "h": 294.5,
       "l": 278.5,
-      "c": 280.5,
-      "v": 40764000
+      "c": 281.0,
+      "v": 40900000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 59.0,
+     "score": 59.1,
      "components": {
-      "depth": 33.3,
+      "depth": 33.7,
       "oversold": 100.0,
       "reversal": 70.0,
       "mfturn": 68.2,
-      "risk": 89.8
+      "risk": 89.7
      },
      "dd126": 0.483,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 66.8,
-     "score_chg": -7.8,
+     "score_chg": -7.7,
      "reasons": [
       "距半年高點 −48%",
       "超賣",
@@ -10227,7 +10328,7 @@
       "h": 91.0,
       "l": 87.4,
       "c": 87.4,
-      "v": 192013000
+      "v": 192320000
      },
      "extended": false,
      "pullback_ok": false,
@@ -10260,267 +10361,13 @@
      "swap": null
     },
     {
-     "ticker": "2383",
-     "name": "台光電",
-     "yahoo": "2383.TW",
-     "theme": "AI伺服器",
-     "price": 3390.0,
-     "prev_close": 3395.0,
-     "chg_1d_pct": -0.15,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      5520.0,
-      5120.0,
-      5165.0,
-      5125.0,
-      4945.0,
-      4990.0,
-      5070.0,
-      5070.0,
-      4750.0,
-      5025.0,
-      5010.0,
-      4675.0,
-      4705.0,
-      4395.0,
-      4555.0,
-      4100.0,
-      3820.0,
-      4070.0,
-      4365.0,
-      4500.0,
-      4105.0,
-      4215.0,
-      3795.0,
-      3540.0,
-      3465.0,
-      3120.0,
-      2810.0,
-      3090.0,
-      3395.0,
-      3390.0
-     ],
-     "exit": {
-      "atr": 396.07,
-      "trail": 3836.79,
-      "hi22": 5025.0,
-      "sma50": 4711.5
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 3235.0,
-      "h": 3590.0,
-      "l": 3100.0,
-      "c": 3390.0,
-      "v": 7724000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 58.4,
-     "components": {
-      "depth": 43.1,
-      "oversold": 96.9,
-      "reversal": 100.0,
-      "mfturn": 0.0,
-      "risk": 95.3
-     },
-     "dd126": 0.464,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 58.3,
-     "score_chg": 0.1,
-     "reasons": [
-      "距半年高點 −46%",
-      "超賣",
-      "止跌訊號",
-      "波動大"
-     ],
-     "alerts": [],
-     "signal": "watch",
-     "signal_label": "觀察",
-     "swap": null
-    },
-    {
-     "ticker": "2892",
-     "name": "第一金",
-     "yahoo": "2892.TW",
-     "theme": "金融",
-     "price": 37.35,
-     "prev_close": 39.8,
-     "chg_1d_pct": -6.16,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      40.65,
-      41.6,
-      41.5,
-      41.1,
-      40.75,
-      41.3,
-      42.35,
-      42.35,
-      43.15,
-      42.8,
-      44.45,
-      44.6,
-      43.65,
-      42.6,
-      42.45,
-      42.25,
-      40.95,
-      40.95,
-      41.05,
-      42.15,
-      42.7,
-      43.45,
-      42.35,
-      42.1,
-      41.0,
-      40.15,
-      37.6,
-      37.65,
-      39.8,
-      37.35
-     ],
-     "exit": {
-      "atr": 2.13,
-      "trail": 38.21,
-      "hi22": 44.6,
-      "sma50": 40.67
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 38.8,
-      "h": 39.15,
-      "l": 36.8,
-      "c": 37.35,
-      "v": 59968000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 57.6,
-     "components": {
-      "depth": 100.0,
-      "oversold": 53.3,
-      "reversal": 30.0,
-      "mfturn": 0.0,
-      "risk": 26.1
-     },
-     "dd126": 0.163,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 73.7,
-     "score_chg": -16.1,
-     "reasons": [
-      "距半年高點 −16%"
-     ],
-     "alerts": [
-      "跌破上升趨勢線"
-     ],
-     "signal": "watch",
-     "signal_label": "觀察",
-     "swap": null
-    },
-    {
-     "ticker": "3163",
-     "name": "波若威",
-     "yahoo": "3163.TWO",
-     "theme": "光通訊",
-     "price": 351.5,
-     "prev_close": 354.0,
-     "chg_1d_pct": -0.71,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      653.0,
-      604.0,
-      589.0,
-      573.0,
-      556.0,
-      583.0,
-      552.0,
-      552.0,
-      538.0,
-      569.0,
-      542.0,
-      509.0,
-      510.0,
-      462.0,
-      465.5,
-      429.5,
-      395.0,
-      434.5,
-      476.5,
-      481.0,
-      486.5,
-      506.0,
-      455.5,
-      414.0,
-      422.0,
-      380.0,
-      342.0,
-      322.0,
-      354.0,
-      351.5
-     ],
-     "exit": {
-      "atr": 40.29,
-      "trail": 448.14,
-      "hi22": 569.0,
-      "sma50": 557.49
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 343.0,
-      "h": 389.0,
-      "l": 343.0,
-      "c": 351.5,
-      "v": 9914000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 57.1,
-     "components": {
-      "depth": 0.0,
-      "oversold": 91.5,
-      "reversal": 100.0,
-      "mfturn": 100.0,
-      "risk": 95.0
-     },
-     "dd126": 0.661,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 39.5,
-     "score_chg": 17.6,
-     "reasons": [
-      "距半年高點 −66%",
-      "超賣",
-      "止跌訊號",
-      "資金回流",
-      "波動大"
-     ],
-     "alerts": [
-      "爆量下跌"
-     ],
-     "signal": "watch",
-     "signal_label": "觀察",
-     "swap": null
-    },
-    {
      "ticker": "2368",
      "name": "金像電",
      "yahoo": "2368.TW",
      "theme": "AI伺服器",
-     "price": 906.0,
+     "price": 918.0,
      "prev_close": 860.0,
-     "chg_1d_pct": 5.35,
+     "chg_1d_pct": 6.74,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -10555,45 +10402,299 @@
       711.0,
       782.0,
       860.0,
-      906.0
+      918.0
      ],
      "exit": {
       "atr": 95.57,
       "trail": 898.29,
       "hi22": 1185.0,
-      "sma50": 1048.28
+      "sma50": 1048.52
      },
      "bar": {
       "t": "2026-11-25",
       "o": 846.0,
       "h": 921.0,
       "l": 827.0,
-      "c": 906.0,
-      "v": 24999000
+      "c": 918.0,
+      "v": 25515000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 56.7,
+     "score": 58.0,
      "components": {
-      "depth": 80.2,
+      "depth": 84.2,
       "oversold": 37.2,
       "reversal": 100.0,
       "mfturn": 0.0,
       "risk": 94.1
      },
-     "dd126": 0.39,
+     "dd126": 0.382,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 64.3,
-     "score_chg": -7.6,
+     "score_chg": -6.3,
      "reasons": [
-      "距半年高點 −39%",
+      "距半年高點 −38%",
       "止跌訊號",
       "波動大"
      ],
      "alerts": [
       "突破壓力區",
       "爆量上漲"
+     ],
+     "signal": "watch",
+     "signal_label": "觀察",
+     "swap": null
+    },
+    {
+     "ticker": "2892",
+     "name": "第一金",
+     "yahoo": "2892.TW",
+     "theme": "金融",
+     "price": 37.45,
+     "prev_close": 39.8,
+     "chg_1d_pct": -5.9,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      40.65,
+      41.6,
+      41.5,
+      41.1,
+      40.75,
+      41.3,
+      42.35,
+      42.35,
+      43.15,
+      42.8,
+      44.45,
+      44.6,
+      43.65,
+      42.6,
+      42.45,
+      42.25,
+      40.95,
+      40.95,
+      41.05,
+      42.15,
+      42.7,
+      43.45,
+      42.35,
+      42.1,
+      41.0,
+      40.15,
+      37.6,
+      37.65,
+      39.8,
+      37.45
+     ],
+     "exit": {
+      "atr": 2.13,
+      "trail": 38.21,
+      "hi22": 44.6,
+      "sma50": 40.67
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 38.8,
+      "h": 39.15,
+      "l": 36.8,
+      "c": 37.45,
+      "v": 61109000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 57.7,
+     "components": {
+      "depth": 100.0,
+      "oversold": 53.3,
+      "reversal": 30.0,
+      "mfturn": 0.0,
+      "risk": 25.7
+     },
+     "dd126": 0.16,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 73.7,
+     "score_chg": -16.0,
+     "reasons": [
+      "距半年高點 −16%"
+     ],
+     "alerts": [
+      "跌破上升趨勢線"
+     ],
+     "signal": "watch",
+     "signal_label": "觀察",
+     "swap": null
+    },
+    {
+     "ticker": "3163",
+     "name": "波若威",
+     "yahoo": "3163.TWO",
+     "theme": "光通訊",
+     "price": 352.5,
+     "prev_close": 354.0,
+     "chg_1d_pct": -0.42,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      653.0,
+      604.0,
+      589.0,
+      573.0,
+      556.0,
+      583.0,
+      552.0,
+      552.0,
+      538.0,
+      569.0,
+      542.0,
+      509.0,
+      510.0,
+      462.0,
+      465.5,
+      429.5,
+      395.0,
+      434.5,
+      476.5,
+      481.0,
+      486.5,
+      506.0,
+      455.5,
+      414.0,
+      422.0,
+      380.0,
+      342.0,
+      322.0,
+      354.0,
+      352.5
+     ],
+     "exit": {
+      "atr": 40.29,
+      "trail": 448.14,
+      "hi22": 569.0,
+      "sma50": 557.51
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 343.0,
+      "h": 389.0,
+      "l": 343.0,
+      "c": 352.5,
+      "v": 9964000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 57.1,
+     "components": {
+      "depth": 0.0,
+      "oversold": 91.5,
+      "reversal": 100.0,
+      "mfturn": 100.0,
+      "risk": 95.0
+     },
+     "dd126": 0.66,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 39.5,
+     "score_chg": 17.6,
+     "reasons": [
+      "距半年高點 −66%",
+      "超賣",
+      "止跌訊號",
+      "資金回流",
+      "波動大"
+     ],
+     "alerts": [
+      "爆量下跌"
+     ],
+     "signal": "watch",
+     "signal_label": "觀察",
+     "swap": null
+    },
+    {
+     "ticker": "1301",
+     "name": "台塑",
+     "yahoo": "1301.TW",
+     "theme": "航運原物料",
+     "price": 57.2,
+     "prev_close": 60.9,
+     "chg_1d_pct": -6.08,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      88.9,
+      81.7,
+      82.1,
+      78.2,
+      74.9,
+      77.0,
+      73.8,
+      73.8,
+      74.4,
+      75.4,
+      73.9,
+      72.5,
+      73.1,
+      68.7,
+      69.1,
+      65.1,
+      62.7,
+      68.9,
+      69.9,
+      70.2,
+      68.3,
+      71.1,
+      67.0,
+      67.5,
+      64.4,
+      60.4,
+      56.1,
+      56.8,
+      60.9,
+      57.2
+     ],
+     "exit": {
+      "atr": 4.81,
+      "trail": 60.98,
+      "hi22": 75.4,
+      "sma50": 69.31
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 58.9,
+      "h": 60.2,
+      "l": 55.5,
+      "c": 57.2,
+      "v": 23919000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 55.9,
+     "components": {
+      "depth": 96.7,
+      "oversold": 56.5,
+      "reversal": 30.0,
+      "mfturn": 16.8,
+      "risk": 62.7
+     },
+     "dd126": 0.357,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 71.5,
+     "score_chg": -15.6,
+     "reasons": [
+      "距半年高點 −36%"
+     ],
+     "alerts": [
+      "跌破上升趨勢線",
+      "跌破支撐區"
      ],
      "signal": "watch",
      "signal_label": "觀察",
@@ -10689,9 +10790,9 @@
      "name": "世芯-KY",
      "yahoo": "3661.TW",
      "theme": "半導體",
-     "price": 3615.0,
+     "price": 3630.0,
      "prev_close": 3915.0,
-     "chg_1d_pct": -7.66,
+     "chg_1d_pct": -7.28,
      "above_sma20": true,
      "above_sma50": false,
      "limit": null,
@@ -10726,21 +10827,21 @@
       3240.0,
       3560.0,
       3915.0,
-      3615.0
+      3630.0
      ],
      "exit": {
       "atr": 353.57,
       "trail": 2959.29,
       "hi22": 4020.0,
-      "sma50": 3642.0
+      "sma50": 3642.3
      },
      "bar": {
       "t": "2026-11-25",
       "o": 3855.0,
       "h": 3970.0,
       "l": 3530.0,
-      "c": 3615.0,
-      "v": 4462000
+      "c": 3630.0,
+      "v": 4486000
      },
      "extended": false,
      "pullback_ok": false,
@@ -10752,13 +10853,13 @@
       "mfturn": 0.0,
       "risk": 84.0
      },
-     "dd126": 0.256,
+     "dd126": 0.253,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 61.6,
      "score_chg": -6.0,
      "reasons": [
-      "距半年高點 −26%",
+      "距半年高點 −25%",
       "止跌訊號",
       "波動大"
      ],
@@ -10770,97 +10871,13 @@
      "swap": null
     },
     {
-     "ticker": "1301",
-     "name": "台塑",
-     "yahoo": "1301.TW",
-     "theme": "航運原物料",
-     "price": 56.9,
-     "prev_close": 60.9,
-     "chg_1d_pct": -6.57,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      88.9,
-      81.7,
-      82.1,
-      78.2,
-      74.9,
-      77.0,
-      73.8,
-      73.8,
-      74.4,
-      75.4,
-      73.9,
-      72.5,
-      73.1,
-      68.7,
-      69.1,
-      65.1,
-      62.7,
-      68.9,
-      69.9,
-      70.2,
-      68.3,
-      71.1,
-      67.0,
-      67.5,
-      64.4,
-      60.4,
-      56.1,
-      56.8,
-      60.9,
-      56.9
-     ],
-     "exit": {
-      "atr": 4.81,
-      "trail": 60.98,
-      "hi22": 75.4,
-      "sma50": 69.31
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 58.9,
-      "h": 60.2,
-      "l": 55.5,
-      "c": 56.9,
-      "v": 23696000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 55.4,
-     "components": {
-      "depth": 95.0,
-      "oversold": 56.5,
-      "reversal": 30.0,
-      "mfturn": 16.9,
-      "risk": 62.9
-     },
-     "dd126": 0.36,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 71.5,
-     "score_chg": -16.1,
-     "reasons": [
-      "距半年高點 −36%"
-     ],
-     "alerts": [
-      "跌破上升趨勢線",
-      "跌破支撐區"
-     ],
-     "signal": "watch",
-     "signal_label": "觀察",
-     "swap": null
-    },
-    {
      "ticker": "6488",
      "name": "環球晶",
      "yahoo": "6488.TWO",
      "theme": "半導體",
-     "price": 478.5,
+     "price": 482.0,
      "prev_close": 506.0,
-     "chg_1d_pct": -5.43,
+     "chg_1d_pct": -4.74,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -10895,21 +10912,21 @@
       441.5,
       460.5,
       506.0,
-      478.5
+      482.0
      ],
      "exit": {
       "atr": 51.89,
       "trail": 693.32,
       "hi22": 849.0,
-      "sma50": 820.11
+      "sma50": 820.18
      },
      "bar": {
       "t": "2026-11-25",
       "o": 479.0,
       "h": 510.0,
       "l": 455.5,
-      "c": 478.5,
-      "v": 7874000
+      "c": 482.0,
+      "v": 7920000
      },
      "extended": false,
      "pullback_ok": false,
@@ -10918,10 +10935,10 @@
       "depth": 0.0,
       "oversold": 100.0,
       "reversal": 100.0,
-      "mfturn": 70.2,
-      "risk": 95.4
+      "mfturn": 70.1,
+      "risk": 95.3
      },
-     "dd126": 0.683,
+     "dd126": 0.681,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 52.4,
@@ -10945,9 +10962,9 @@
      "name": "台達電",
      "yahoo": "2308.TW",
      "theme": "重電",
-     "price": 1055.0,
+     "price": 1065.0,
      "prev_close": 1085.0,
-     "chg_1d_pct": -2.76,
+     "chg_1d_pct": -1.84,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -10982,21 +10999,21 @@
       900.0,
       990.0,
       1085.0,
-      1055.0
+      1065.0
      ],
      "exit": {
       "atr": 105.21,
       "trail": 1234.36,
       "hi22": 1550.0,
-      "sma50": 1524.9
+      "sma50": 1525.1
      },
      "bar": {
       "t": "2026-11-25",
       "o": 1095.0,
       "h": 1115.0,
       "l": 989.0,
-      "c": 1055.0,
-      "v": 35251000
+      "c": 1065.0,
+      "v": 35645000
      },
      "extended": false,
      "pullback_ok": false,
@@ -11005,105 +11022,23 @@
       "depth": 0.0,
       "oversold": 100.0,
       "reversal": 100.0,
-      "mfturn": 51.0,
+      "mfturn": 50.7,
       "risk": 94.4
      },
-     "dd126": 0.579,
+     "dd126": 0.575,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 53.5,
      "score_chg": -1.1,
      "reasons": [
-      "距半年高點 −58%",
+      "距半年高點 −57%",
       "超賣",
       "止跌訊號",
       "資金回流",
       "波動大"
      ],
-     "alerts": [],
-     "signal": "none",
-     "signal_label": "未達標",
-     "swap": null
-    },
-    {
-     "ticker": "9904",
-     "name": "寶成",
-     "yahoo": "9904.TW",
-     "theme": "民生消費",
-     "price": 25.05,
-     "prev_close": 25.5,
-     "chg_1d_pct": -1.76,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      26.1,
-      26.25,
-      26.5,
-      26.4,
-      26.55,
-      26.4,
-      26.35,
-      26.35,
-      25.9,
-      25.2,
-      25.65,
-      25.8,
-      25.85,
-      25.9,
-      25.45,
-      26.0,
-      25.7,
-      25.7,
-      26.0,
-      25.85,
-      25.75,
-      26.0,
-      26.8,
-      26.3,
-      25.75,
-      25.15,
-      24.2,
-      23.95,
-      25.5,
-      25.05
-     ],
-     "exit": {
-      "atr": 0.9321,
-      "trail": 24.0,
-      "hi22": 26.8,
-      "sma50": 25.4
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 24.95,
-      "h": 25.25,
-      "l": 24.65,
-      "c": 25.05,
-      "v": 12908000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 51.4,
-     "components": {
-      "depth": 32.6,
-      "oversold": 44.6,
-      "reversal": 100.0,
-      "mfturn": 0.0,
-      "risk": 14.3
-     },
-     "dd126": 0.065,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 48.7,
-     "score_chg": 2.7,
-     "reasons": [
-      "距半年高點 −6%",
-      "止跌訊號"
-     ],
      "alerts": [
-      "跌破支撐區"
+      "突破下降趨勢線"
      ],
      "signal": "none",
      "signal_label": "未達標",
@@ -11114,9 +11049,9 @@
      "name": "亞力",
      "yahoo": "1514.TW",
      "theme": "重電",
-     "price": 71.2,
+     "price": 71.5,
      "prev_close": 76.4,
-     "chg_1d_pct": -6.81,
+     "chg_1d_pct": -6.41,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -11151,7 +11086,7 @@
       66.8,
       69.5,
       76.4,
-      71.2
+      71.5
      ],
      "exit": {
       "atr": 5.57,
@@ -11164,24 +11099,24 @@
       "o": 75.3,
       "h": 75.3,
       "l": 69.0,
-      "c": 71.2,
-      "v": 852000
+      "c": 71.5,
+      "v": 868000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 51.2,
+     "score": 51.5,
      "components": {
-      "depth": 23.0,
+      "depth": 24.1,
       "oversold": 100.0,
       "reversal": 70.0,
-      "mfturn": 15.2,
-      "risk": 63.5
+      "mfturn": 15.1,
+      "risk": 63.4
      },
-     "dd126": 0.504,
+     "dd126": 0.502,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 63.3,
-     "score_chg": -12.1,
+     "score_chg": -11.8,
      "reasons": [
       "距半年高點 −50%",
       "超賣",
@@ -11197,9 +11132,9 @@
      "name": "華城",
      "yahoo": "1519.TW",
      "theme": "重電",
-     "price": 435.0,
+     "price": 437.0,
      "prev_close": 467.5,
-     "chg_1d_pct": -6.95,
+     "chg_1d_pct": -6.52,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -11234,37 +11169,37 @@
       421.5,
       425.0,
       467.5,
-      435.0
+      437.0
      ],
      "exit": {
       "atr": 40.89,
       "trail": 469.32,
       "hi22": 592.0,
-      "sma50": 601.48
+      "sma50": 601.52
      },
      "bar": {
       "t": "2026-11-25",
       "o": 457.5,
       "h": 470.0,
       "l": 421.0,
-      "c": 435.0,
-      "v": 1064000
+      "c": 437.0,
+      "v": 1071000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 50.9,
+     "score": 51.2,
      "components": {
-      "depth": 35.3,
+      "depth": 36.5,
       "oversold": 75.5,
       "reversal": 70.0,
-      "mfturn": 36.8,
-      "risk": 79.6
+      "mfturn": 36.7,
+      "risk": 79.4
      },
-     "dd126": 0.479,
+     "dd126": 0.477,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 62.8,
-     "score_chg": -11.9,
+     "score_chg": -11.6,
      "reasons": [
       "距半年高點 −48%",
       "超賣",
@@ -11277,13 +11212,97 @@
      "swap": null
     },
     {
+     "ticker": "9904",
+     "name": "寶成",
+     "yahoo": "9904.TW",
+     "theme": "民生消費",
+     "price": 25.1,
+     "prev_close": 25.5,
+     "chg_1d_pct": -1.57,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      26.1,
+      26.25,
+      26.5,
+      26.4,
+      26.55,
+      26.4,
+      26.35,
+      26.35,
+      25.9,
+      25.2,
+      25.65,
+      25.8,
+      25.85,
+      25.9,
+      25.45,
+      26.0,
+      25.7,
+      25.7,
+      26.0,
+      25.85,
+      25.75,
+      26.0,
+      26.8,
+      26.3,
+      25.75,
+      25.15,
+      24.2,
+      23.95,
+      25.5,
+      25.1
+     ],
+     "exit": {
+      "atr": 0.9321,
+      "trail": 24.0,
+      "hi22": 26.8,
+      "sma50": 25.4
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 24.95,
+      "h": 25.25,
+      "l": 24.65,
+      "c": 25.1,
+      "v": 13062000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 51.1,
+     "components": {
+      "depth": 31.7,
+      "oversold": 44.6,
+      "reversal": 100.0,
+      "mfturn": 0.0,
+      "risk": 14.3
+     },
+     "dd126": 0.063,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 48.7,
+     "score_chg": 2.4,
+     "reasons": [
+      "距半年高點 −6%",
+      "止跌訊號"
+     ],
+     "alerts": [
+      "跌破支撐區"
+     ],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
      "ticker": "2603",
      "name": "長榮",
      "yahoo": "2603.TW",
      "theme": "航運原物料",
-     "price": 252.0,
+     "price": 254.0,
      "prev_close": 257.0,
-     "chg_1d_pct": -1.95,
+     "chg_1d_pct": -1.17,
      "above_sma20": false,
      "above_sma50": true,
      "limit": null,
@@ -11318,44 +11337,42 @@
       233.0,
       234.5,
       257.0,
-      252.0
+      254.0
      ],
      "exit": {
       "atr": 12.32,
       "trail": 237.54,
       "hi22": 274.5,
-      "sma50": 250.53
+      "sma50": 250.57
      },
      "bar": {
       "t": "2026-11-25",
       "o": 250.0,
       "h": 256.5,
       "l": 244.5,
-      "c": 252.0,
-      "v": 21047000
+      "c": 254.0,
+      "v": 21453000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 49.7,
+     "score": 49.1,
      "components": {
-      "depth": 41.0,
+      "depth": 37.3,
       "oversold": 32.2,
       "reversal": 100.0,
-      "mfturn": 0.0,
-      "risk": 29.1
+      "mfturn": 3.8,
+      "risk": 29.0
      },
-     "dd126": 0.082,
+     "dd126": 0.075,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 46.9,
-     "score_chg": 2.8,
+     "score_chg": 2.2,
      "reasons": [
       "距半年高點 −8%",
       "止跌訊號"
      ],
-     "alerts": [
-      "跌破支撐區"
-     ],
+     "alerts": [],
      "signal": "none",
      "signal_label": "未達標",
      "swap": null
@@ -11416,7 +11433,7 @@
       "h": 46.5,
       "l": 42.75,
       "c": 42.75,
-      "v": 23967000
+      "v": 24064000
      },
      "extended": false,
      "pullback_ok": false,
@@ -11447,13 +11464,97 @@
      "swap": null
     },
     {
+     "ticker": "6446",
+     "name": "藥華藥",
+     "yahoo": "6446.TW",
+     "theme": "生技醫療",
+     "price": 1085.0,
+     "prev_close": 1150.0,
+     "chg_1d_pct": -5.65,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      1190.0,
+      1205.0,
+      1245.0,
+      1175.0,
+      1155.0,
+      1175.0,
+      1160.0,
+      1160.0,
+      1190.0,
+      1200.0,
+      1240.0,
+      1190.0,
+      1190.0,
+      1225.0,
+      1250.0,
+      1185.0,
+      1270.0,
+      1370.0,
+      1280.0,
+      1335.0,
+      1365.0,
+      1380.0,
+      1295.0,
+      1280.0,
+      1245.0,
+      1205.0,
+      1100.0,
+      1120.0,
+      1150.0,
+      1085.0
+     ],
+     "exit": {
+      "atr": 101.07,
+      "trail": 1076.79,
+      "hi22": 1380.0,
+      "sma50": 1207.4
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 1120.0,
+      "h": 1150.0,
+      "l": 1045.0,
+      "c": 1085.0,
+      "v": 2802000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 45.8,
+     "components": {
+      "depth": 100.0,
+      "oversold": 14.2,
+      "reversal": 30.0,
+      "mfturn": 0.0,
+      "risk": 56.9
+     },
+     "dd126": 0.315,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 48.2,
+     "score_chg": -2.4,
+     "reasons": [
+      "距半年高點 −32%"
+     ],
+     "alerts": [
+      "跌破上升趨勢線",
+      "跌破支撐區"
+     ],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
      "ticker": "3037",
      "name": "欣興",
      "yahoo": "3037.TW",
      "theme": "AI伺服器",
-     "price": 582.0,
+     "price": 589.0,
      "prev_close": 613.0,
-     "chg_1d_pct": -5.06,
+     "chg_1d_pct": -3.92,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -11488,21 +11589,21 @@
       537.0,
       558.0,
       613.0,
-      582.0
+      589.0
      ],
      "exit": {
       "atr": 73.54,
       "trail": 879.39,
       "hi22": 1100.0,
-      "sma50": 979.72
+      "sma50": 979.86
      },
      "bar": {
       "t": "2026-11-25",
       "o": 570.0,
       "h": 640.0,
       "l": 555.0,
-      "c": 582.0,
-      "v": 41959000
+      "c": 589.0,
+      "v": 42298000
      },
      "extended": false,
      "pullback_ok": false,
@@ -11512,9 +11613,9 @@
       "oversold": 100.0,
       "reversal": 100.0,
       "mfturn": 0.0,
-      "risk": 94.7
+      "risk": 94.6
      },
-     "dd126": 0.561,
+     "dd126": 0.555,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 52.9,
@@ -11586,7 +11687,7 @@
       "h": 27.25,
       "l": 25.9,
       "c": 26.3,
-      "v": 17190000
+      "v": 17326000
      },
      "extended": false,
      "pullback_ok": false,
@@ -11620,9 +11721,9 @@
      "name": "聯鈞",
      "yahoo": "3450.TW",
      "theme": "光通訊",
-     "price": 278.0,
+     "price": 279.0,
      "prev_close": 284.0,
-     "chg_1d_pct": -2.11,
+     "chg_1d_pct": -1.76,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -11657,21 +11758,21 @@
       257.0,
       258.5,
       284.0,
-      278.0
+      279.0
      ],
      "exit": {
       "atr": 31.07,
       "trail": 348.29,
       "hi22": 441.5,
-      "sma50": 434.02
+      "sma50": 434.04
      },
      "bar": {
       "t": "2026-11-25",
       "o": 270.0,
       "h": 300.0,
       "l": 265.5,
-      "c": 278.0,
-      "v": 6907000
+      "c": 279.0,
+      "v": 6945000
      },
      "extended": false,
      "pullback_ok": false,
@@ -11680,10 +11781,10 @@
       "depth": 0.0,
       "oversold": 84.1,
       "reversal": 100.0,
-      "mfturn": 12.7,
+      "mfturn": 12.6,
       "risk": 94.6
      },
-     "dd126": 0.57,
+     "dd126": 0.568,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 48.2,
@@ -11695,6 +11796,90 @@
       "波動大"
      ],
      "alerts": [],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
+     "ticker": "2356",
+     "name": "英業達",
+     "yahoo": "2356.TW",
+     "theme": "AI伺服器",
+     "price": 39.3,
+     "prev_close": 42.2,
+     "chg_1d_pct": -6.87,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      58.3,
+      57.6,
+      59.0,
+      59.1,
+      60.0,
+      61.3,
+      60.5,
+      60.5,
+      63.0,
+      63.8,
+      61.4,
+      59.5,
+      59.6,
+      57.2,
+      56.4,
+      55.0,
+      52.6,
+      55.6,
+      54.9,
+      51.2,
+      46.6,
+      46.05,
+      43.0,
+      42.75,
+      42.3,
+      40.55,
+      39.25,
+      38.75,
+      42.2,
+      39.3
+     ],
+     "exit": {
+      "atr": 3.44,
+      "trail": 53.49,
+      "hi22": 63.8,
+      "sma50": 55.71
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 39.5,
+      "h": 40.15,
+      "l": 38.0,
+      "c": 39.3,
+      "v": 28293000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 43.4,
+     "components": {
+      "depth": 12.6,
+      "oversold": 100.0,
+      "reversal": 30.0,
+      "mfturn": 49.3,
+      "risk": 64.5
+     },
+     "dd126": 0.525,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 65.1,
+     "score_chg": -21.7,
+     "reasons": [
+      "距半年高點 −52%",
+      "超賣"
+     ],
+     "alerts": [
+      "跌破支撐區"
+     ],
      "signal": "none",
      "signal_label": "未達標",
      "swap": null
@@ -11783,265 +11968,13 @@
      "swap": null
     },
     {
-     "ticker": "2356",
-     "name": "英業達",
-     "yahoo": "2356.TW",
-     "theme": "AI伺服器",
-     "price": 39.2,
-     "prev_close": 42.2,
-     "chg_1d_pct": -7.11,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      58.3,
-      57.6,
-      59.0,
-      59.1,
-      60.0,
-      61.3,
-      60.5,
-      60.5,
-      63.0,
-      63.8,
-      61.4,
-      59.5,
-      59.6,
-      57.2,
-      56.4,
-      55.0,
-      52.6,
-      55.6,
-      54.9,
-      51.2,
-      46.6,
-      46.05,
-      43.0,
-      42.75,
-      42.3,
-      40.55,
-      39.25,
-      38.75,
-      42.2,
-      39.2
-     ],
-     "exit": {
-      "atr": 3.44,
-      "trail": 53.49,
-      "hi22": 63.8,
-      "sma50": 55.71
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 39.5,
-      "h": 40.15,
-      "l": 38.0,
-      "c": 39.2,
-      "v": 28076000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 43.2,
-     "components": {
-      "depth": 11.9,
-      "oversold": 100.0,
-      "reversal": 30.0,
-      "mfturn": 49.4,
-      "risk": 64.6
-     },
-     "dd126": 0.526,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 65.1,
-     "score_chg": -21.9,
-     "reasons": [
-      "距半年高點 −53%",
-      "超賣"
-     ],
-     "alerts": [
-      "跌破支撐區"
-     ],
-     "signal": "none",
-     "signal_label": "未達標",
-     "swap": null
-    },
-    {
-     "ticker": "3081",
-     "name": "聯亞",
-     "yahoo": "3081.TWO",
-     "theme": "光通訊",
-     "price": 1450.0,
-     "prev_close": 1525.0,
-     "chg_1d_pct": -4.92,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      2880.0,
-      2640.0,
-      2545.0,
-      2570.0,
-      2490.0,
-      2625.0,
-      2375.0,
-      2375.0,
-      2500.0,
-      2580.0,
-      2575.0,
-      2370.0,
-      2415.0,
-      2175.0,
-      2100.0,
-      1890.0,
-      1750.0,
-      1925.0,
-      2115.0,
-      2215.0,
-      2100.0,
-      2110.0,
-      1900.0,
-      1710.0,
-      1680.0,
-      1515.0,
-      1365.0,
-      1390.0,
-      1525.0,
-      1450.0
-     ],
-     "exit": {
-      "atr": 177.14,
-      "trail": 2048.57,
-      "hi22": 2580.0,
-      "sma50": 2405.4
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 1470.0,
-      "h": 1525.0,
-      "l": 1375.0,
-      "c": 1450.0,
-      "v": 927000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 41.8,
-     "components": {
-      "depth": 0.0,
-      "oversold": 84.0,
-      "reversal": 100.0,
-      "mfturn": 0.0,
-      "risk": 96.5
-     },
-     "dd126": 0.589,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 41.7,
-     "score_chg": 0.1,
-     "reasons": [
-      "距半年高點 −59%",
-      "超賣",
-      "止跌訊號",
-      "波動大"
-     ],
-     "alerts": [],
-     "signal": "none",
-     "signal_label": "未達標",
-     "swap": null
-    },
-    {
-     "ticker": "6515",
-     "name": "穎崴",
-     "yahoo": "6515.TW",
-     "theme": "半導體",
-     "price": 3085.0,
-     "prev_close": 3220.0,
-     "chg_1d_pct": -4.19,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      5615.0,
-      5055.0,
-      5160.0,
-      5160.0,
-      4960.0,
-      4970.0,
-      4795.0,
-      4795.0,
-      4775.0,
-      4935.0,
-      4655.0,
-      4565.0,
-      4485.0,
-      4075.0,
-      4020.0,
-      3620.0,
-      3295.0,
-      3495.0,
-      3720.0,
-      4090.0,
-      3975.0,
-      4115.0,
-      3705.0,
-      3445.0,
-      3560.0,
-      3205.0,
-      2885.0,
-      2930.0,
-      3220.0,
-      3085.0
-     ],
-     "exit": {
-      "atr": 366.43,
-      "trail": 3835.71,
-      "hi22": 4935.0,
-      "sma50": 4899.5
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 3060.0,
-      "h": 3315.0,
-      "l": 2900.0,
-      "c": 3085.0,
-      "v": 695000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 41.1,
-     "components": {
-      "depth": 0.0,
-      "oversold": 80.0,
-      "reversal": 100.0,
-      "mfturn": 0.0,
-      "risk": 94.3
-     },
-     "dd126": 0.688,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 41.0,
-     "score_chg": 0.1,
-     "reasons": [
-      "距半年高點 −69%",
-      "超賣",
-      "止跌訊號",
-      "波動大"
-     ],
-     "alerts": [],
-     "signal": "none",
-     "signal_label": "未達標",
-     "swap": null
-    },
-    {
      "ticker": "3529",
      "name": "力旺",
      "yahoo": "3529.TWO",
      "theme": "半導體",
-     "price": 1865.0,
+     "price": 1880.0,
      "prev_close": 2025.0,
-     "chg_1d_pct": -7.9,
+     "chg_1d_pct": -7.16,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -12076,37 +12009,37 @@
       1800.0,
       1895.0,
       2025.0,
-      1865.0
+      1880.0
      ],
      "exit": {
       "atr": 202.86,
       "trail": 2046.43,
       "hi22": 2655.0,
-      "sma50": 2574.6
+      "sma50": 2574.9
      },
      "bar": {
       "t": "2026-11-25",
       "o": 1845.0,
       "h": 2030.0,
       "l": 1825.0,
-      "c": 1865.0,
-      "v": 1349000
+      "c": 1880.0,
+      "v": 1355000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 40.8,
+     "score": 41.5,
      "components": {
-      "depth": 37.9,
+      "depth": 40.0,
       "oversold": 51.8,
       "reversal": 70.0,
       "mfturn": 0.0,
-      "risk": 85.6
+      "risk": 85.3
      },
-     "dd126": 0.474,
+     "dd126": 0.47,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 51.2,
-     "score_chg": -10.4,
+     "score_chg": -9.7,
      "reasons": [
       "距半年高點 −47%",
       "止跌訊號",
@@ -12120,13 +12053,97 @@
      "swap": null
     },
     {
+     "ticker": "6515",
+     "name": "穎崴",
+     "yahoo": "6515.TW",
+     "theme": "半導體",
+     "price": 3075.0,
+     "prev_close": 3220.0,
+     "chg_1d_pct": -4.5,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      5615.0,
+      5055.0,
+      5160.0,
+      5160.0,
+      4960.0,
+      4970.0,
+      4795.0,
+      4795.0,
+      4775.0,
+      4935.0,
+      4655.0,
+      4565.0,
+      4485.0,
+      4075.0,
+      4020.0,
+      3620.0,
+      3295.0,
+      3495.0,
+      3720.0,
+      4090.0,
+      3975.0,
+      4115.0,
+      3705.0,
+      3445.0,
+      3560.0,
+      3205.0,
+      2885.0,
+      2930.0,
+      3220.0,
+      3075.0
+     ],
+     "exit": {
+      "atr": 366.43,
+      "trail": 3835.71,
+      "hi22": 4935.0,
+      "sma50": 4899.3
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 3060.0,
+      "h": 3315.0,
+      "l": 2900.0,
+      "c": 3075.0,
+      "v": 704000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 41.1,
+     "components": {
+      "depth": 0.0,
+      "oversold": 80.0,
+      "reversal": 100.0,
+      "mfturn": 0.0,
+      "risk": 94.4
+     },
+     "dd126": 0.689,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 41.0,
+     "score_chg": 0.1,
+     "reasons": [
+      "距半年高點 −69%",
+      "超賣",
+      "止跌訊號",
+      "波動大"
+     ],
+     "alerts": [],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
      "ticker": "4979",
      "name": "華星光",
      "yahoo": "4979.TWO",
      "theme": "光通訊",
-     "price": 265.0,
+     "price": 267.5,
      "prev_close": 280.5,
-     "chg_1d_pct": -5.53,
+     "chg_1d_pct": -4.63,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -12161,21 +12178,21 @@
       266.0,
       255.0,
       280.5,
-      265.0
+      267.5
      ],
      "exit": {
       "atr": 32.32,
       "trail": 391.54,
       "hi22": 488.5,
-      "sma50": 466.61
+      "sma50": 466.66
      },
      "bar": {
       "t": "2026-11-25",
       "o": 264.0,
       "h": 299.0,
       "l": 253.0,
-      "c": 265.0,
-      "v": 10944000
+      "c": 267.5,
+      "v": 10988000
      },
      "extended": false,
      "pullback_ok": false,
@@ -12184,105 +12201,21 @@
       "depth": 0.0,
       "oversold": 84.2,
       "reversal": 70.0,
-      "mfturn": 39.3,
-      "risk": 94.1
+      "mfturn": 39.1,
+      "risk": 94.0
      },
-     "dd126": 0.608,
+     "dd126": 0.605,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 39.5,
      "score_chg": 1.1,
      "reasons": [
-      "距半年高點 −61%",
+      "距半年高點 −60%",
       "超賣",
       "止跌訊號",
       "波動大"
      ],
      "alerts": [],
-     "signal": "none",
-     "signal_label": "未達標",
-     "swap": null
-    },
-    {
-     "ticker": "6446",
-     "name": "藥華藥",
-     "yahoo": "6446.TW",
-     "theme": "生技醫療",
-     "price": 1075.0,
-     "prev_close": 1150.0,
-     "chg_1d_pct": -6.52,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      1190.0,
-      1205.0,
-      1245.0,
-      1175.0,
-      1155.0,
-      1175.0,
-      1160.0,
-      1160.0,
-      1190.0,
-      1200.0,
-      1240.0,
-      1190.0,
-      1190.0,
-      1225.0,
-      1250.0,
-      1185.0,
-      1270.0,
-      1370.0,
-      1280.0,
-      1335.0,
-      1365.0,
-      1380.0,
-      1295.0,
-      1280.0,
-      1245.0,
-      1205.0,
-      1100.0,
-      1120.0,
-      1150.0,
-      1075.0
-     ],
-     "exit": {
-      "atr": 101.07,
-      "trail": 1076.79,
-      "hi22": 1380.0,
-      "sma50": 1207.2
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 1120.0,
-      "h": 1150.0,
-      "l": 1045.0,
-      "c": 1075.0,
-      "v": 2767000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 39.0,
-     "components": {
-      "depth": 100.0,
-      "oversold": 14.6,
-      "reversal": 0.0,
-      "mfturn": 0.0,
-      "risk": 58.0
-     },
-     "dd126": 0.322,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 48.2,
-     "score_chg": -9.2,
-     "reasons": [
-      "距半年高點 −32%"
-     ],
-     "alerts": [
-      "跌破上升趨勢線",
-      "跌破支撐區"
-     ],
      "signal": "none",
      "signal_label": "未達標",
      "swap": null
@@ -12343,111 +12276,25 @@
       "h": 126.0,
       "l": 123.0,
       "c": 124.0,
-      "v": 8650000
+      "v": 8874000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 38.7,
+     "score": 38.6,
      "components": {
       "depth": 40.7,
       "oversold": 35.6,
       "reversal": 30.0,
-      "mfturn": 11.9,
+      "mfturn": 11.7,
       "risk": 5.5
      },
      "dd126": 0.081,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 35.3,
-     "score_chg": 3.4,
+     "score_chg": 3.3,
      "reasons": [
       "距半年高點 −8%"
-     ],
-     "alerts": [
-      "跌破支撐區"
-     ],
-     "signal": "none",
-     "signal_label": "未達標",
-     "swap": null
-    },
-    {
-     "ticker": "3324",
-     "name": "雙鴻",
-     "yahoo": "3324.TWO",
-     "theme": "AI伺服器",
-     "price": 807.0,
-     "prev_close": 854.0,
-     "chg_1d_pct": -5.5,
-     "above_sma20": false,
-     "above_sma50": false,
-     "limit": null,
-     "data_date": "2026-11-25",
-     "spark": [
-      1490.0,
-      1410.0,
-      1425.0,
-      1380.0,
-      1395.0,
-      1375.0,
-      1360.0,
-      1360.0,
-      1335.0,
-      1435.0,
-      1465.0,
-      1330.0,
-      1395.0,
-      1320.0,
-      1300.0,
-      1170.0,
-      1055.0,
-      1150.0,
-      1235.0,
-      1300.0,
-      1170.0,
-      1140.0,
-      1030.0,
-      927.0,
-      979.0,
-      882.0,
-      794.0,
-      777.0,
-      854.0,
-      807.0
-     ],
-     "exit": {
-      "atr": 104.71,
-      "trail": 1150.86,
-      "hi22": 1465.0,
-      "sma50": 1319.0
-     },
-     "bar": {
-      "t": "2026-11-25",
-      "o": 825.0,
-      "h": 892.0,
-      "l": 769.0,
-      "c": 807.0,
-      "v": 5100000
-     },
-     "extended": false,
-     "pullback_ok": false,
-     "score": 38.2,
-     "components": {
-      "depth": 11.0,
-      "oversold": 76.3,
-      "reversal": 70.0,
-      "mfturn": 12.4,
-      "risk": 98.5
-     },
-     "dd126": 0.528,
-     "new_low": false,
-     "entry_ok": false,
-     "score_prev": 42.0,
-     "score_chg": -3.8,
-     "reasons": [
-      "距半年高點 −53%",
-      "超賣",
-      "止跌訊號",
-      "波動大"
      ],
      "alerts": [
       "跌破支撐區"
@@ -12461,9 +12308,9 @@
      "name": "美時",
      "yahoo": "1795.TW",
      "theme": "生技醫療",
-     "price": 99.6,
+     "price": 99.9,
      "prev_close": 103.0,
-     "chg_1d_pct": -3.3,
+     "chg_1d_pct": -3.01,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -12498,7 +12345,7 @@
       101.5,
       99.3,
       103.0,
-      99.6
+      99.9
      ],
      "exit": {
       "atr": 9.34,
@@ -12511,27 +12358,111 @@
       "o": 99.5,
       "h": 107.0,
       "l": 98.7,
-      "c": 99.6,
-      "v": 2132000
+      "c": 99.9,
+      "v": 2155000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 38.2,
+     "score": 38.5,
      "components": {
-      "depth": 19.1,
+      "depth": 19.8,
       "oversold": 100.0,
       "reversal": 30.0,
       "mfturn": 0.0,
       "risk": 70.2
      },
-     "dd126": 0.512,
+     "dd126": 0.51,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 52.2,
-     "score_chg": -14.0,
+     "score_chg": -13.7,
      "reasons": [
       "距半年高點 −51%",
       "超賣",
+      "波動大"
+     ],
+     "alerts": [],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
+     "ticker": "3324",
+     "name": "雙鴻",
+     "yahoo": "3324.TWO",
+     "theme": "AI伺服器",
+     "price": 810.0,
+     "prev_close": 854.0,
+     "chg_1d_pct": -5.15,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      1490.0,
+      1410.0,
+      1425.0,
+      1380.0,
+      1395.0,
+      1375.0,
+      1360.0,
+      1360.0,
+      1335.0,
+      1435.0,
+      1465.0,
+      1330.0,
+      1395.0,
+      1320.0,
+      1300.0,
+      1170.0,
+      1055.0,
+      1150.0,
+      1235.0,
+      1300.0,
+      1170.0,
+      1140.0,
+      1030.0,
+      927.0,
+      979.0,
+      882.0,
+      794.0,
+      777.0,
+      854.0,
+      810.0
+     ],
+     "exit": {
+      "atr": 104.71,
+      "trail": 1150.86,
+      "hi22": 1465.0,
+      "sma50": 1319.06
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 825.0,
+      "h": 892.0,
+      "l": 769.0,
+      "c": 810.0,
+      "v": 5133000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 38.4,
+     "components": {
+      "depth": 11.8,
+      "oversold": 76.3,
+      "reversal": 70.0,
+      "mfturn": 12.3,
+      "risk": 98.5
+     },
+     "dd126": 0.526,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 42.0,
+     "score_chg": -3.6,
+     "reasons": [
+      "距半年高點 −53%",
+      "超賣",
+      "止跌訊號",
       "波動大"
      ],
      "alerts": [],
@@ -12544,9 +12475,9 @@
      "name": "統一",
      "yahoo": "1216.TW",
      "theme": "民生消費",
-     "price": 79.5,
+     "price": 79.6,
      "prev_close": 77.4,
-     "chg_1d_pct": 2.71,
+     "chg_1d_pct": 2.84,
      "above_sma20": true,
      "above_sma50": true,
      "limit": null,
@@ -12581,7 +12512,7 @@
       75.0,
       75.5,
       77.4,
-      79.5
+      79.6
      ],
      "exit": {
       "atr": 2.85,
@@ -12594,24 +12525,24 @@
       "o": 75.9,
       "h": 80.0,
       "l": 75.7,
-      "c": 79.5,
-      "v": 24620000
+      "c": 79.6,
+      "v": 24982000
      },
      "extended": false,
      "pullback_ok": true,
-     "score": 38.2,
+     "score": 38.0,
      "components": {
-      "depth": 9.9,
+      "depth": 9.2,
       "oversold": 15.3,
       "reversal": 100.0,
       "mfturn": 0.0,
       "risk": 8.5
      },
-     "dd126": 0.02,
+     "dd126": 0.018,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 35.6,
-     "score_chg": 2.6,
+     "score_chg": 2.4,
      "reasons": [
       "距半年高點 −2%",
       "止跌訊號"
@@ -12628,9 +12559,9 @@
      "name": "和泰車",
      "yahoo": "2207.TW",
      "theme": "民生消費",
-     "price": 523.0,
+     "price": 522.0,
      "prev_close": 533.0,
-     "chg_1d_pct": -1.88,
+     "chg_1d_pct": -2.06,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -12665,37 +12596,37 @@
       516.0,
       500.0,
       533.0,
-      523.0
+      522.0
      ],
      "exit": {
       "atr": 21.64,
       "trail": 486.07,
       "hi22": 551.0,
-      "sma50": 527.54
+      "sma50": 527.52
      },
      "bar": {
       "t": "2026-11-25",
       "o": 522.0,
       "h": 526.0,
       "l": 510.0,
-      "c": 523.0,
-      "v": 385000
+      "c": 522.0,
+      "v": 386000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 36.2,
+     "score": 36.5,
      "components": {
-      "depth": 31.4,
+      "depth": 32.3,
       "oversold": 9.4,
       "reversal": 70.0,
       "mfturn": 0.0,
-      "risk": 15.4
+      "risk": 15.5
      },
-     "dd126": 0.063,
+     "dd126": 0.065,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 33.7,
-     "score_chg": 2.5,
+     "score_chg": 2.8,
      "reasons": [
       "距半年高點 −6%",
       "止跌訊號"
@@ -12712,9 +12643,9 @@
      "name": "光聖",
      "yahoo": "6442.TW",
      "theme": "光通訊",
-     "price": 925.0,
+     "price": 930.0,
      "prev_close": 979.0,
-     "chg_1d_pct": -5.52,
+     "chg_1d_pct": -5.01,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -12749,21 +12680,21 @@
       864.0,
       890.0,
       979.0,
-      925.0
+      930.0
      ],
      "exit": {
       "atr": 108.93,
       "trail": 1078.21,
       "hi22": 1405.0,
-      "sma50": 1363.32
+      "sma50": 1363.42
      },
      "bar": {
       "t": "2026-11-25",
       "o": 919.0,
       "h": 1015.0,
       "l": 887.0,
-      "c": 925.0,
-      "v": 2698000
+      "c": 930.0,
+      "v": 2709000
      },
      "extended": false,
      "pullback_ok": false,
@@ -12773,9 +12704,9 @@
       "oversold": 58.6,
       "reversal": 100.0,
       "mfturn": 0.0,
-      "risk": 96.3
+      "risk": 96.2
      },
-     "dd126": 0.588,
+     "dd126": 0.586,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 41.9,
@@ -12846,7 +12777,7 @@
       "h": 169.0,
       "l": 153.0,
       "c": 153.0,
-      "v": 20096000
+      "v": 20139000
      },
      "extended": false,
      "pullback_ok": false,
@@ -12869,6 +12800,92 @@
       "波動大"
      ],
      "alerts": [],
+     "signal": "none",
+     "signal_label": "未達標",
+     "swap": null
+    },
+    {
+     "ticker": "3081",
+     "name": "聯亞",
+     "yahoo": "3081.TWO",
+     "theme": "光通訊",
+     "price": 1435.0,
+     "prev_close": 1525.0,
+     "chg_1d_pct": -5.9,
+     "above_sma20": false,
+     "above_sma50": false,
+     "limit": null,
+     "data_date": "2026-11-25",
+     "spark": [
+      2880.0,
+      2640.0,
+      2545.0,
+      2570.0,
+      2490.0,
+      2625.0,
+      2375.0,
+      2375.0,
+      2500.0,
+      2580.0,
+      2575.0,
+      2370.0,
+      2415.0,
+      2175.0,
+      2100.0,
+      1890.0,
+      1750.0,
+      1925.0,
+      2115.0,
+      2215.0,
+      2100.0,
+      2110.0,
+      1900.0,
+      1710.0,
+      1680.0,
+      1515.0,
+      1365.0,
+      1390.0,
+      1525.0,
+      1435.0
+     ],
+     "exit": {
+      "atr": 177.14,
+      "trail": 2048.57,
+      "hi22": 2580.0,
+      "sma50": 2405.1
+     },
+     "bar": {
+      "t": "2026-11-25",
+      "o": 1470.0,
+      "h": 1525.0,
+      "l": 1375.0,
+      "c": 1435.0,
+      "v": 930000
+     },
+     "extended": false,
+     "pullback_ok": false,
+     "score": 35.0,
+     "components": {
+      "depth": 0.0,
+      "oversold": 84.0,
+      "reversal": 70.0,
+      "mfturn": 0.0,
+      "risk": 96.7
+     },
+     "dd126": 0.593,
+     "new_low": false,
+     "entry_ok": false,
+     "score_prev": 41.7,
+     "score_chg": -6.7,
+     "reasons": [
+      "距半年高點 −59%",
+      "超賣",
+      "止跌訊號",
+      "波動大"
+     ],
+     "alerts": [
+      "跌破支撐區"
+     ],
      "signal": "none",
      "signal_label": "未達標",
      "swap": null
@@ -12929,7 +12946,7 @@
       "h": 279.5,
       "l": 245.0,
       "c": 245.5,
-      "v": 1176000
+      "v": 1180000
      },
      "extended": false,
      "pullback_ok": false,
@@ -13012,7 +13029,7 @@
       "h": 193.5,
       "l": 175.5,
       "c": 175.5,
-      "v": 9699000
+      "v": 9712000
      },
      "extended": false,
      "pullback_ok": false,
@@ -13095,7 +13112,7 @@
       "h": 162.0,
       "l": 144.0,
       "c": 144.0,
-      "v": 6611000
+      "v": 6617000
      },
      "extended": false,
      "pullback_ok": false,
@@ -13180,7 +13197,7 @@
       "h": 1320.0,
       "l": 1250.0,
       "c": 1255.0,
-      "v": 453000
+      "v": 457000
      },
      "extended": false,
      "pullback_ok": false,
@@ -13211,9 +13228,9 @@
      "name": "兆豐金",
      "yahoo": "2886.TW",
      "theme": "金融",
-     "price": 50.1,
+     "price": 50.3,
      "prev_close": 55.0,
-     "chg_1d_pct": -8.91,
+     "chg_1d_pct": -8.55,
      "above_sma20": false,
      "above_sma50": false,
      "limit": null,
@@ -13248,7 +13265,7 @@
       51.8,
       50.0,
       55.0,
-      50.1
+      50.3
      ],
      "exit": {
       "atr": 2.88,
@@ -13261,26 +13278,26 @@
       "o": 52.8,
       "h": 53.7,
       "l": 49.5,
-      "c": 50.1,
-      "v": 70804000
+      "c": 50.3,
+      "v": 71886000
      },
      "extended": false,
      "pullback_ok": false,
-     "score": 27.6,
+     "score": 27.1,
      "components": {
-      "depth": 47.8,
+      "depth": 46.0,
       "oversold": 21.7,
       "reversal": 0.0,
       "mfturn": 0.0,
-      "risk": 23.4
+      "risk": 23.0
      },
-     "dd126": 0.096,
+     "dd126": 0.092,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 36.7,
-     "score_chg": -9.1,
+     "score_chg": -9.6,
      "reasons": [
-      "距半年高點 −10%"
+      "距半年高點 −9%"
      ],
      "alerts": [
       "跌破上升趨勢線",
@@ -13347,7 +13364,7 @@
       "h": 2.35,
       "l": 2.35,
       "c": 2.35,
-      "v": 154000
+      "v": 162000
      },
      "extended": false,
      "pullback_ok": false,
@@ -13381,9 +13398,9 @@
      "name": "中華電",
      "yahoo": "2412.TW",
      "theme": "電信與電腦",
-     "price": 164.5,
+     "price": 165.0,
      "prev_close": 164.5,
-     "chg_1d_pct": 0.0,
+     "chg_1d_pct": 0.3,
      "above_sma20": true,
      "above_sma50": true,
      "limit": null,
@@ -13418,42 +13435,42 @@
       162.5,
       164.5,
       164.5,
-      164.5
+      165.0
      ],
      "exit": {
       "atr": 5.18,
       "trail": 150.46,
       "hi22": 166.0,
-      "sma50": 153.77
+      "sma50": 153.78
      },
      "bar": {
       "t": "2026-11-25",
       "o": 163.5,
       "h": 167.0,
       "l": 163.0,
-      "c": 164.5,
-      "v": 41963000
+      "c": 165.0,
+      "v": 42703000
      },
      "extended": false,
-     "pullback_ok": false,
-     "score": 24.9,
+     "pullback_ok": true,
+     "score": 24.4,
      "components": {
-      "depth": 4.5,
+      "depth": 3.0,
       "oversold": 0.0,
       "reversal": 60.0,
       "mfturn": 0.0,
       "risk": 0.0
      },
-     "dd126": 0.009,
+     "dd126": 0.006,
      "new_low": false,
      "entry_ok": false,
      "score_prev": 22.5,
-     "score_chg": 2.4,
+     "score_chg": 1.9,
      "reasons": [
       "距半年高點 −1%"
      ],
      "alerts": [
-      "爆量"
+      "爆量上漲"
      ],
      "signal": "none",
      "signal_label": "未達標",
